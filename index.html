@@ -71,7 +71,7 @@ p { margin: 0; }
 .brand-name b { font: 600 15px/1.2 var(--f-body); }
 .brand-name span { font: 500 11px/1.2 var(--f-mono); color: var(--muted); }
 .top nav { margin-left: auto; display: flex; gap: 6px; align-items: center; }
-.ghost { background: none; border: 1px solid var(--line); border-radius: 999px; padding: 7px 14px; font-size: 14px; cursor: pointer; color: var(--ink); }
+.ghost { background: none; border: 1px solid var(--line); border-radius: 999px; padding: 7px 14px; font-size: 14px; cursor: pointer; color: var(--ink); white-space: nowrap; }
 .ghost:hover { border-color: var(--muted); }
 @media (max-width: 560px) { .top nav .hide-sm { display: none; } }
 
@@ -220,6 +220,33 @@ p { margin: 0; }
 .wrong-item .y { margin-top: 4px; font-size: 14px; color: var(--bad); }
 .wrong-item .meta { font: 500 11.5px/1 var(--f-mono); color: var(--muted); margin-bottom: 8px; }
 
+/* Slides */
+.slides { display: grid; grid-template-columns: 320px minmax(0,1fr); gap: 20px; align-items: start; }
+.slide-list { display: flex; flex-direction: column; gap: 6px; position: sticky; top: 84px; }
+.slide-item { display: grid; grid-template-columns: 44px minmax(0,1fr); gap: 4px 12px; align-items: center; text-align: left; width: 100%; padding: 11px 13px; border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--surface); cursor: pointer; }
+.slide-item:hover { border-color: var(--muted); }
+.slide-item[aria-current="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.slide-item .code { font: 600 12px/1 var(--f-mono); color: var(--accent); grid-row: span 2; }
+.slide-item .name { font-weight: 600; font-size: 14.5px; line-height: 1.3; }
+.slide-item .sub { font: 500 11.5px/1.3 var(--f-mono); color: var(--muted); }
+.viewer { padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+.viewer-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 14px 18px; border-bottom: 1px solid var(--line); }
+.viewer-bar h2 { font: 600 18px/1.25 var(--f-body); }
+.viewer-bar .sp { flex: 1; }
+.viewer-bar a { text-decoration: none; }
+.pages { height: calc(100vh - 210px); min-height: 520px; overflow-y: auto; background: var(--surface-2); padding: 16px; display: flex; flex-direction: column; gap: 14px; overscroll-behavior: contain; }
+.pg { flex: none; position: relative; width: 100%; background: #fff; border-radius: 4px; box-shadow: var(--shadow); overflow: hidden; }
+.pg canvas { display: block; width: 100%; height: auto; }
+.pg .n { position: absolute; right: 8px; bottom: 8px; font: 500 11px/1 var(--f-mono); color: #5A6873; background: rgba(255,255,255,.85); padding: 4px 6px; border-radius: 5px; }
+.pages .msg { margin: auto; color: var(--muted); font-size: 14px; text-align: center; }
+.pages iframe { flex: 1; width: 100%; border: 0; }
+@media (max-width: 880px) {
+  .slides { grid-template-columns: 1fr; }
+  .slide-list { position: static; display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 6px; }
+  .slide-item { display: block; padding: 10px 0; text-align: center; }
+  .slide-item .name, .slide-item .sub { display: none; }
+  .pages { height: 75vh; min-height: 420px; padding: 10px; gap: 10px; }
+}
 footer { border-top: 1px solid var(--line); }
 footer .wrap { padding-block: 22px 32px; color: var(--muted); font-size: 13px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
 
@@ -242,6 +269,7 @@ footer .wrap { padding-block: 22px 32px; color: var(--muted); font-size: 13px; d
       <button class="ghost hide-sm" type="button" id="nav-mid">Мидтерм</button>
       <button class="ghost hide-sm" type="button" id="nav-kc">Knowledge checks</button>
       <button class="ghost hide-sm" type="button" id="nav-lab">Лабы</button>
+      <button class="ghost" type="button" id="nav-slides">Слайды</button>
       <button class="ghost" type="button" id="theme-btn" aria-label="Переключить тему">Тема</button>
     </nav>
   </div>
@@ -401,6 +429,31 @@ footer .wrap { padding-block: 22px 32px; color: var(--muted); font-size: 13px; d
       </div>
     </div>
   </section>
+  <!-- SLIDES -->
+  <section id="view-slides" hidden>
+    <div class="wrap page">
+      <button class="back" type="button" data-home>← На главную</button>
+      <div class="setup-head">
+        <div>
+          <span class="eyebrow">Student Guide · PDF</span>
+          <h1>Слайды модулей</h1>
+          <p>Официальные слайды курса M01–M10. Можно читать прямо здесь или открыть PDF в новой вкладке.</p>
+        </div>
+      </div>
+      <div class="slides">
+        <nav class="slide-list" id="slide-list" aria-label="Модули"></nav>
+        <div class="panel viewer">
+          <div class="viewer-bar">
+            <div><span class="eyebrow" id="sv-code">M01</span><h2 id="sv-title"></h2></div>
+            <span class="sp"></span>
+            <a class="btn secondary" id="sv-open" href="#" target="_blank" rel="noopener">Открыть ↗</a>
+            <a class="btn secondary" id="sv-dl" href="#" download>Скачать</a>
+          </div>
+          <div class="pages" id="sv-pages" tabindex="0" aria-label="Страницы PDF"></div>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer>
@@ -445,7 +498,7 @@ footer .wrap { padding-block: 22px 32px; color: var(--muted); font-size: 13px; d
   paintThemeBtn();
 
   // ---------- views ----------
-  const VIEWS = ["home", "setup", "quiz", "results"];
+  const VIEWS = ["home", "setup", "quiz", "results", "slides"];
   function show(v) {
     VIEWS.forEach(n => { $("view-" + n).hidden = n !== v; });
     window.scrollTo({ top: 0 });
@@ -490,6 +543,89 @@ footer .wrap { padding-block: 22px 32px; color: var(--muted); font-size: 13px; d
   $("nav-kc").addEventListener("click", () => openSetup("kc"));
   $("nav-mid").addEventListener("click", () => openSetup("mid"));
   $("nav-lab").addEventListener("click", () => openSetup("lab"));
+
+  // ---------- slides ----------
+  // Student Guide PDF модулей, лежат в slides/
+  const SLIDE_PAGES = { m1: 50, m2: 70, m3: 37, m4: 69, m5: 75, m6: 98, m7: 71, m8: 69, m9: 70, m10: 50 };
+  const SLIDE_MB = { m1: 2.1, m2: 3.1, m3: 1.4, m4: 2.4, m5: 2.4, m6: 3.4, m7: 2.1, m8: 1.6, m9: 2.6, m10: 1.8 };
+  const slideUrl = s => "slides/100-ACCLFO-20-EN-" + s.code + "SG.pdf";
+  function openSlide(id) {
+    const s = KC.find(k => k.id === id) || KC[0];
+    store.slide = s.id; save();
+    const url = slideUrl(s);
+    $("sv-code").textContent = s.code + " · " + SLIDE_PAGES[s.id] + " стр.";
+    $("sv-title").textContent = s.title;
+    $("sv-open").href = url; $("sv-dl").href = url;
+    if (pdfShown !== url) renderPdf(url);
+    document.querySelectorAll(".slide-item").forEach(b => b.setAttribute("aria-current", String(b.dataset.slide === s.id)));
+  }
+  // PDF.js рисует страницы на canvas: встроенный просмотр PDF в iframe не работает на телефонах
+  const PDFJS = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
+  let pdfLib = null, pdfShown = null, pdfDoc = null, pdfObs = null;
+  function loadPdfLib() {
+    if (pdfLib) return pdfLib;
+    pdfLib = new Promise((ok, fail) => {
+      const sc = document.createElement("script");
+      sc.src = PDFJS + "pdf.min.js";
+      sc.onload = () => { window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS + "pdf.worker.min.js"; ok(window.pdfjsLib); };
+      sc.onerror = () => { pdfLib = null; fail(new Error("pdf.js")); };
+      document.head.appendChild(sc);
+    });
+    return pdfLib;
+  }
+  async function renderPdf(url) {
+    const box = $("sv-pages");
+    pdfShown = url;
+    if (pdfObs) pdfObs.disconnect();
+    if (pdfDoc) { pdfDoc.destroy(); pdfDoc = null; }
+    box.scrollTop = 0;
+    box.innerHTML = `<p class="msg">Загружаю слайды…</p>`;
+    let doc;
+    try {
+      const lib = await loadPdfLib();
+      doc = await lib.getDocument(url).promise;
+    } catch (e) {
+      if (pdfShown === url) box.innerHTML = `<iframe src="${esc(url)}" title="Слайды модуля"></iframe>`;
+      return;
+    }
+    if (pdfShown !== url) { doc.destroy(); return; }
+    pdfDoc = doc;
+    const first = (await doc.getPage(1)).getViewport({ scale: 1 });
+    box.innerHTML = Array.from({ length: doc.numPages }, (_, i) =>
+      `<div class="pg" data-p="${i + 1}" style="aspect-ratio:${first.width} / ${first.height}"><span class="n">${i + 1} / ${doc.numPages}</span></div>`).join("");
+    pdfObs = new IntersectionObserver(entries => entries.forEach(en => {
+      if (!en.isIntersecting || en.target.dataset.done) return;
+      en.target.dataset.done = "1";
+      drawPage(doc, en.target);
+    }), { root: box, rootMargin: "600px 0px" });
+    box.querySelectorAll(".pg").forEach(el => pdfObs.observe(el));
+  }
+  async function drawPage(doc, el) {
+    try {
+      const page = await doc.getPage(+el.dataset.p);
+      const base = page.getViewport({ scale: 1 });
+      const vp = page.getViewport({ scale: Math.min(3, (el.clientWidth * (window.devicePixelRatio || 1)) / base.width) });
+      const cv = document.createElement("canvas");
+      cv.width = Math.floor(vp.width); cv.height = Math.floor(vp.height);
+      await page.render({ canvasContext: cv.getContext("2d"), viewport: vp }).promise;
+      el.prepend(cv);
+    } catch (e) { delete el.dataset.done; }
+  }
+  function showSlides() {
+    $("slide-list").innerHTML = KC.map(s => `<button class="slide-item" type="button" data-slide="${s.id}">
+      <span class="code">${esc(s.code)}</span>
+      <span class="name">${esc(s.title)}</span>
+      <span class="sub">${esc(s.ru)} · ${SLIDE_PAGES[s.id]} стр. · ${SLIDE_MB[s.id]} МБ</span>
+    </button>`).join("");
+    show("slides");
+    openSlide(store.slide);
+  }
+  $("slide-list").addEventListener("click", e => {
+    const b = e.target.closest(".slide-item");
+    if (!b) return;
+    openSlide(b.dataset.slide);
+  });
+  $("nav-slides").addEventListener("click", showSlides);
   $("mist-go").addEventListener("click", () => {
     const ids = Object.keys(store.mistakes).filter(qid => getQ(qid));
     if (ids.length) startQuiz(shuffle(ids), { title: "Работа над ошибками", shuffle: true });
