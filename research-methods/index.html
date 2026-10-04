@@ -1,3 +1,8 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Research Methods Midterm</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,7 +36,7 @@
   color-scheme:dark;
 }
 *{box-sizing:border-box}
-body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.6;padding-inline:16px;padding-block:0 64px}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.6;padding-inline:16px;padding-block:0 64px}
 h1,h2,h3,h4{font-family:var(--f-display);line-height:1.2;text-wrap:balance;margin:0}
 p{margin:0}
 a{color:var(--accent)}
@@ -112,6 +117,23 @@ td:first-child{font-weight:600}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 
+/* KEYS */
+.keys-wrap{max-width:820px;margin-inline:auto;display:flex;flex-direction:column;gap:26px}
+.keys-wrap>header{display:flex;flex-direction:column;gap:8px}
+.keys-wrap>header h2{font-size:32px}
+.keys-jump{display:flex;flex-wrap:wrap;gap:8px}
+.keys-jump a{font-family:var(--f-mono);font-size:13px;font-weight:600;text-decoration:none;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 14px;color:var(--ink)}
+.keys-jump a:hover{border-color:var(--accent);color:var(--accent)}
+.kblock{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;display:flex;flex-direction:column;gap:14px;scroll-margin-top:90px}
+.kblock h3{font-size:22px;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.kblock h3 .n{font-family:var(--f-mono);font-size:13px;color:var(--accent);font-weight:600}
+ul.klist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+ul.klist li{padding:9px 0 9px 22px;border-top:1px solid var(--line);position:relative;line-height:1.5}
+ul.klist li:first-child{border-top:0}
+ul.klist li::before{content:"";position:absolute;left:4px;top:18px;width:7px;height:7px;border-radius:2px;background:var(--accent)}
+.kblock .tbl{background:var(--paper)}
+.kfoot{display:flex;gap:10px;flex-wrap:wrap}
+
 /* QUIZ */
 .panel{max-width:780px;margin-inline:auto;display:flex;flex-direction:column;gap:20px}
 .panel h2{font-size:32px}
@@ -190,9 +212,13 @@ td:first-child{font-weight:600}
   .qtext{font-size:20px}
   .bd{grid-template-columns:80px minmax(0,1fr) 56px}
   .brand{margin-right:0;width:100%}
-  .tab{padding:6px 12px}
+  .tab{padding:6px 10px;font-size:14px}
+  .tabs{max-width:100%;overflow-x:auto}
+  .back{width:100%}
 }
 </style>
+</head>
+<body>
 
 <header class="bar">
   <div class="wrap">
@@ -200,6 +226,7 @@ td:first-child{font-weight:600}
     <a class="back" href="../">← Cloud Foundations</a>
     <nav class="tabs" role="tablist" aria-label="Разделы">
       <button class="tab" role="tab" id="tab-notes" data-view="notes" aria-selected="true">Конспекты</button>
+      <button class="tab" role="tab" id="tab-keys" data-view="keys" aria-selected="false">Ключевое</button>
       <button class="tab" role="tab" id="tab-quiz" data-view="quiz" aria-selected="false">Тест</button>
       <button class="tab" role="tab" id="tab-cards" data-view="cards" aria-selected="false">Карточки</button>
     </nav>
@@ -1097,6 +1124,141 @@ td:first-child{font-weight:600}
 </div>
 </section>
 
+<!-- ============ KEY POINTS ============ -->
+<section class="view" id="view-keys" hidden>
+<div class="keys-wrap">
+  <header>
+    <h2>Ключевое из лекций</h2>
+    <p class="sub">Самое важное без лишнего: то, что надо знать на мидтерме. Подробности во вкладке «Конспекты».</p>
+    <nav class="keys-jump" aria-label="Лекции">
+      <a href="#" data-jump="k-pairs">Путают</a><a href="#" data-jump="k1">L1</a><a href="#" data-jump="k2">L2</a><a href="#" data-jump="k3">L3</a><a href="#" data-jump="k4">L4.1</a><a href="#" data-jump="k5">L4.2</a>
+    </nav>
+  </header>
+
+  <div class="kblock" id="k-pairs">
+    <h3>Что чаще всего путают</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>Пара</th><th>Разница</th></tr></thead>
+      <tbody>
+        <tr><td>Ontology / Epistemology</td><td>ЧТО реально / КАК мы это знаем</td></tr>
+        <tr><td>Methodology / Methods / Tools</td><td>macro-стратегия (ethnography) / micro-техники (interview) / инструмент (questionnaire)</td></tr>
+        <tr><td>Question / Objective</td><td>вопрос спрашивает / цель называет действие (to compare… using F1)</td></tr>
+        <tr><td>AND / OR</td><td>AND сужает, между группами / OR расширяет, внутри синонимов</td></tr>
+        <tr><td>Fabrication / Falsification</td><td>выдумать несуществующее / исказить реальное (в т.ч. показать только лучший прогон)</td></tr>
+        <tr><td>Confidentiality / Anonymity</td><td>личность известна, доступ закрыт / личность не связана с ответом</td></tr>
+        <tr><td>Verification / Evaluation</td><td>существует ли источник / качественный и релевантный ли он</td></tr>
+        <tr><td>Patchwriting / Paraphrase</td><td>замена пары слов, структура та же (нельзя) / свои слова и структура + ссылка</td></tr>
+        <tr><td>Literature review / Document analysis</td><td>обзор чужих исследований / документы как данные → в method и findings</td></tr>
+        <tr><td>Literature review / Conceptual framework</td><td>что нашли другие / что изучишь ты и как связаны переменные</td></tr>
+        <tr><td>Construct / Indicator</td><td>абстрактная идея (trust) / конкретное измерение (mean of 6 items)</td></tr>
+        <tr><td>Mediator / Moderator</td><td>how/why, механизм / when/for whom, условие</td></tr>
+        <tr><td>Confounder / Control</td><td>влияет и на X, и на Y / переменная, которую учитывают из-за альтернативного влияния</td></tr>
+        <tr><td>Reliability / Validity</td><td>стабильность / меряет ли нужное</td></tr>
+        <tr><td>Directional / Non-directional</td><td>предсказывает направление (faster) / только наличие различия</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="kblock" id="k1">
+    <h3><span class="n">L1</span>Taking a Leap into Research World</h3>
+    <ul class="klist">
+      <li><b>Research</b> (OED) = the systematic study of materials and sources in order to establish facts and reach new conclusions.</li>
+      <li>Делая проект, ты становишься <b>knowledge producer</b>, а не consumer. Цель исследования — <b>situation improvement</b>, а не любопытство.</li>
+      <li>Research помогает: understand → find solutions → implement change → evaluate success → offer recommendations.</li>
+      <li><b>Ontology</b> = что существует / реально. <b>Epistemology</b> = как мы получаем знание (rules for knowing).</li>
+      <li>Realism — мир независим от восприятия · Empiricism — знание только через органы чувств · Positivism — истинное знание только научное.</li>
+      <li>Relativism — нет универсалий, всё в контексте · Social constructionism — мир строят люди через взаимодействие · Subjectivism — личный опыт = основа знания.</li>
+      <li><b>Quantitative</b> (числа) ↔ realism, empiricism, positivism. <b>Qualitative</b> (слова, образы) ↔ relativism, constructionism, subjectivism. <b>Mixed</b> — оба, без привязки к допущениям.</li>
+      <li>Лучшего подхода нет: важно соответствие вопросу. Выбирает исследователь, а не методология.</li>
+      <li><b>Methodology</b> (macro: scientific method, ethnography, action research) → <b>Methods</b> (micro: interviews, surveys, statistics) → <b>Tools</b> (questionnaires, checklists) → <b>Methodological design</b> = план целиком.</li>
+      <li>Positivism: predictable world, objective researcher, hypothesis-driven, quantitative. Post-positivism: ambiguous world, subjective researcher, inductive, qualitative.</li>
+    </ul>
+    <div class="kfoot"><button class="btn" data-start-lec="1">Тест L1</button><button class="btn" data-cards-lec="1">Карточки L1</button></div>
+  </div>
+
+  <div class="kblock" id="k2">
+    <h3><span class="n">L2</span>Research Questions &amp; Scientific Search</h3>
+    <ul class="klist">
+      <li><b>Topic</b> (область) → <b>Problem</b> (неопределённость) → <b>Question</b> (что исследуем). Хороший вопрос = factor + outcome + context.</li>
+      <li>5 тестов: <b>Clear, Focused, Researchable</b> (отвечается evidence), <b>Feasible</b> (время, данные, навыки), <b>Analytical</b>.</li>
+      <li>Типы вопросов: <b>Compare</b> (A vs B), <b>Relate</b> (X связан с Y), <b>Evaluate</b> (насколько A улучшает Y), <b>Explain</b> (как пользователи воспринимают X).</li>
+      <li>Objective = действие. Глаголы: compare, evaluate, examine, measure, explore, identify. Не одни: understand, know, learn, study.</li>
+      <li>Проблемы вопроса: <b>too broad</b> (нет boundary) · <b>not answerable</b> (нет evidence) · <b>misaligned</b> (вопрос и цель про разное).</li>
+      <li>Поиск: <b>Search → Screen → Select → Extract → Revise</b>, всё записывается в <b>Search Log</b>.</li>
+      <li>Вопрос разбить на 2–4 понятия, не вбивать целым предложением.</li>
+      <li><b>AND</b> сужает · <b>OR</b> расширяет (синонимы) · <b>NOT</b> осторожно. Шаблон: <code>(a OR b) AND (c OR d)</code>. Кавычки = фраза, скобки = логика, <code>*</code> = wildcard.</li>
+      <li>Query ladder: broad → balanced → precise. Неудачный запрос тоже записать.</li>
+      <li>Базы: <b>Scopus</b> (multidisciplinary), <b>IEEE Xplore</b> (engineering/computing, операторы ЗАГЛАВНЫМИ), <b>ACM DL</b> (computing), <b>Google Scholar</b> (cited by). Минимум <b>2 базы</b>.</li>
+      <li>Too many → добавить concept · too few → убрать узкое или добавить синонимы. Меняй одно решение за раз.</li>
+      <li>Screening: title → abstract → record → full text. Citation count ≠ relevance. Критерии пишутся <b>до</b> скрининга.</li>
+      <li>Search Log: database, date, exact query, filters, result count, decision.</li>
+    </ul>
+    <div class="kfoot"><button class="btn" data-start-lec="2">Тест L2</button><button class="btn" data-cards-lec="2">Карточки L2</button></div>
+  </div>
+
+  <div class="kblock" id="k3">
+    <h3><span class="n">L3</span>Ethics, Source Verification &amp; Mendeley</h3>
+    <ul class="klist">
+      <li>Integrity = две ответственности: <b>knowledge</b> (credible claims) и <b>people</b> (защита участников). Технически верное исследование может быть неэтичным.</li>
+      <li><b>FFP:</b> Fabrication = выдумать · Falsification = исказить реальное (в т.ч. умолчанием, только лучший прогон) · Plagiarism = присвоить чужое.</li>
+      <li>Сомнительные практики: cherry-picking, hidden limits, duplication, gift authorship. Тест: изменил бы читатель решение, если бы знал?</li>
+      <li>Informed consent — процесс: <b>understand, choose, withdraw, ask</b>.</li>
+      <li><b>Confidentiality</b> — личность известна, доступ контролируется. <b>Anonymity</b> — не связана с ответом. Псевдоним ≠ анонимность.</li>
+      <li>Data lifecycle: collect (только нужное) → store → access → retain → delete/share. Не обещай защиту, которую не обеспечишь.</li>
+      <li>Публичное онлайн ≠ этически просто: expectations, re-identification, platform terms, presentation. Legal ≠ ethical.</li>
+      <li>Изменения после ethics approval → report и <b>amendment</b>. Ethics card: data, people, risk, safeguard, evidence; safeguard конкретный.</li>
+      <li><b>Verification</b> = существует ли · <b>Evaluation</b> = качество и релевантность. Ladder: Read → Match → Resolve (DOI) → Check (retractions) → Open.</li>
+      <li><b>DOI</b> — идентификатор, а не знак качества. Нет DOI ≠ нет источника. Не проверен → не цитировать как подтверждённое.</li>
+      <li>Copy → patchwrite (нельзя) → paraphrase (нужна ссылка) → synthesise. Обзор организуется <b>по идеям</b>.</li>
+      <li>Authorship = вклад + ответственность; помощь без вклада → acknowledgements; конфликт интересов раскрывается.</li>
+      <li>AI можно: search terms, грамматика, объяснения. Нельзя: неоткрытые источники, фабрикация. Контракт: no source, no claim, no secret data, no hidden role.</li>
+      <li>Mendeley: <b>Import → Verify → Organise → Read → Cite</b>. Reference manager ≠ source verifier.</li>
+    </ul>
+    <div class="kfoot"><button class="btn" data-start-lec="3">Тест L3</button><button class="btn" data-cards-lec="3">Карточки L3</button></div>
+  </div>
+
+  <div class="kblock" id="k4">
+    <h3><span class="n">L4.1</span>Literature Review</h3>
+    <ul class="klist">
+      <li><b>Literature review</b> = a critical and purposive review of a body of knowledge including findings and theoretical and methodological contributions. Это аргументативный текст, создающий «space» для исследования.</li>
+      <li>3 цели: <b>inform readers</b> о состоянии области · <b>establish credibility</b> исследователя · <b>argue need and relevance</b> (найти gaps).</li>
+      <li>Lit review ≠ document analysis: документы как данные идут в method и findings.</li>
+      <li>Работа с литературой: <b>Purpose, Sourcing, Managing, Reviewing</b>.</li>
+      <li>Типы: reference materials · books (выходят медленно) · <b>journal articles</b> (peer reviewed, главный источник) · <b>grey literature</b> (без ISBN/ISSN: conference papers, theses, газеты) · official publications/statistics · writing aids.</li>
+      <li>Помогут: <b>librarian</b>, academics, ResearchGate. Google Scholar: «journal» в поле Publication, вход через университет.</li>
+      <li>Сузить: добавить keywords или ограничить 5–7 годами. Расширить: убрать keywords, увеличить период. Venn diagram показывает пересечения понятий.</li>
+      <li><b>Fair dealing</b> (Commonwealth) / <b>fair use</b> (US). Австралия: 5% или 1 глава книги, 1 статья из номера.</li>
+      <li>Relevance: abstract, стикеры 1–3. Quality: учтены ли subjectivities, логичны ли методы, последовательны ли, уместны ли аргументы, можно ли проверить.</li>
+      <li><b>Annotated bibliography</b>: citation, author/audience, summary, critical appraisal, relevance. Critical = informed and considered evaluation, а не критика.</li>
+      <li>Софт: ProCite, Mendeley, EndNote, Reference Manager → стили Harvard, APA, Vancouver.</li>
+      <li>Плагиат включает: источник в библиографии без ссылки в тексте, пересказ без ссылки, цитату лекции без спикера.</li>
+      <li>Процесс циклический. Write purposefully: каждый абзац — свой тезис, подкреплённый литературой.</li>
+    </ul>
+    <div class="kfoot"><button class="btn" data-start-lec="4">Тест L4.1</button><button class="btn" data-cards-lec="4">Карточки L4.1</button></div>
+  </div>
+
+  <div class="kblock" id="k5">
+    <h3><span class="n">L4.2</span>Conceptual Framework</h3>
+    <ul class="klist">
+      <li>Lit review = что нашли другие. <b>Framework</b> = какие переменные изучишь ты и как они связаны. Jobs: <b>Explain, Select, Predict</b>.</li>
+      <li>Framework следует из вопроса: population, context, variables, relationship. Сначала вопрос, потом стрелки.</li>
+      <li><b>Construct</b> (trust) → <b>Variable</b> → <b>Indicator</b> (mean of 6 survey items).</li>
+      <li><b>X</b> predictor · <b>Y</b> outcome · <b>C</b> control (только с причиной). Типы: categorical, ordinal, continuous, count.</li>
+      <li>Operational definition: measure, unit, data source, conditions. «The system is effective» слишком размыто.</li>
+      <li>Стрелка в модели = repeated evidence + reasoned mechanism.</li>
+      <li>Correlation ≠ causation: observational data → «is associated with», не «causes». <b>Confounder</b> влияет и на X, и на Y (prior skill).</li>
+      <li><b>Mediator</b> = how/why (механизм: cognitive load). <b>Moderator</b> = when/for whom (условие) → interaction analysis. Baron &amp; Kenny 1986.</li>
+      <li>Diagram: nodes, arrows, boundaries (Pearl 1995). <b>TAM</b> (Davis 1989): PU + PEOU → acceptance; PEOU → PU.</li>
+      <li>Hypothesis: variables, relationship, direction, boundary. Directional требует обоснования; non-directional — при противоречивых данных.</li>
+      <li><b>Null</b> = нет связи. p &gt; .05 ≠ нет эффекта. Falsifiability: можно описать результат, который опровергнет.</li>
+      <li><b>Reliability</b> = consistency · <b>Validity</b> = meaning. Triangulation: self-report + logs + performance task.</li>
+      <li><b>HARKing</b> (Kerr 1998) = гипотеза после результатов. Записывай гипотезы до анализа. Framework: 3–5 переменных.</li>
+    </ul>
+    <div class="kfoot"><button class="btn" data-start-lec="5">Тест L4.2</button><button class="btn" data-cards-lec="5">Карточки L4.2</button></div>
+  </div>
+</div>
+</section>
+
 <!-- ============ QUIZ ============ -->
 <section class="view" id="view-quiz" hidden>
   <div class="panel" id="quiz-setup">
@@ -1455,7 +1617,7 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":
 
 /* ---------- views ---------- */
 function showView(v){
-  ["notes","quiz","cards"].forEach(n=>{
+  ["notes","keys","quiz","cards"].forEach(n=>{
     $("#view-"+n).hidden = n!==v;
     $("#tab-"+n).setAttribute("aria-selected", n===v ? "true":"false");
   });
@@ -1471,6 +1633,10 @@ function showLec(n){
   store.set("lec", n);
 }
 $$(".lec-btn").forEach(b=>b.addEventListener("click",()=>{ showLec(b.dataset.lec); window.scrollTo(0,0); }));
+
+$$("[data-jump]").forEach(a=>a.addEventListener("click",e=>{
+  e.preventDefault(); const t = document.getElementById(a.dataset.jump); if(t) t.scrollIntoView({behavior:"smooth", block:"start"});
+}));
 
 /* ---------- quiz ---------- */
 const counts = {}; Q.forEach(q=>counts[q.l]=(counts[q.l]||0)+1);
@@ -1640,5 +1806,7 @@ renderHist();
 buildDeck(false);
 showLec(store.get("lec", 1));
 const h = (location.hash||"").slice(1);
-showView(["notes","quiz","cards"].includes(h) ? h : store.get("view","notes"));
+showView(["notes","keys","quiz","cards"].includes(h) ? h : store.get("view","notes"));
 </script>
+</body>
+</html>
