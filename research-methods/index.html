@@ -3,10 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Research Methods Midterm</title>
+<title>Research Methods · Тренажёр</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<script>try{var t=(JSON.parse(localStorage.getItem("cfq:v1")||"{}")).theme;if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}</script>
 <style>
 /* Layout: a study binder. Sticky tab bar; notes = lecture index + reading column; quiz and cards = one centred working card. */
 :root{
@@ -196,6 +197,67 @@ ul.klist li::before{content:"";position:absolute;left:4px;top:18px;width:7px;hei
 .fc-ru{color:var(--muted);font-size:15.5px;border-top:1px solid var(--line);padding-top:10px}
 @media (prefers-reduced-motion: reduce){.fc-in,.prog i{transition:none}}
 
+[hidden]{display:none!important}
+
+/* HOME: same layout as the Cloud Foundations trainer home. Hero + course map, then study modes. */
+.brand-btn{display:flex;align-items:center;gap:10px;background:none;border:0;padding:0;cursor:pointer;text-align:left;margin-right:auto}
+.brand-mark{width:34px;height:34px;border-radius:9px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font:700 13px/1 var(--f-mono);flex:none}
+.brand-btn .brand{margin-right:0}
+.theme-btn{border:1px solid var(--line);background:none;border-radius:999px;padding:6px 14px;font-size:14px;cursor:pointer;white-space:nowrap}
+.theme-btn:hover{border-color:var(--muted)}
+.h-eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.h-hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:40px;padding-block:20px 32px;align-items:start}
+.h-hero h1{font-family:var(--f-display);font-weight:700;font-size:clamp(34px,5vw,58px);line-height:1.05;letter-spacing:-.01em;margin-top:16px}
+.h-hero h1 em{font-style:normal;color:var(--accent)}
+.h-lede{margin-top:18px;color:var(--muted);font-size:18px;max-width:34em}
+.h-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.h-btn{display:inline-flex;align-items:center;gap:10px;border:0;border-radius:999px;padding:12px 22px;font-weight:700;font-size:16px;cursor:pointer;background:var(--accent);color:var(--accent-ink)}
+.h-btn:hover{filter:brightness(1.08)}
+.h-btn.sec{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.h-btn.sec:hover{border-color:var(--muted);filter:none}
+.h-stats{display:flex;flex-wrap:wrap;gap:28px;margin-top:34px;padding-top:22px;border-top:1px solid var(--line)}
+.h-stat b{display:block;font-family:var(--f-display);font-size:34px;line-height:1;font-weight:700;font-variant-numeric:tabular-nums}
+.h-stat span{display:block;margin-top:6px;font-size:14px;color:var(--muted)}
+.h-map{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;min-width:0;box-shadow:0 1px 2px rgba(0,0,0,.05),0 8px 24px rgba(0,0,0,.05)}
+.h-map-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:2px 4px 12px}
+.h-map-head h2{font-family:var(--f-body);font-size:17px;font-weight:700}
+.h-row{display:grid;grid-template-columns:52px minmax(0,1fr) 70px;gap:12px;align-items:center;padding:10px 6px;border-radius:8px;background:none;border:0;text-align:left;cursor:pointer;width:100%}
+.h-row:hover{background:var(--accent-soft)}
+.h-row .code{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--muted)}
+.h-row .name{font-size:15px;line-height:1.3;min-width:0}
+.h-row .name small{display:block;font-family:var(--f-mono);font-size:11px;color:var(--muted);margin-top:2px}
+.h-meter{display:block;height:6px;border-radius:99px;background:var(--paper);border:1px solid var(--line);overflow:hidden;position:relative}
+.h-meter i{position:absolute;inset:0 auto 0 0;background:var(--ok);border-radius:99px}
+.h-row .pct{display:block;font-family:var(--f-mono);font-size:11px;color:var(--muted);text-align:right;margin-top:4px;font-variant-numeric:tabular-nums}
+.h-section{padding-block:12px 24px}
+.h-section>.h-eyebrow{display:block;margin-bottom:10px}
+.h-section h2.big{font-size:clamp(24px,3vw,32px);margin-bottom:22px}
+.h-modes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.h-mode{display:flex;flex-direction:column;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;text-align:left;cursor:pointer;min-width:0;transition:border-color .15s,transform .15s}
+.h-mode:hover{border-color:var(--accent);transform:translateY(-2px)}
+.h-mode.featured{border-color:var(--accent);background:var(--accent-soft)}
+.h-mode.featured .h-chip{background:var(--card)}
+.h-mode .tag{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--accent);letter-spacing:.04em}
+.h-mode h3{font-size:22px}
+.h-mode p{color:var(--muted);font-size:15px;line-height:1.5}
+.h-facts{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+.h-chip{font-family:var(--f-mono);font-size:12px;line-height:1;padding:6px 9px;border-radius:99px;background:var(--paper);border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.h-mode .go{display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px solid var(--line);font-weight:700;font-size:15px}
+.h-wide{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px 24px;width:100%;margin-top:16px;padding:18px 22px;text-align:left;cursor:pointer;background:var(--card);border:1px solid var(--line);border-radius:14px}
+.h-wide:hover{border-color:var(--accent)}
+.h-wide>span:first-child{display:flex;flex-direction:column;gap:6px;flex:1 1 320px;min-width:0}
+.h-wide .tag{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--accent);letter-spacing:.04em}
+.h-wide b{font-size:18px}
+.h-wide .d{color:var(--muted);font-size:15px}
+.h-wide .go{font-weight:700;font-size:15px;white-space:nowrap}
+.h-mist{margin-top:16px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px;background:var(--bad-soft);border-radius:14px;padding:16px 20px}
+.h-mist p{flex:1 1 260px;min-width:0}
+.h-mist b{color:var(--bad)}
+.h-link{background:none;border:0;padding:0;color:var(--accent);cursor:pointer;font-size:14px;font-weight:600}
+@media (max-width:1080px){.h-modes{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:880px){.h-hero{grid-template-columns:minmax(0,1fr);gap:28px;padding-block:8px 16px}}
+@media (max-width:620px){.h-modes{grid-template-columns:minmax(0,1fr)}.brand-btn{flex:1 1 100%}.bar .back{width:auto}.theme-btn{margin-left:auto}.h-row{grid-template-columns:44px minmax(0,1fr) 56px}}
+
 @media (max-width:900px){
   .notes{grid-template-columns:minmax(0,1fr);gap:20px}
   .lec-index{position:static;flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:6px}
@@ -222,10 +284,15 @@ ul.klist li::before{content:"";position:absolute;left:4px;top:18px;width:7px;hei
 
 <header class="bar">
   <div class="wrap">
-    <div class="brand"><b>Research Methods in IT</b><span>подготовка к мидтерму · лекции 1–4.2</span></div>
-    <a class="back" href="../">← Cloud Foundations</a>
+    <button class="brand-btn" type="button" id="brand" aria-label="Главная Research Methods">
+      <span class="brand-mark">RM</span>
+      <span class="brand"><b>Research Methods in IT</b><span>подготовка к мидтерму · лекции 1–4.2</span></span>
+    </button>
+    <a class="back" href="../">← Все курсы</a>
+    <button class="theme-btn" type="button" id="theme-btn" aria-label="Переключить тему">Тема</button>
     <nav class="tabs" role="tablist" aria-label="Разделы">
-      <button class="tab" role="tab" id="tab-notes" data-view="notes" aria-selected="true">Конспекты</button>
+      <button class="tab" role="tab" id="tab-home" data-view="home" aria-selected="true">Главная</button>
+      <button class="tab" role="tab" id="tab-notes" data-view="notes" aria-selected="false">Конспекты</button>
       <button class="tab" role="tab" id="tab-keys" data-view="keys" aria-selected="false">Ключевое</button>
       <button class="tab" role="tab" id="tab-quiz" data-view="quiz" aria-selected="false">Тест</button>
       <button class="tab" role="tab" id="tab-cards" data-view="cards" aria-selected="false">Карточки</button>
@@ -235,8 +302,77 @@ ul.klist li::before{content:"";position:absolute;left:4px;top:18px;width:7px;hei
 
 <main class="wrap">
 
+<!-- ============ HOME ============ -->
+<section class="view" id="view-home">
+  <div class="h-hero">
+    <div>
+      <span class="h-eyebrow">Research Methods in IT · Midterm</span>
+      <h1>Пять лекций, <span id="h-q1">183</span> вопроса. <em>Один тренажёр.</em></h1>
+      <p class="h-lede">Вопросы на английском, как на мидтерме, пояснения на русском. После каждого ответа сразу видно, почему он верный. К каждой лекции есть подробный конспект, выжимка «Ключевое» и карточки с терминами.</p>
+      <div class="h-actions">
+        <button class="h-btn" type="button" data-go="quiz">Начать тест <span aria-hidden="true">→</span></button>
+        <button class="h-btn sec" type="button" data-go="keys">Ключевое к мидтерму</button>
+      </div>
+      <div class="h-stats">
+        <div class="h-stat"><b id="h-q">183</b><span>вопроса по лекциям 1–4.2</span></div>
+        <div class="h-stat"><b id="h-c">58</b><span>карточек с терминами</span></div>
+        <div class="h-stat"><b id="h-avg">—</b><span>средний лучший результат</span></div>
+      </div>
+    </div>
+    <aside class="h-map" aria-label="Карта курса">
+      <div class="h-map-head"><h2>Карта курса</h2><span class="h-eyebrow">лучший результат</span></div>
+      <div id="h-map"></div>
+    </aside>
+  </div>
+
+  <div class="h-section">
+    <span class="h-eyebrow">Режимы</span>
+    <h2 class="big">Выбери, как готовиться</h2>
+    <div class="h-modes">
+      <button class="h-mode featured" type="button" data-go="quiz">
+        <span class="tag">MIDTERM TEST</span>
+        <h3>Тест к мидтерму</h3>
+        <p>Выбираешь лекции и число вопросов: 10, 25, 50 или все. Результат сохраняется по каждой лекции.</p>
+        <span class="h-facts"><span class="h-chip" id="h-q2">183 вопроса</span><span class="h-chip">5 лекций</span><span class="h-chip">пояснения на русском</span></span>
+        <span class="go">Настроить тест <span aria-hidden="true">→</span></span>
+      </button>
+      <button class="h-mode" type="button" id="h-exam">
+        <span class="tag">MIXED</span>
+        <h3>Пробный мидтерм</h3>
+        <p>40 случайных вопросов из всех лекций, варианты перемешаны. Хорошая проверка перед настоящим тестом.</p>
+        <span class="h-facts"><span class="h-chip">40 вопросов</span><span class="h-chip">все лекции</span><span class="h-chip">случайный порядок</span></span>
+        <span class="go">Начать сразу <span aria-hidden="true">→</span></span>
+      </button>
+      <button class="h-mode" type="button" data-go="keys">
+        <span class="tag">KEY POINTS</span>
+        <h3>Ключевое из лекций</h3>
+        <p>Только то, что надо знать на мидтерме, и таблица понятий, которые чаще всего путают.</p>
+        <span class="h-facts"><span class="h-chip">5 лекций</span><span class="h-chip">что путают</span></span>
+        <span class="go">Читать <span aria-hidden="true">→</span></span>
+      </button>
+      <button class="h-mode" type="button" data-go="cards">
+        <span class="tag">FLASHCARDS</span>
+        <h3>Карточки</h3>
+        <p>Термин на лицевой стороне, определение и перевод на обороте. Можно выбрать лекции и перемешать.</p>
+        <span class="h-facts"><span class="h-chip" id="h-c2">58 карточек</span><span class="h-chip">EN + RU</span></span>
+        <span class="go">Листать <span aria-hidden="true">→</span></span>
+      </button>
+    </div>
+    <button class="h-wide" type="button" data-go="notes">
+      <span><span class="tag">КОНСПЕКТЫ</span><b>Подробно по каждой лекции</b>
+      <span class="d">Определения, схемы и таблицы из слайдов лекций 1–4.2, а в конце каждой лекции кнопки теста и карточек по ней.</span></span>
+      <span class="go">Открыть <span aria-hidden="true">→</span></span>
+    </button>
+    <div class="h-mist" id="h-mist" hidden>
+      <p>В базе ошибок <b id="h-mist-n">0</b> вопр. Вопрос уходит оттуда, когда ты ответишь на него правильно.</p>
+      <button class="h-btn" type="button" id="h-mist-go">Повторить ошибки</button>
+      <button class="h-link" type="button" id="h-mist-clear">Очистить</button>
+    </div>
+  </div>
+</section>
+
 <!-- ============ NOTES ============ -->
-<section class="view" id="view-notes">
+<section class="view" id="view-notes" hidden>
 <div class="notes">
   <nav class="lec-index" aria-label="Лекции">
     <span class="lbl">Лекции</span>
@@ -1616,8 +1752,10 @@ const shuffle = a => { a = a.slice(); for(let i=a.length-1;i>0;i--){ const j=Mat
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
 /* ---------- views ---------- */
+const VIEWS = ["home","notes","keys","quiz","cards"];
 function showView(v){
-  ["notes","keys","quiz","cards"].forEach(n=>{
+  if(v==="home") renderHome();
+  VIEWS.forEach(n=>{
     $("#view-"+n).hidden = n!==v;
     $("#tab-"+n).setAttribute("aria-selected", n===v ? "true":"false");
   });
@@ -1787,6 +1925,58 @@ $$("[data-cards-lec]").forEach(b=>b.addEventListener("click",()=>{
   fcLecs = new Set([l]); buildDeck(false); showView("cards");
 }));
 
+/* ---------- home ---------- */
+const plural = (n, one, few, many) => { const a = n%10, b = n%100; return a===1 && b!==11 ? one : a>=2 && a<=4 && (b<12 || b>14) ? few : many; };
+function renderHome(){
+  const best = store.get("best", {});
+  const vals = Object.keys(LECS).map(k=>best[k]).filter(v=>v!=null);
+  $("#h-avg").textContent = vals.length ? Math.round(vals.reduce((a,b)=>a+b,0)/vals.length)+"%" : "—";
+  $("#h-q").textContent = $("#h-q1").textContent = Q.length;
+  $("#h-q2").textContent = Q.length+" "+plural(Q.length,"вопрос","вопроса","вопросов");
+  $("#h-c").textContent = CARDS.length;
+  $("#h-c2").textContent = CARDS.length+" "+plural(CARDS.length,"карточка","карточки","карточек");
+  $("#h-map").innerHTML = Object.keys(LECS).map(k=>{
+    const b = best[k], nc = CARDS.filter(c=>c.l==k).length;
+    return `<button class="h-row" type="button" data-lec-quiz="${k}" title="Тест по лекции ${LECS[k].s}">
+      <span class="code">${LECS[k].s}</span>
+      <span class="name">${esc(LECS[k].t)}<small>${counts[k]} вопр. · ${nc} карт.</small></span>
+      <span><span class="h-meter"><i style="width:${b||0}%"></i></span><span class="pct">${b==null ? "—" : b+"%"}</span></span>
+    </button>`;
+  }).join("");
+  const m = store.get("mist", []).filter(id=>Q[id]);
+  $("#h-mist").hidden = !m.length;
+  $("#h-mist-n").textContent = m.length;
+}
+$("#h-map").addEventListener("click",e=>{
+  const r = e.target.closest("[data-lec-quiz]"); if(!r) return;
+  const l = +r.dataset.lecQuiz;
+  $$("#lec-chips input").forEach(i=>i.checked = +i.value===l);
+  startQuiz(shuffle(Q.filter(q=>q.l===l)));
+});
+$$("[data-go]").forEach(b=>b.addEventListener("click",()=>{
+  if(b.dataset.go==="quiz" && !$("#quiz-done").hidden) backToSetup();
+  showView(b.dataset.go);
+}));
+$("#brand").addEventListener("click",()=>showView("home"));
+$("#h-exam").addEventListener("click",()=>startQuiz(shuffle(Q).slice(0,40)));
+$("#h-mist-go").addEventListener("click",()=>$("#mist-btn").click());
+let clearArmed = false;
+$("#h-mist-clear").addEventListener("click",e=>{
+  if(!clearArmed){ clearArmed = true; e.target.textContent = "Точно очистить?"; setTimeout(()=>{ clearArmed = false; e.target.textContent = "Очистить"; }, 3000); return; }
+  store.set("mist", []); clearArmed = false; e.target.textContent = "Очистить"; renderHist(); renderHome();
+});
+
+/* ---------- theme (shared with the hub and the AWS trainer via cfq:v1) ---------- */
+function isDark(){ const t = document.documentElement.getAttribute("data-theme"); return t ? t==="dark" : matchMedia("(prefers-color-scheme: dark)").matches; }
+function paintTheme(){ $("#theme-btn").textContent = isDark() ? "☀ Светлая" : "☾ Тёмная"; }
+$("#theme-btn").addEventListener("click",()=>{
+  const t = isDark() ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", t);
+  try{ const s = JSON.parse(localStorage.getItem("cfq:v1")||"{}"); s.theme = t; localStorage.setItem("cfq:v1", JSON.stringify(s)); }catch(e){}
+  paintTheme();
+});
+paintTheme();
+
 /* ---------- keyboard ---------- */
 document.addEventListener("keydown",e=>{
   if(e.target.matches("input, textarea")) return;
@@ -1806,7 +1996,8 @@ renderHist();
 buildDeck(false);
 showLec(store.get("lec", 1));
 const h = (location.hash||"").slice(1);
-showView(["notes","keys","quiz","cards"].includes(h) ? h : store.get("view","notes"));
+showView(VIEWS.includes(h) ? h : "home");
+window.addEventListener("hashchange",()=>{ const v = location.hash.slice(1); if(VIEWS.includes(v)) showView(v); });
 </script>
 </body>
 </html>
