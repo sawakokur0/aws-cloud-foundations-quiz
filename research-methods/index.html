@@ -1,0 +1,1644 @@
+<title>Research Methods Midterm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a study binder. Sticky tab bar; notes = lecture index + reading column; quiz and cards = one centred working card. */
+:root{
+  --paper:#F2F4F1; --card:#FFFFFF; --ink:#18211C; --muted:#56625B; --line:#D7DDD8;
+  --accent:#1E5A48; --accent-ink:#FFFFFF; --accent-soft:#E0ECE5;
+  --mark:#F7E58A; --mark-ink:#18211C;
+  --ok:#2C7A4B; --ok-soft:#E1F1E6; --bad:#B03F36; --bad-soft:#F8E3E0;
+  --f-display:"Spectral", Georgia, "Times New Roman", serif;
+  --f-body:"Source Sans 3", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#111513; --card:#19201C; --ink:#E4EAE6; --muted:#9BA7A0; --line:#2B3530;
+    --accent:#7FC4A8; --accent-ink:#0E1512; --accent-soft:#1D2E27;
+    --mark:#5C5220; --mark-ink:#F4EDC8;
+    --ok:#6CC28E; --ok-soft:#183026; --bad:#E7847A; --bad-soft:#3A1E1B;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#111513; --card:#19201C; --ink:#E4EAE6; --muted:#9BA7A0; --line:#2B3530;
+  --accent:#7FC4A8; --accent-ink:#0E1512; --accent-soft:#1D2E27;
+  --mark:#5C5220; --mark-ink:#F4EDC8;
+  --ok:#6CC28E; --ok-soft:#183026; --bad:#E7847A; --bad-soft:#3A1E1B;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.6;padding-inline:16px;padding-block:0 64px}
+h1,h2,h3,h4{font-family:var(--f-display);line-height:1.2;text-wrap:balance;margin:0}
+p{margin:0}
+a{color:var(--accent)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+mark{background:var(--mark);color:var(--mark-ink);padding:0 .15em;border-radius:2px}
+code,.mono{font-family:var(--f-mono);font-size:.86em}
+.wrap{max-width:1120px;margin-inline:auto}
+
+/* top bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--paper);border-bottom:1px solid var(--line);margin-inline:-16px;padding:10px 16px}
+.bar .wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{display:flex;flex-direction:column;line-height:1.15;margin-right:auto}
+.brand b{font-family:var(--f-display);font-size:20px}
+.brand span{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.back{font-size:14px;font-weight:600;text-decoration:none;color:var(--muted)}
+.back:hover{color:var(--accent)}
+.tabs{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px}
+.tab{border:0;background:none;padding:6px 16px;border-radius:999px;cursor:pointer;font-weight:600;font-size:15px;color:var(--muted)}
+.tab[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+
+.view{padding-top:28px}
+
+/* NOTES */
+.notes{display:grid;grid-template-columns:250px minmax(0,1fr);gap:40px;align-items:start}
+.lec-index{position:sticky;top:calc(env(safe-area-inset-top,0px) + 84px);display:flex;flex-direction:column;gap:2px}
+.lec-index .lbl{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:0 12px 8px}
+.lec-btn{display:grid;grid-template-columns:44px 1fr;gap:8px;align-items:baseline;text-align:left;border:0;background:none;padding:10px 12px;border-radius:8px;cursor:pointer;color:var(--ink)}
+.lec-btn .n{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.lec-btn .t{font-size:15px;line-height:1.3}
+.lec-btn:hover{background:var(--accent-soft)}
+.lec-btn[aria-current="true"]{background:var(--card);box-shadow:inset 3px 0 0 var(--accent)}
+.lec-btn[aria-current="true"] .n{color:var(--accent);font-weight:600}
+
+article.lec{max-width:760px;display:flex;flex-direction:column;gap:22px}
+.lec-head{display:flex;flex-direction:column;gap:10px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.lec-head h2{font-size:clamp(28px,4vw,38px)}
+.lede{color:var(--muted);font-size:18px}
+article.lec h3{font-size:24px;margin-top:14px;scroll-margin-top:90px}
+article.lec h4{font-size:18px}
+article.lec ul,article.lec ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+dl.defs{margin:0;display:flex;flex-direction:column;gap:0;border:1px solid var(--line);border-radius:var(--r);background:var(--card);overflow:hidden}
+dl.defs>div{display:grid;grid-template-columns:200px minmax(0,1fr);gap:16px;padding:12px 16px;border-top:1px solid var(--line)}
+dl.defs>div:first-child{border-top:0}
+dl.defs dt{font-weight:700}
+dl.defs dt small{display:block;font-weight:400;color:var(--muted);font-size:13px}
+dl.defs dd{margin:0}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:15.5px}
+th,td{text-align:left;vertical-align:top;padding:10px 14px;border-top:1px solid var(--line)}
+thead th{border-top:0;font-family:var(--f-mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--paper)}
+td:first-child{font-weight:600}
+.flow{list-style:none;padding:0!important;display:flex!important;flex-direction:row!important;flex-wrap:wrap;gap:8px!important;counter-reset:f}
+.flow li{counter-increment:f;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:15px;line-height:1.3;flex:1 1 130px;min-width:0}
+.flow li::before{content:counter(f);display:block;font-family:var(--f-mono);font-size:11px;color:var(--accent);font-weight:600}
+.flow li b{display:block}
+.remember{border-left:4px solid var(--mark);background:var(--card);padding:12px 16px;border-radius:0 var(--r) var(--r) 0}
+.remember .k{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:4px}
+.query{display:block;font-family:var(--f-mono);font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px;overflow-x:auto;white-space:pre}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.two>div{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.two h4{font-size:17px}
+.diagram{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px;overflow-x:auto}
+.diagram svg{display:block;width:100%;min-width:520px;height:auto}
+.dg-box{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.5}
+.dg-box.alt{fill:var(--paper);stroke:var(--muted);stroke-dasharray:5 4}
+.dg-line{stroke:var(--ink);stroke-width:1.6;fill:none}
+.dg-line.alt{stroke:var(--muted);stroke-dasharray:5 4}
+.dg-head{fill:var(--ink)}
+.dg-t{fill:var(--ink);font-family:var(--f-body);font-size:15px;font-weight:600}
+.dg-s{fill:var(--muted);font-family:var(--f-mono);font-size:11px}
+.dg-l{fill:var(--muted);font-family:var(--f-body);font-size:13px;font-style:italic}
+.lec-foot{display:flex;gap:12px;flex-wrap:wrap;align-items:center;padding-top:18px;border-top:1px solid var(--line)}
+
+.btn{border:1px solid var(--line);background:var(--card);padding:9px 18px;border-radius:8px;cursor:pointer;font-weight:600;font-size:15px}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* QUIZ */
+.panel{max-width:780px;margin-inline:auto;display:flex;flex-direction:column;gap:20px}
+.panel h2{font-size:32px}
+.panel .sub{color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:18px}
+.field{display:flex;flex-direction:column;gap:10px}
+.field>.lbl{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:7px 14px;cursor:pointer;font-size:15px;user-select:none}
+.chip input{accent-color:var(--accent);margin:0}
+.chip:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.chip .c{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.hist{font-size:14.5px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+.hist b{color:var(--ink)}
+
+.qtop{display:flex;justify-content:space-between;gap:12px;font-family:var(--f-mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+.prog{height:4px;background:var(--line);border-radius:4px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--accent);transition:width .25s}
+.qtext{font-family:var(--f-display);font-size:23px;line-height:1.35;font-weight:600}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;align-items:start;text-align:left;border:1.5px solid var(--line);background:var(--card);border-radius:10px;padding:12px 14px;cursor:pointer;font-size:16.5px;line-height:1.45}
+.opt .k{font-family:var(--f-mono);font-size:13px;width:26px;height:26px;border:1px solid var(--line);border-radius:6px;display:grid;place-items:center;color:var(--muted)}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:disabled{cursor:default}
+.opt.right{border-color:var(--ok);background:var(--ok-soft)}
+.opt.right .k{background:var(--ok);border-color:var(--ok);color:var(--card)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt.wrong .k{background:var(--bad);border-color:var(--bad);color:var(--card)}
+.explain{border-radius:10px;padding:14px 16px;background:var(--paper);border:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.explain .verdict{font-weight:700}
+.explain.ok .verdict{color:var(--ok)}
+.explain.no .verdict{color:var(--bad)}
+.hint{font-size:13px;color:var(--muted)}
+
+.score{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.score .big{font-family:var(--f-display);font-size:64px;line-height:1;font-weight:700;font-variant-numeric:tabular-nums}
+.score .of{color:var(--muted);font-size:18px}
+.breakdown{display:flex;flex-direction:column;gap:10px}
+.bd{display:grid;grid-template-columns:110px minmax(0,1fr) 64px;gap:12px;align-items:center;font-size:14.5px}
+.bd .bar2{height:10px;background:var(--line);border-radius:6px;overflow:hidden}
+.bd .bar2 i{display:block;height:100%;background:var(--accent)}
+.bd .v{font-family:var(--f-mono);font-size:13px;text-align:right;font-variant-numeric:tabular-nums}
+.mist{display:flex;flex-direction:column;gap:12px}
+.mist>div{border:1px solid var(--line);border-left:4px solid var(--bad);border-radius:0 10px 10px 0;padding:12px 14px;display:flex;flex-direction:column;gap:6px;background:var(--card)}
+.mist .q{font-weight:600}
+.mist .a{color:var(--ok);font-weight:600}
+.mist .y{color:var(--bad);text-decoration:line-through}
+.mist .e{color:var(--muted);font-size:15px}
+
+/* CARDS */
+.fc{perspective:1200px;cursor:pointer;min-height:280px}
+.fc-in{position:relative;min-height:280px;transition:transform .45s;transform-style:preserve-3d}
+.fc.flip .fc-in{transform:rotateY(180deg)}
+.fc-face{position:absolute;inset:0;backface-visibility:hidden;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px;display:flex;flex-direction:column;justify-content:center;gap:12px;overflow:auto}
+.fc-back{transform:rotateY(180deg)}
+.fc-face .tag{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.fc-term{font-family:var(--f-display);font-size:34px;font-weight:700;text-wrap:balance}
+.fc-def{font-size:18px}
+.fc-ru{color:var(--muted);font-size:15.5px;border-top:1px solid var(--line);padding-top:10px}
+@media (prefers-reduced-motion: reduce){.fc-in,.prog i{transition:none}}
+
+@media (max-width:900px){
+  .notes{grid-template-columns:minmax(0,1fr);gap:20px}
+  .lec-index{position:static;flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:6px}
+  .lec-index .lbl{display:none}
+  .lec-btn{grid-template-columns:auto;flex:0 0 auto;max-width:220px;background:var(--card);border:1px solid var(--line)}
+  .lec-btn .t{font-size:13.5px}
+  .lec-btn[aria-current="true"]{box-shadow:none;border-color:var(--accent);background:var(--accent-soft)}
+}
+@media (max-width:620px){
+  body{font-size:16px}
+  dl.defs>div{grid-template-columns:minmax(0,1fr);gap:4px}
+  .two{grid-template-columns:minmax(0,1fr)}
+  .card{padding:18px}
+  .qtext{font-size:20px}
+  .bd{grid-template-columns:80px minmax(0,1fr) 56px}
+  .brand{margin-right:0;width:100%}
+  .tab{padding:6px 12px}
+}
+</style>
+
+<header class="bar">
+  <div class="wrap">
+    <div class="brand"><b>Research Methods in IT</b><span>подготовка к мидтерму · лекции 1–4.2</span></div>
+    <a class="back" href="../">← Cloud Foundations</a>
+    <nav class="tabs" role="tablist" aria-label="Разделы">
+      <button class="tab" role="tab" id="tab-notes" data-view="notes" aria-selected="true">Конспекты</button>
+      <button class="tab" role="tab" id="tab-quiz" data-view="quiz" aria-selected="false">Тест</button>
+      <button class="tab" role="tab" id="tab-cards" data-view="cards" aria-selected="false">Карточки</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ============ NOTES ============ -->
+<section class="view" id="view-notes">
+<div class="notes">
+  <nav class="lec-index" aria-label="Лекции">
+    <span class="lbl">Лекции</span>
+    <button class="lec-btn" data-lec="1"><span class="n">L1</span><span class="t">Taking a Leap into Research World</span></button>
+    <button class="lec-btn" data-lec="2"><span class="n">L2</span><span class="t">Research Questions &amp; Scientific Search</span></button>
+    <button class="lec-btn" data-lec="3"><span class="n">L3</span><span class="t">Ethics, Source Verification &amp; Mendeley</span></button>
+    <button class="lec-btn" data-lec="4"><span class="n">L4.1</span><span class="t">Literature Review</span></button>
+    <button class="lec-btn" data-lec="5"><span class="n">L4.2</span><span class="t">From Literature to a Conceptual Framework</span></button>
+  </nav>
+  <div>
+
+<!-- L1 -->
+<article class="lec" data-lec="1">
+  <div class="lec-head">
+    <span class="eyebrow">Week 1 · Lecture 1</span>
+    <h2>Taking a Leap into Research World</h2>
+    <p class="lede">Что такое исследование и зачем оно нужно, философские позиции исследователя (ontology, epistemology и «измы»), quantitative / qualitative / mixed подходы и разница между methodology, methods и tools.</p>
+  </div>
+
+  <h3>Вызов исследовательского проекта</h3>
+  <p>Делая свой проект, вы переходите от роли <mark>knowledge consumer</mark> к роли <mark>knowledge producer</mark>: тот, кто фиксирует и сообщает «truth». Это новая ответственность и набор новых навыков: «doing» research, а не просто знание о нём.</p>
+  <p>Весь процесс, которым нужно управлять самому:</p>
+  <ol class="flow">
+    <li><b>Topic</b>выбрать тему</li>
+    <li><b>Question</b>researchable question</li>
+    <li><b>Ethics</b>пройти этику</li>
+    <li><b>Literature</b>работа с литературой</li>
+    <li><b>Methodology</b>подход и design methods</li>
+    <li><b>Proposal</b>связный план</li>
+    <li><b>Data</b>респонденты, сбор, анализ</li>
+    <li><b>Write up</b>написать отчёт</li>
+  </ol>
+
+  <h3>Что такое research и зачем он нужен</h3>
+  <div class="remember"><span class="k">Определение (Oxford English Dictionary)</span>Research is <b>“the systematic study of materials and sources in order to establish facts and reach new conclusions”</b>.</div>
+  <p>Бытовой «research» (выбор машины или университета) не то же самое, что систематическое исследование. Исследования редко делают ради чистого любопытства: «knowledge for knowledge's sake» считается роскошью. Цель — знания, которые помогают решать проблемы, то есть <mark>situation improvement</mark>. Кроме требования программы, мотивом должна быть возможность что-то улучшить: экология, здравоохранение, образование, дискриминация и т.д.</p>
+  <h4>Potential of research — исследование помогает:</h4>
+  <ol>
+    <li><b>understand</b> проблему со всеми сложностями и последствиями;</li>
+    <li><b>find workable solutions</b> — видеть варианты будущего, исследовать возможности;</li>
+    <li><b>work towards that solution</b> — внедрять реальные изменения;</li>
+    <li><b>evaluate success</b> — проверить, сработали ли стратегии изменений;</li>
+    <li><b>offer robust recommendations</b> — влиять на practice, programmes и policy.</li>
+  </ol>
+
+  <h3>Construct of research: ontology и epistemology</h3>
+  <dl class="defs">
+    <div><dt>Ontology<small>онтология</small></dt><dd>Учение о том, <b>что существует</b>, и как существующее понимается и классифицируется. Личная онтология — что мы считаем «реальным» (душа, Бог, любовь, мораль).</dd></div>
+    <div><dt>Epistemology<small>эпистемология</small></dt><dd>Как мы получаем <b>легитимное знание</b> о мире; «rules for knowing». Личная эпистемология — как мы пришли к пониманию мира (как поверил в Бога, как понял любовь, как усвоил мораль).</dd></div>
+  </dl>
+  <p><b>Пример из лекции:</b> empiricists считают, что знание ограничено тем, что наблюдается органами чувств (это их epistemology), поэтому им трудно признать существование того, что нельзя измерить (их ontology). Религиозная эпистемология (вера) признаёт Бога реальным; indigenous ways of knowing принимают мифы и легенды как истину; postmodernists сомневаются, что «truth» вообще можно найти, и считают истину политической.</p>
+  <div class="remember"><span class="k">Запомнить</span>Ontology = <b>ЧТО</b> реально. Epistemology = <b>КАК</b> мы это знаем. Разная эпистемология ведёт к разной онтологии.</div>
+
+  <h3>Competing positions («измы»)</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Позиция</th><th>Суть</th></tr></thead>
+    <tbody>
+      <tr><td>Realism</td><td>Внешний мир существует <b>независимо от восприятия</b>: истина «где-то там», видим мы её или нет.</td></tr>
+      <tr><td>Empiricism</td><td>Всё знание ограничено тем, что <b>наблюдается органами чувств</b>. Краеугольный камень scientific method.</td></tr>
+      <tr><td>Positivism</td><td>Всё истинное знание — <b>научное</b>, и лучше всего добывается scientific method.</td></tr>
+      <tr><td>Relativism</td><td><b>Нет универсалий</b>: истина, мораль и культура понимаются только в своём социально-историческом контексте.</td></tr>
+      <tr><td>Social constructionism</td><td>Мир <b>конструируется людьми</b>, когда они взаимодействуют и интерпретируют.</td></tr>
+      <tr><td>Subjectivism</td><td>Акцент на субъективном опыте; <b>личный опыт</b> — основа фактического знания.</td></tr>
+    </tbody>
+  </table></div>
+  <p><b>Зачем нужны все эти «isms» и «ologies»?</b> Мы видим мир по-разному. В быту позицию можно не объявлять, но исследователь производит знание и делает выводы, поэтому должен «put your cards on the table»: знать свою позицию по отношению к знанию и уметь её сформулировать.</p>
+
+  <h3>Quantitative, Qualitative и Mixed</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Подход</th><th>Данные</th><th>Связанные допущения</th></tr></thead>
+    <tbody>
+      <tr><td>Qualitative</td><td>Слова, изображения, опыт, наблюдения, которые <b>не переведены в числа</b></td><td>relativism, social constructionism, subjectivism</td></tr>
+      <tr><td>Quantitative</td><td>Числовые данные и понятия, закодированные числами</td><td>realism, empiricism, positivism</td></tr>
+      <tr><td>Mixed</td><td>И те, и другие</td><td>Оба типа данных ценятся <b>независимо</b> от онтологических и эпистемологических допущений</td></tr>
+    </tbody>
+  </table></div>
+  <div class="remember"><span class="k">Что лучше: quant или qual?</span><b>Лучшего типа нет.</b> Стратегия хороша ровно настолько, насколько подходит к вопросу. Хороший вопрос сочетается с подходящими процедурами, и выбор делает <b>исследователь, а не методология</b>. Подходы должны быть fluid, flexible и eclectic.</div>
+
+  <h3>Methodology, Methods, Tools</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Термин</th><th>Уровень и смысл</th><th>Примеры</th></tr></thead>
+    <tbody>
+      <tr><td>Methodology</td><td><b>Macro-level</b> рамки с принципами рассуждения, связанные с парадигмой; дают стратегию и обоснование исследования</td><td>scientific method, ethnography, action research</td></tr>
+      <tr><td>Methods</td><td><b>Micro-level</b> техники сбора и анализа данных</td><td>сбор: interviewing, surveying, observation, unobtrusive methods; анализ: statistics, thematic exploration</td></tr>
+      <tr><td>Tools</td><td><b>Инструменты</b> для сбора данных</td><td>questionnaires, observation checklists, interview schedules</td></tr>
+      <tr><td>Methodological design</td><td><b>План</b> проекта, включающий всё перечисленное выше</td><td>—</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Summary: positivism и post-positivism</h3>
+  <p>Research — процесс получения нового знания через сбор данных, отвечающих на конкретный вопрос. Это вклад в body of knowledge и инструмент informed decision-making: что нужно делать, что можно делать, как и насколько хорошо мы сделали.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Аспект</th><th>Positivism (откуда выросла наука)</th><th>Post-positivism</th></tr></thead>
+    <tbody>
+      <tr><td>Мир</td><td>knowable and predictable</td><td>ambiguous and variable</td></tr>
+      <tr><td>Исследование</td><td>empirical and reductionist</td><td>intuitive and holistic</td></tr>
+      <tr><td>Исследователь</td><td>objective and expert</td><td>subjective and collaborative</td></tr>
+      <tr><td>Методы</td><td>hypothesis-driven</td><td>inductive and exploratory</td></tr>
+      <tr><td>Результаты</td><td>statistically significant, quantitative</td><td>idiographic and qualitative</td></tr>
+    </tbody>
+  </table></div>
+  <p>Вместо жёсткой привязки к одной парадигме <mark>reflexive researcher</mark> рассматривает допущения разных парадигм применительно к конкретному вопросу.</p>
+
+  <div class="lec-foot"><button class="btn primary" data-start-lec="1">Тест по лекции 1 →</button><button class="btn" data-cards-lec="1">Карточки L1</button></div>
+</article>
+
+<!-- L2 -->
+<article class="lec" data-lec="2" hidden>
+  <div class="lec-head">
+    <span class="eyebrow">Week 2 · Lecture 2</span>
+    <h2>Research Questions and Scientific Search</h2>
+    <p class="lede">От широкой идеи к воспроизводимой стратегии поиска: Question → Keywords → Databases → Search Log. Результат: один сфокусированный вопрос, одна цель (objective) и три тестируемых запроса.</p>
+  </div>
+
+  <h3>Четыре результата недели</h3>
+  <ol class="flow">
+    <li><b>Research question</b>сфокусированный, отвечаемый через evidence, реалистичный на семестр</li>
+    <li><b>Research objective</b>точное действие: что исследование изучит или оценит</li>
+    <li><b>Three search strings</b>broad, balanced, precise</li>
+    <li><b>Search Log row</b>database, query, filters, results, date, decision</li>
+  </ol>
+
+  <h3>Какой вопрос может вести исследование?</h3>
+  <p>Из вариантов «How can AI improve education?», «Is machine learning useful?», «Can I build a better chatbot?» и <b>«How does retrieval augmentation affect factual accuracy in a campus-service chatbot?»</b> лучший — последний: в нём есть определённый <b>factor</b>, <b>outcome</b> и <b>context</b>.</p>
+
+  <h3>Topic, problem и question играют разные роли</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Элемент</th><th>Роль</th><th>Пример</th></tr></thead>
+    <tbody>
+      <tr><td>Topic</td><td>Область</td><td>Machine learning for phishing detection</td></tr>
+      <tr><td>Problem</td><td>Нерешённая проблема (uncertainty)</td><td>Reported performance may not hold on imbalanced, newly collected URLs.</td></tr>
+      <tr><td>Question</td><td>Само исследование</td><td>How do Random Forest and XGBoost compare on imbalanced URL data?</td></tr>
+    </tbody>
+  </table></div>
+  <p>Каждая строка сужает пространство решений для следующей.</p>
+
+  <h3>Пять тестов сильного research question</h3>
+  <ol class="flow">
+    <li><b>Clear</b>читатель понимает термины</li>
+    <li><b>Focused</b>одна центральная связь или проблема</li>
+    <li><b>Researchable</b>на него можно ответить evidence</li>
+    <li><b>Feasible</b>хватает времени, данных и навыков</li>
+    <li><b>Analytical</b>ответ требует рассуждения</li>
+  </ol>
+  <div class="remember"><span class="k">Быстрая проверка</span>What evidence would change your answer? Интересный вопрос всё равно проваливается, если нет доступных evidence, чтобы на него ответить.</div>
+
+  <h3>Типы вопросов в IT-исследованиях</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Тип</th><th>Шаблон</th><th>Типично для</th></tr></thead>
+    <tbody>
+      <tr><td>Compare</td><td>How do A and B differ on outcome Y?</td><td>model performance</td></tr>
+      <tr><td>Relate</td><td>How is factor X associated with outcome Y?</td><td>usage and retention</td></tr>
+      <tr><td>Evaluate</td><td>To what extent does artifact A improve Y?</td><td>system or interface</td></tr>
+      <tr><td>Explain</td><td>How do users experience or interpret X?</td><td>human behaviour</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Worked example: от идеи к тестируемому вопросу</h3>
+  <ol class="flow">
+    <li><b>Idea</b>AI for code review (too broad)</li>
+    <li><b>Boundary</b>novice Python programmers (population, context)</li>
+    <li><b>Factor</b>AI-generated feedback (intervention)</li>
+    <li><b>Outcome</b>debugging accuracy and time (evidence)</li>
+  </ol>
+  <p><b>Question:</b> Does AI feedback improve debugging accuracy and completion time for novice Python programmers? Вопрос сразу показывает, какие данные нужны: accuracy scores и completion time от novice programmers.</p>
+
+  <h3>Question vs objective</h3>
+  <div class="two">
+    <div><h4>Research question</h4><p>Спрашивает.</p><p class="mono">How do Random Forest and XGBoost compare on imbalanced URL data?</p></div>
+    <div><h4>Research objective</h4><p>Формулирует <b>действие</b> и часто критерии оценки.</p><p class="mono">To compare Random Forest and XGBoost using precision, recall and F1-score on the same imbalanced dataset.</p></div>
+  </div>
+  <p><b>Alignment check:</b> тот же factor, outcome, population и boundary. Вопрос и цель должны описывать одно и то же исследование.</p>
+  <div class="two">
+    <div><h4>Глаголы для objective</h4><p><b>compare, evaluate, examine, measure, explore, identify</b></p></div>
+    <div><h4>Не использовать в одиночку</h4><p><b>understand, know, learn, study</b>: слабые глаголы скрывают, какие evidence и анализ нужны.</p></div>
+  </div>
+
+  <h3>Question clinic и критика</h3>
+  <p>Шаги: <b>Write</b> (вопрос и цель) → <b>Mark</b> (factor, outcome, population, boundary) → <b>Test</b> (5 критериев) → <b>Revise</b> (убрать одно расплывчатое слово). Вопрос партнёру: What evidence could answer this?</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Проблема</th><th>Вопрос-диагноз</th><th>Что делать</th></tr></thead>
+    <tbody>
+      <tr><td>Too broad</td><td>Which boundary is missing?</td><td>Назвать population, system, dataset, domain или time frame</td></tr>
+      <tr><td>Not answerable</td><td>Which evidence is unavailable?</td><td>Заменить opinion или prediction на observable evidence</td></tr>
+      <tr><td>Misaligned</td><td>Which element changed?</td><td>Согласовать question, objective и planned outcome</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Зачем поиск литературы до сбора данных</h3>
+  <p>Поиск <b>тестирует вопрос</b>, а не просто собирает цитаты:</p>
+  <ul>
+    <li><b>Terminology</b> — какие термины исследователи используют для того же понятия;</li>
+    <li><b>Evidence</b> — какие методы, датасеты и метрики уже существуют;</li>
+    <li><b>Boundary</b> — не слишком ли вопрос широкий, узкий или уже отвеченный.</li>
+  </ul>
+  <p>Вопрос может измениться после первого серьёзного поиска, и это нормально.</p>
+
+  <h3>Поиск — итеративный документированный процесс</h3>
+  <ol class="flow">
+    <li><b>Search</b>запустить запланированный запрос</li>
+    <li><b>Screen</b>прочитать titles и abstracts</li>
+    <li><b>Select</b>применить критерии</li>
+    <li><b>Extract</b>записать полезное</li>
+    <li><b>Revise</b>улучшить термины и scope</li>
+  </ol>
+  <p><mark>Search Log</mark> сохраняет каждое решение, чтобы другой человек мог повторить маршрут.</p>
+
+  <h3>Query design</h3>
+  <p>Вопрос превращается в <b>2–4 searchable concepts</b>. <b>Не ищите весь вопрос как предложение.</b> Пример: «How do Random Forest and XGBoost compare for phishing URL detection on imbalanced data?» → METHOD: Random Forest / XGBoost · TASK: phishing detection · DATA: URL / web address · CONDITION: imbalanced data.</p>
+  <p><b>Синонимы</b> защищают от различий в словаре:</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Concept</th><th>Synonym 1</th><th>Synonym 2</th><th>Variant</th></tr></thead>
+    <tbody>
+      <tr><td>machine learning</td><td>deep learning</td><td>classifier</td><td>ML</td></tr>
+      <tr><td>phishing</td><td>fraudulent website</td><td>malicious site</td><td>phishing attack</td></tr>
+      <tr><td>URL</td><td>web address</td><td>web link</td><td>hyperlink</td></tr>
+      <tr><td>detection</td><td>classification</td><td>identification</td><td>detect*</td></tr>
+    </tbody>
+  </table></div>
+  <p>Берите термины из сильных статей, subject terms баз данных и словаря области. Каждый лишний OR может добавить шум.</p>
+
+  <h3>Boolean logic: AND сужает, OR расширяет, NOT осторожно</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Оператор</th><th>Значение</th><th>Пример</th><th>Где использовать</th></tr></thead>
+    <tbody>
+      <tr><td>AND</td><td>Оба понятия должны быть</td><td><code>phishing AND detection</code></td><td>Между группами понятий</td></tr>
+      <tr><td>OR</td><td>Любой из терминов</td><td><code>phishing OR malicious website</code></td><td>Внутри группы синонимов</td></tr>
+      <tr><td>NOT</td><td>Термин исключается</td><td><code>phishing NOT email</code></td><td>Осторожно: может убрать релевантные статьи</td></tr>
+    </tbody>
+  </table></div>
+  <span class="query">(synonym OR synonym) AND (synonym OR synonym)</span>
+  <h4>Три элемента синтаксиса</h4>
+  <ul>
+    <li><b>Quotation marks</b> держат фразу вместе: <code>"machine learning"</code></li>
+    <li><b>Parentheses</b> управляют логикой: <code>(phishing OR "malicious URL") AND detection</code></li>
+    <li><b>Wildcard</b> ловит окончания слов: <code>detect*</code></li>
+  </ul>
+  <span class="query">("machine learning" OR classifier) AND (phishing OR "malicious URL") AND detect*</span>
+
+  <h3>Query ladder</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Уровень</th><th>Запрос</th><th>Цель</th></tr></thead>
+    <tbody>
+      <tr><td>Broad</td><td><code>phishing AND detection</code></td><td>Изучить словарь области</td></tr>
+      <tr><td>Balanced</td><td><code>(phishing OR "malicious URL") AND (detection OR classification)</code></td><td>Охватить распространённые варианты</td></tr>
+      <tr><td>Precise</td><td><code>("machine learning" OR classifier) AND (phishing OR "malicious URL") AND (detection OR classification)</code></td><td>Нацелиться на планируемый метод</td></tr>
+    </tbody>
+  </table></div>
+  <div class="remember"><span class="k">Запомнить</span>Записывайте все три. <b>Неудачный запрос — тоже evidence о scope.</b> Количество результатов само по себе не показатель качества (думайте о recall и precision).</div>
+
+  <h3>Выбор баз: по охвату, а не по удобству</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>База</th><th>Охват</th><th>Для чего</th></tr></thead>
+    <tbody>
+      <tr><td>Scopus</td><td>Broad multidisciplinary</td><td>Карта авторов, venues и цитирований</td></tr>
+      <tr><td>IEEE Xplore</td><td>Engineering and computing</td><td>Технические статьи и стандарты</td></tr>
+      <tr><td>ACM DL</td><td>Computing research</td><td>ACM journals и conferences</td></tr>
+      <tr><td>Google Scholar</td><td>Broad discovery</td><td>Cited by, related articles, доступные версии</td></tr>
+    </tbody>
+  </table></div>
+  <p><b>Assignment 1 требует минимум две академические базы данных.</b></p>
+
+  <h3>Scopus workflow</h3>
+  <ol class="flow">
+    <li><b>Document search</b>вставить balanced query</li>
+    <li><b>Field choice</b>title, abstract, keywords</li>
+    <li><b>Filters</b>year, subject, document type, language</li>
+    <li><b>Inspect</b>title, abstract, keywords, venue, DOI</li>
+    <li><b>Save</b>экспорт цитаты и запись в Search Log</li>
+  </ol>
+  <p><b>Live rule:</b> меняйте одно поисковое решение за раз.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Диагноз</th><th>Действие</th></tr></thead>
+    <tbody>
+      <tr><td>Too many</td><td>Добавить concept, phrase или field restriction (шум доминирует)</td></tr>
+      <tr><td>Too few</td><td>Убрать самое узкое понятие или добавить синонимы</td></tr>
+      <tr><td>Wrong field</td><td>Проверить настройки title / abstract / keyword: ограничение может быть слишком строгим</td></tr>
+      <tr><td>Good set</td><td>Скринить titles, затем abstracts; сохранить и задокументировать запрос</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>IEEE Xplore</h3>
+  <ol class="flow">
+    <li><b>Search</b>Global или Advanced Search</li>
+    <li><b>Structure</b>операторы ЗАГЛАВНЫМИ, OR в группах</li>
+    <li><b>Focus</b>сначала metadata, потом шире</li>
+    <li><b>Refine</b>content type, year, author, topic</li>
+    <li><b>Verify</b>abstract, index terms, venue, DOI, access</li>
+  </ol>
+  <ul>
+    <li><b>UPPERCASE</b>: AND, OR, NOT работают как операторы.</li>
+    <li><b>Parentheses</b>: группы OR выполняются до AND.</li>
+    <li><b>Quotes</b>: точные фразы держатся вместе.</li>
+    <li><b>Field search</b>: <code>"Document Title":phishing</code></li>
+    <li>Несколько обычных слов подряд = implicit AND, но явная Boolean-структура понятнее.</li>
+    <li>Поиск по metadata уменьшает случайные совпадения из full text.</li>
+  </ul>
+
+  <h3>Google Scholar и ACM DL</h3>
+  <p><b>Google Scholar</b>: Cited by, related articles, versions, date filters. <b>Проверяйте запись источника перед цитированием.</b> <b>ACM DL</b>: ACM journals, proceedings, computing topics; повторите запрос и запишите различия платформ. Discovery-ссылки (citation chaining) расширяют карту, потом возвращайтесь к записи статьи и venue.</p>
+
+  <h3>Screening и документирование</h3>
+  <ol class="flow">
+    <li><b>Title</b>совпадает с темой и контекстом?</li>
+    <li><b>Abstract</b>помогают вопрос, метод, результаты?</li>
+    <li><b>Record</b>ясны venue, year, authors, DOI?</li>
+    <li><b>Full text</b>поддержит synthesis или методические решения?</li>
+  </ol>
+  <p><b>Citation count не заменяет relevance и methodological fit.</b> Решение: include / exclude / uncertain + одна причина.</p>
+  <div class="two">
+    <div><h4>Include when</h4><ul><li>Peer-reviewed article или conference paper</li><li>Прямо отвечает на вопрос или метод</li><li>Подходит по годам и языку</li><li>Достаточно деталей для оценки</li></ul></div>
+    <div><h4>Search Log fields</h4><ul><li>Database</li><li>Date</li><li>Exact query</li><li>Filters</li><li>Result count</li><li>Screening decision and notes</li></ul></div>
+  </div>
+  <div class="remember"><span class="k">Запомнить</span>Критерии включения пишутся <b>до</b> скрининга. Изменения записываются после каждого значимого запроса.</div>
+
+  <div class="lec-foot"><button class="btn primary" data-start-lec="2">Тест по лекции 2 →</button><button class="btn" data-cards-lec="2">Карточки L2</button></div>
+</article>
+
+<!-- L3 -->
+<article class="lec" data-lec="3" hidden>
+  <div class="lec-head">
+    <span class="eyebrow">Week 3 · Lecture 3</span>
+    <h2>Research Ethics, Source Verification and Mendeley</h2>
+    <p class="lede">Как сделать работу credible, traceable и respectful: этика, research misconduct, приватность, проверка источников, DOI, плагиат, границы использования AI и рабочий процесс в Mendeley.</p>
+  </div>
+  <div class="remember"><span class="k">Ключевая идея</span>Если цель исследования — новое знание, которому другие будут доверять, оно должно быть credible, то есть иметь «power to elicit belief».</div>
+
+  <h3>Диагностика: одобрили бы вы это?</h3>
+  <ul>
+    <li><b>A. Скрейпить публичные профили и публиковать usernames.</b> Публичный доступ не убирает риск для приватности: ожидали ли пользователи research use, нужны ли usernames, не раскроет ли их публикация?</li>
+    <li><b>B. Удалить три низкие оценки, потому что «выглядят неправильно».</b> Было ли заранее заданное правило исключения? Удаление неудобных результатов после их просмотра искажает исследование.</li>
+    <li><b>C. Использовать ссылку, предложенную AI, не открыв её.</b> Источник может не существовать или не подтверждать утверждение.</li>
+    <li><b>D. Хранить аудио интервью в общей папке класса.</b> Неконтролируемый доступ = проблема confidentiality.</li>
+  </ul>
+
+  <h3>Research integrity: две ответственности</h3>
+  <div class="two">
+    <div><h4>Knowledge: make claims credible</h4><p>Accurate data, transparent methods, honest limitations, verifiable sources.</p></div>
+    <div><h4>People: protect those affected</h4><p>Consent, privacy, fair treatment, secure data, внимание к downstream harm.</p></div>
+  </div>
+  <p><b>Технически верное исследование может быть неэтичным</b>: точная модель распознавания лиц, обученная на фото, собранных без разрешения. И наоборот: уважительное отношение к участникам не спасает слабый дизайн. Нужны обе стороны.</p>
+
+  <h3>Research misconduct: FFP</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Нарушение</th><th>Суть</th><th>Пример в IT</th></tr></thead>
+    <tbody>
+      <tr><td>Fabrication<br><small>inventing</small></td><td>Создание данных, участников, результатов или ссылок, которых <b>не было</b></td><td>Добавить выдуманные ответы опроса, чтобы набрать выборку</td></tr>
+      <tr><td>Falsification<br><small>distorting</small></td><td>Изменение, выборочный показ или сокрытие <b>реальных</b> данных или процедур</td><td>Отчитаться только о лучшем прогоне модели; молча поменять labels; скрыть условие, где система провалилась</td></tr>
+      <tr><td>Plagiarism<br><small>taking</small></td><td>Использование чужих слов, идей, кода, изображений или данных <b>без атрибуции</b></td><td>Скопировать абзац; выдать чужой метод или датасет за свой</td></tr>
+    </tbody>
+  </table></div>
+  <div class="remember"><span class="k">Важно</span>Falsification включает и <b>misleading omission</b> (вводящее в заблуждение умолчание), а не только правку значений.</div>
+
+  <h3>Questionable research practices</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Практика</th><th>Что это</th></tr></thead>
+    <tbody>
+      <tr><td>Cherry-picking</td><td>Сообщать только ту метрику, прогон или подгруппу, которая подтверждает вывод</td></tr>
+      <tr><td>Hidden limits</td><td>Выдавать маленькую convenience sample за representative</td></tr>
+      <tr><td>Duplication</td><td>Подавать по сути ту же работу как новый вклад</td></tr>
+      <tr><td>Gift authorship</td><td>Добавить имя без обоснованного вклада</td></tr>
+    </tbody>
+  </table></div>
+  <p><b>Disclosure test:</b> would a reasonable reader make a different decision if this were disclosed?</p>
+  <p><b>Кейс:</b> команда тестирует 6 моделей и сообщает только лучший прогон → <b>falsification</b> (selective reporting искажает картину). <b>Repair:</b> определить правило отчётности до выбора результата; сообщать mean и variation по повторным прогонам; один evaluation dataset для всех моделей; primary metric заранее; любое исключение объяснять задокументированным правилом.</p>
+
+  <h3>Researcher role: bias и reflexivity</h3>
+  <ol class="flow">
+    <li><b>Before</b>заявить ожидания, интересы, конфликты</li>
+    <li><b>During</b>decision log, критерии применяются одинаково</li>
+    <li><b>After</b>сообщить исключения, неопределённость, ограничения</li>
+  </ol>
+  <p>Reflexivity — это <b>сделать решения видимыми</b>, а не притворяться нейтральным. Шаблон: «I may favour ___. I will check this by ___.» (например: «я знаком с нейросетями, поэтому могу предпочитать их простым моделям»).</p>
+
+  <h3>Informed consent — процесс, а не подпись</h3>
+  <ol class="flow">
+    <li><b>Understand</b>цель, задачи, риски, использование данных</li>
+    <li><b>Choose</b>добровольно, без давления</li>
+    <li><b>Withdraw</b>понятный способ отказаться и его пределы</li>
+    <li><b>Ask</b>контакт для вопросов и жалоб</li>
+  </ol>
+  <p>Consent должен соответствовать реальному workflow: запись интервью, загрузка транскрипта в сервис, повторное использование, публикация цитат не должны быть сюрпризом. Ключевые понятия: competence, autonomy, voluntariness.</p>
+
+  <h3>Confidentiality ≠ anonymity</h3>
+  <div class="two">
+    <div><h4>Confidentiality</h4><p>Личность <b>известна</b> команде, но доступ и раскрытие контролируются. Файл «P07» с отдельным ключом «P07 → имя» = confidential, а не anonymous.</p></div>
+    <div><h4>Anonymity</h4><p>Личность <b>не связана</b> с ответом, или связь необратимо удалена. Более сильное утверждение, не всегда достижимо.</p></div>
+  </div>
+  <div class="remember"><span class="k">Запомнить</span>Pseudonyms и коды участников снижают риск, но <b>не создают анонимность автоматически</b>.</div>
+
+  <h3>Data lifecycle (план до сбора)</h3>
+  <ol class="flow">
+    <li><b>Collect</b>только то, что нужно вопросу</li>
+    <li><b>Store</b>зашифрованное или одобренное университетом место</li>
+    <li><b>Access</b>названные люди и роли</li>
+    <li><b>Retain</b>обоснованный срок</li>
+    <li><b>Delete / Share</b>метод, разрешение, запись</li>
+  </ol>
+  <p><b>Never promise a protection your workflow cannot deliver.</b></p>
+
+  <h3>Online research: публичное ≠ этически простое</h3>
+  <ol>
+    <li><b>Expectations</b> — ожидали ли пользователи, что их пост станет research material и будет процитирован?</li>
+    <li><b>Sensitivity</b> — точную цитату можно найти поиском; локация + должность + редкий опыт вместе могут <b>re-identify</b> человека.</li>
+    <li><b>Platform terms</b> — разрешён ли автоматический сбор; агрессивный scraping создаёт операционные проблемы.</li>
+    <li><b>Presentation</b> — даже агрегированные выводы могут стигматизировать маленькое сообщество или раскрыть уязвимость.</li>
+  </ol>
+  <p>Legal access и ethical use связаны, но это <b>разные вопросы</b>. Для GitHub: нужно ли называть разработчиков, соблюдены ли лицензии и правила, не оценивает ли вывод человека вместо технического процесса.</p>
+
+  <h3>Approval: если сомневаетесь, остановитесь</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Вопрос</th><th>Действие</th></tr></thead>
+    <tbody>
+      <tr><td>Люди или identifiable traces?</td><td>YES → может потребоваться ethics review</td></tr>
+      <tr><td>Sensitive, vulnerable, high-risk context?</td><td>YES → более строгий review и safeguards</td></tr>
+      <tr><td>Institutional policy или внешний партнёр?</td><td>CHECK → следовать применимому процессу</td></tr>
+      <tr><td>Изменения после одобрения?</td><td>REPORT → запросить amendment до продолжения</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Ethics card (5 строк)</h3>
+  <ol class="flow">
+    <li><b>Data</b>что соберёте?</li>
+    <li><b>People</b>кого это затронет?</li>
+    <li><b>Risk</b>что может пойти не так?</li>
+    <li><b>Safeguard</b>что снижает риск?</li>
+    <li><b>Evidence</b>какой consent, approval или запись это доказывает?</li>
+  </ol>
+  <p>Safeguard должен быть <b>operational</b>. Плохо: «we will keep the data safe». Хорошо: аудио хранится в зашифрованной университетской папке; доступ у двух названных членов команды; ключ имя–код хранится отдельно; файлы удаляются после указанного срока. Проверка партнёра: could I actually perform and verify this safeguard?</p>
+
+  <h3>Source integrity: verification vs evaluation</h3>
+  <div class="remember"><span class="k">Запомнить</span><b>Verification answers existence. Evaluation answers quality and relevance.</b> Реальная статья может быть слабой или нерелевантной; впечатляющая ссылка может быть полностью выдуманной.</div>
+  <div class="tbl"><table>
+    <thead><tr><th>Проверка</th><th>Вопрос</th><th>Как</th></tr></thead>
+    <tbody>
+      <tr><td>Identity</td><td>Это та же работа?</td><td>Совпадают title, authors, year, venue в разных записях</td></tr>
+      <tr><td>Traceability</td><td>Другие могут её найти?</td><td>DOI, publisher page или стабильная запись в репозитории</td></tr>
+      <tr><td>Fitness</td><td>Подтверждает ли она утверждение?</td><td>Читать method и results, а не только title или abstract</td></tr>
+    </tbody>
+  </table></div>
+  <h4>Verification ladder</h4>
+  <ol class="flow">
+    <li><b>Read</b>title и abstract соответствуют теме</li>
+    <li><b>Match</b>запись издателя или trusted repository</li>
+    <li><b>Resolve</b>DOI или Crossref metadata</li>
+    <li><b>Check</b>corrections, retractions, version</li>
+    <li><b>Open</b>method и results поддерживают claim</li>
+  </ol>
+  <p>Нет DOI ≠ нет источника: легитимная работа может не иметь DOI, но иметь стабильную запись издателя или репозитория. Если источник <b>unresolved</b> — не цитировать его как подтверждённый evidence.</p>
+
+  <h3>DOI — идентификатор, а не знак качества</h3>
+  <div class="two">
+    <div><h4>DOI can help</h4><ul><li>Resolve to a stable record</li><li>Match metadata</li><li>Distinguish versions</li><li>Support traceability</li></ul></div>
+    <div><h4>DOI cannot prove</h4><ul><li>Sound method</li><li>Ethical conduct</li><li>Relevance to your claim</li><li>Absence of later correction</li></ul></div>
+  </div>
+  <p>То же с индексацией: наличие статьи в базе помогает найти её, но critical appraisal всё равно требует чтения.</p>
+
+  <h3>Плагиат: сменить слова недостаточно</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Вид</th><th>Что это</th><th>Допустимо?</th></tr></thead>
+    <tbody>
+      <tr><td>Copy</td><td>Те же слова без кавычек и цитирования</td><td>Нет</td></tr>
+      <tr><td>Patchwrite</td><td>Мелкие замены слов при сохранении структуры источника</td><td>Нет в финальном тексте (бывает на этапе обучения)</td></tr>
+      <tr><td>Paraphrase</td><td>Новые слова и структура, та же идея одного источника</td><td>Да, <b>с цитированием</b></td></tr>
+      <tr><td>Synthesise</td><td>Несколько источников объединены ради нового аналитического тезиса: agreement, contrast, development, limitation, gap</td><td>Да, источники цитируются</td></tr>
+    </tbody>
+  </table></div>
+  <p>Плагиат касается не только слов: ideas, data, code, визуальные материалы тоже требуют атрибуции. Записывайте источник <b>во время</b> конспектирования.</p>
+  <ul>
+    <li><b>Quote</b> — точная формулировка; редко, когда важны сами слова.</li>
+    <li><b>Paraphrase</b> — идея одного источника своими словами и структурой + ссылка.</li>
+    <li><b>Synthesis</b> — связь между несколькими источниками → аналитический вывод.</li>
+  </ul>
+  <div class="remember"><span class="k">Запомнить</span>A literature review is organised by <b>ideas</b>, not by a list of papers.</div>
+
+  <h3>Credit: authorship, acknowledgement, conflicts</h3>
+  <dl class="defs">
+    <div><dt>Contribution</dt><dd>Авторство отражает значимый интеллектуальный или практический вклад, а не статус, дружбу или удобство.</dd></div>
+    <div><dt>Responsibility</dt><dd>Автор может объяснить и защитить свою часть работы.</dd></div>
+    <div><dt>Acknowledgement</dt><dd>Помощь, не дающая права на авторство (техническая помощь, оборудование, языковая или административная помощь), указывается в благодарностях.</dd></div>
+    <div><dt>Conflict</dt><dd>Финансирование, работа, личные связи, собственность раскрываются. Раскрытие помогает читателю оценить контекст и <b>не является обвинением</b>.</dd></div>
+  </dl>
+  <p>Honorary authorship искажает ответственность. В командных проектах contribution statements пишут рано и обновляют.</p>
+
+  <h3>Использование AI</h3>
+  <div class="two">
+    <div><h4>Defensible support</h4><ul><li>Генерировать кандидаты поисковых терминов</li><li>Объяснять незнакомую терминологию</li><li>Улучшать грамматику <b>после</b> написания</li><li>Оспаривать черновой аргумент</li><li>Предлагать проверки</li></ul></div>
+    <div><h4>Unacceptable substitution</h4><ul><li>Выдумывать или цитировать неоткрытые источники</li><li>Фабриковать данные или результаты</li><li>Скрывать существенный сгенерированный текст</li><li>Загружать защищённые данные без разрешения</li><li>Обходить правила курса</li></ul></div>
+  </div>
+  <h4>AI verification contract</h4>
+  <ol class="flow">
+    <li><b>No source</b>ни одна сгенерированная ссылка не попадает в работу, пока не открыта</li>
+    <li><b>No claim</b>ни одно сгенерированное утверждение без evidence</li>
+    <li><b>No secret data</b>данные участников не идут в неодобренный инструмент</li>
+    <li><b>No hidden role</b>использование AI раскрывается по правилам курса</li>
+  </ol>
+  <p>Студент отвечает за каждый источник, утверждение и предложение.</p>
+
+  <h3>Mendeley workflow</h3>
+  <ol class="flow">
+    <li><b>Import</b>PDF, Web Importer или вручную</li>
+    <li><b>Verify</b>title, authors, year, venue, DOI</li>
+    <li><b>Organise</b>collection, tags, notes</li>
+    <li><b>Read</b>выделения и аннотации в PDF</li>
+    <li><b>Cite</b>цитаты и библиография в Word</li>
+  </ol>
+  <div class="remember"><span class="k">Запомнить</span><b>Reference manager ≠ source verifier.</b> Если metadata импортированы с ошибкой, Mendeley идеально воспроизведёт эту ошибку в каждой цитате. Автоматизация экономит время только после очистки записи.</div>
+  <ul>
+    <li><b>Демо импорта:</b> Add → Open details (сравнить с первой страницей статьи и страницей издателя) → Correct (title case, полные имена авторов, year, venue, volume/pages, DOI) → Confirm (открыть DOI или стабильный URL).</li>
+    <li><b>Организация:</b> Collection «Assignment 1 — core papers»; Tags: method · dataset · domain · finding; Annotation — почему фрагмент важен; Note = <b>claim + evidence + limitation + possible use</b>. Теги последовательно: одно понятие не должно иметь трёх написаний.</li>
+    <li><b>Mendeley Cite в Word:</b> поставить курсор → открыть Mendeley Cite → Insert citation → выбрать style (по требованию задания или журнала) → Insert bibliography → <b>проверить каждую запись</b>.</li>
+  </ul>
+
+  <div class="lec-foot"><button class="btn primary" data-start-lec="3">Тест по лекции 3 →</button><button class="btn" data-cards-lec="3">Карточки L3</button></div>
+</article>
+
+<!-- L4.1 -->
+<article class="lec" data-lec="4" hidden>
+  <div class="lec-head">
+    <span class="eyebrow">Week 4 · Lecture 4.1</span>
+    <h2>Literature Review</h2>
+    <p class="lede">Зачем нужна литература, какие бывают её типы, как искать и управлять источниками, как вести annotated bibliography и как писать формальный literature review (O'Leary, гл. 6).</p>
+  </div>
+
+  <h3>Важность литературы</h3>
+  <p>Исследование нельзя вести «from a platform of ignorance». При учёбе цель — самообразование, а при исследовании вы <b>производите знание</b>, которым будут пользоваться другие. Новое знание зависит от прошлого: невозможно добавить к body of literature, не зная его. Работа с литературой кажется тяжёлой из-за множества целей, объёма, сложности поиска и управления, противоречий, необходимости формального обзора и нехватки опыта.</p>
+  <h4>Working with literature: четыре области</h4>
+  <div class="tbl"><table>
+    <thead><tr><th>Purpose</th><th>Sourcing</th><th>Managing</th><th>Reviewing</th></tr></thead>
+    <tbody><tr>
+      <td style="font-weight:400">Choosing your topic · Developing your question · Arguing your rationale · Informing your work with theory · Designing method · Primary data source</td>
+      <td>Knowing literature types · Calling on experts · Honing search skills</td>
+      <td>Assessing relevance · Being systematic · Annotating references</td>
+      <td>Understanding the review's purpose · Ensuring adequate coverage · Writing purposefully</td>
+    </tr></tbody>
+  </table></div>
+
+  <h3>Роль литературы на каждом этапе</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Этап</th><th>Вопрос</th><th>Какое чтение</th></tr></thead>
+    <tbody>
+      <tr><td>Exploring a topic</td><td>Что я знаю? Как узнать больше?</td><td>Background reading для себя: популярные медиа, тексты, журналы</td></tr>
+      <tr><td>Developing a research question</td><td>Что читать, чтобы сформулировать вопрос?</td><td>Глубокое погружение в research literature, чтобы вопрос был значим для области</td></tr>
+      <tr><td>Articulating a rationale</td><td>Как убедительно обосновать исследование?</td><td>Контекстное чтение: значимость в широком социальном и научном контексте</td></tr>
+      <tr><td>Informing with theory</td><td>Какая теория будет основой?</td><td>Современные и классические теоретики</td></tr>
+      <tr><td>Designing methods</td><td>Что читать для выбора методов?</td><td>Обзор прошлых исследований и литература о конкретных методах</td></tr>
+      <tr><td>Writing a literature review</td><td>Какие исследования уже проведены?</td><td>Тщательный и критический обзор, в основном журнальных статей</td></tr>
+      <tr><td>As a primary source of data</td><td>Буду ли я анализировать литературу как «data»?</td><td>Часть methodological design: документы систематически собираются и анализируются</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Типы литературы</h3>
+  <dl class="defs">
+    <div><dt>Discipline-based reference materials</dt><dd>Предметные справочники помогают новичку разобраться в терминах, конструктах и теориях области.</dd></div>
+    <div><dt>Books</dt><dd>Вводные и продвинутые тексты, антологии, отчёты, нон-фикшн и даже художественная литература для фона, теории и метода. Из-за <b>долгого производства</b> самые свежие исследования чаще в журналах, а не в книгах.</dd></div>
+    <div><dt>Journal articles</dt><dd><b>Центральны для literature review</b>: для академической аудитории, обычно <b>peer reviewed</b> (прошли порог доверия), регулярно выходят и узко специализированы, поэтому актуальны и релевантны.</dd></div>
+    <div><dt>Grey literature</dt><dd>Опубликованные и неопубликованные материалы <b>без ISBN или ISSN</b>: conference papers, неопубликованные диссертации, газетные статьи, памфлеты и брошюры. Свежие диссертации и доклады — источник оригинальной работы; газеты и брошюры дают фон или материал для document analysis.</dd></div>
+    <div><dt>Official publications, statistics and archives</dt><dd>Фон и контекст, помогают обосновать исследование; источник primary data (document analysis) или secondary data (статистический анализ).</dd></div>
+    <div><dt>Writing aids</dt><dd>Библиографические справочники, словари, энциклопедии, тезаурусы, альманахи, ежегодники, сборники цитат: для стиля, проверки фактов и ссылок на них.</dd></div>
+  </dl>
+
+  <h3>Calling on experts и базы данных</h3>
+  <ul>
+    <li><b>University librarian</b> — эксперт по поиску, проводит обучение; многие библиотекари закреплены за областью (subject specialists) и знают нужные базы, журналы, библиографии.</li>
+    <li><b>Academics</b> — научные руководители, профессора, преподаватели знают литературу и могут направить; полезно посмотреть их книжные полки.</li>
+    <li>Академические сообщества: <b>Academia.edu</b>, <b>ResearchGate</b>.</li>
+    <li><b>CrossSearch</b> (библиотечный поиск) ищет по всем типам материалов, ранжирует по релевантности, фильтрует по году, формату, языку.</li>
+    <li><b>Google Scholar</b>: в Advanced search можно ограничить год и журнал. Совет: если не знаете названий журналов, впишите <b>«journal» в поле Publication</b>. Заходите через сайт университета, чтобы бесплатно получать полные тексты из подписок.</li>
+  </ul>
+
+  <h3>Honing your search skills</h3>
+  <p>Нужно выразить тему, подтемы, переменные, теории, теоретиков, методы и ключевые понятия в виде <b>keywords</b> и искать по одиночным и комбинированным запросам.</p>
+  <p><b>Пример:</b> body piercing (earrings, nose rings…) + teenagers (girls, boys, youth, adolescents) → результатов много → добавить переменные: rebellion, rites of passage.</p>
+  <ul>
+    <li><b>Сузить</b>: добавить keywords (family background) или теоретика (Foucault).</li>
+    <li><b>Расширить</b>: убрать keywords; также можно менять их местами.</li>
+    <li><b>Venn diagram</b> показывает пересечения ключевых понятий; некоторые пересечения дают мало литературы.</li>
+  </ul>
+
+  <h3>Copyright</h3>
+  <p>Copyright — исключительные права создателя на оригинальную работу (обычно на ограниченный срок). Копировать можно в рамках <mark>fair dealing</mark> (страны Commonwealth) или <mark>fair use</mark> (США).</p>
+  <p>В Австралии для учёбы и некоммерческого исследования можно скопировать:</p>
+  <ul>
+    <li><b>5% или одну главу</b> книги;</li>
+    <li><b>одну статью</b> из номера журнала или газеты;</li>
+    <li><b>один доклад</b> из сборника конференции;</li>
+    <li>одно дело из тома law reports;</li>
+    <li>короткие литературные тексты <b>до 10 страниц</b>;</li>
+    <li>одну (бумажную) копию веб-материала, если на сайте не указано иное.</li>
+  </ul>
+  <p>Для диссертации можно делать столько копий, сколько нужно для оценки, при правильной атрибуции. Правила разные в разных странах.</p>
+
+  <h3>Managing the literature</h3>
+  <h4>Assessing relevance</h4>
+  <p>Статья: смотрите <b>abstract / executive summary</b>. Книга: оглавление, аннотация на обложке, введение, выводы глав и общий вывод. Совет: стикеры трёх цветов (по одному на понятие) и ранг <b>1 (minimally) / 2 (somewhat) / 3 (highly relevant)</b>.</p>
+  <h4>Assessing quality</h4>
+  <p>Релевантно ≠ качественно. Даже для peer-reviewed статей спрашивайте:</p>
+  <ul>
+    <li>Have researcher subjectivities been acknowledged and managed?</li>
+    <li>Have they used logical methods that lead to valid and/or authentic truth?</li>
+    <li>Are their methods approached with consistency?</li>
+    <li>Are arguments relevant and appropriate?</li>
+    <li>Can the research be audited/verified?</li>
+  </ul>
+  <h4>Being systematic</h4>
+  <p>Храните копии, не давайте «единственные экземпляры», ведите точные цитаты. Сразу узнайте рекомендованный стиль и возьмите style guide. Программы: <b>ProCite, Mendeley, EndNote, Reference Manager</b> автоматически форматируют ссылки в стилях <b>Harvard, APA, Vancouver</b>. Делайте резервные копии всего.</p>
+
+  <h3>Annotating references</h3>
+  <div class="remember"><span class="k">Определение</span><b>Annotated bibliography</b> — a list of citations with a brief descriptive and evaluative paragraph indicating the relevance, accuracy and quality of the cited sources.</div>
+  <dl class="defs">
+    <div><dt>Citation</dt><dd>Полная библиографическая ссылка.</dd></div>
+    <div><dt>Author / Audience</dt><dd>Кто пишет (квалификация: профессионал, политик, исследователь, неизвестный) и для кого (академическая аудитория, широкая публика, клиенты).</dd></div>
+    <div><dt>Summary</dt><dd>Ключевые моменты; длина «it depends»: менее релевантное — 1–2 предложения. Не доверяйте памяти.</dd></div>
+    <div><dt>Critical appraisal</dt><dd>«Critical» = <b>informed and considered evaluation</b>, а не негатив. What did I really think of that and why? Новое? Старое? Пересказ? Есть ли изъяны в методологии?</dd></div>
+    <div><dt>Relevance</dt><dd>Как работа соотносится с вашим исследованием: теория, методы, изъяны, полезные цитаты. Look to be inspired, look to be surprised.</dd></div>
+  </dl>
+  <p><b>Пример из лекции:</b> O'Leary (2001a) «Conversations in the Kitchen» — анекдот о трудностях студентов, совмещающих семью и учёбу; тёплый стиль, но <b>не исследование</b> с данными, поэтому нельзя оценить масштаб проблемы; связан с более строгими работами Field &amp; Howard (2002) и Dreicker (2003); пригодится для цитаты.</p>
+
+  <h3>Формальный literature review</h3>
+  <div class="remember"><span class="k">Определение</span><b>Literature review</b> — a critical and purposive review of a body of knowledge including findings and theoretical and methodological contributions.</div>
+  <p>Это особый вид <b>argumentative writing</b>, основанный на критическом обзоре журнальных статей, который создаёт «space» для вашего исследования. Нужно сравнивать, противопоставлять, синтезировать и аргументировать.</p>
+  <h4>Purpose: формальный обзор должен</h4>
+  <ol>
+    <li><b>Inform readers of developments in the field</b> — актуальный обзор теорий, методов и исследований по теме.</li>
+    <li><b>Establish researcher credibility</b> — показать, что вы в курсе области, новых разработок и научных дискуссий.</li>
+    <li><b>Argue the need for, and relevance of, the study</b> — поместить работу в контекст прошлых исследований и выявить <b>gaps</b>.</li>
+  </ol>
+  <div class="remember"><span class="k">Не путать</span>Literature review — <b>не document analysis</b>. Анализ policy documents, законодательства, протоколов как данных относится к <b>method</b>, а результаты — к <b>findings</b>.</div>
+  <h4>Table 6.1: reviewing the literature vs the «literature review»</h4>
+  <div class="two">
+    <div><h4>Self-educative reasons</h4><ul><li>Inform yourself of what is happening in the field</li><li>Form a foundation of topical and methodological knowledge</li><li>Develop skills in critical thinking/analysis</li><li>Find potential gaps that may point to research questions</li><li>Critically evaluate common/typical methods</li><li>Facilitate development of your own methodological approaches</li></ul></div>
+    <div><h4>What the formal review achieves</h4><ul><li>Inform your audience of what is happening in the field</li><li>Establish your credibility as a knowledgeable and capable researcher</li><li>Argue the relevance and significance of your research question</li><li>Provide the context for your own methodological approach</li><li>Argue the relevance and appropriateness of your approach</li></ul></div>
+  </div>
+
+  <h3>Плагиат в literature review</h3>
+  <p>Cut-and-paste — это неправильно (кража), может стоить места в программе и не даёт хорошего обзора (нет аргумента). <b>Plagiarism</b> — когда слова, идеи или данные другого человека не указаны и выдаются за свои. Нельзя:</p>
+  <ul>
+    <li>копировать идеи, фразы, абзацы, диаграммы или изображения без ссылки;</li>
+    <li>платить кому-то за написание;</li>
+    <li>скачать работу и сдать как свою;</li>
+    <li>копировать у другого студента без указания;</li>
+    <li>указать источник в библиографии, но <b>не сослаться в тексте</b>;</li>
+    <li>пересказать чужую идею своими словами без ссылки;</li>
+    <li>цитировать речь или лекцию без указания спикера.</li>
+  </ul>
+
+  <h3>Процесс написания (15 шагов)</h3>
+  <ol>
+    <li><b>Ongoing process</b> — обзор формирует вопрос, теорию и методы, а они задают рамки обзора. Это <b>cyclical</b>, «moving target».</li>
+    <li>Прочитать несколько хороших обзоров.</li>
+    <li>Определить переменные (body piercing; teenagers; rites of passage).</li>
+    <li>Составить список синонимов и альтернатив.</li>
+    <li>Поместить термины в Venn diagram.</li>
+    <li>Искать в базах (или спросить библиотекаря) по комбинациям переменных и синонимов.</li>
+    <li>Собрать цитаты с abstracts.</li>
+    <li>Прочитать abstracts и отсеять нерелевантное; ранжировать остальное.</li>
+    <li>Решить: копать глубже или сузить. <b>Сузить</b>: добавить переменные и/или ограничиться последними <b>5–7 годами</b>, selective/representative coverage. <b>Расширить</b>: изменить переменные, увеличить период.</li>
+    <li>Систематически вести список (вручную или ProCite / EndNote / Reference Manager).</li>
+    <li>Читать и аннотировать: author/audience, key points, critical comment, relevance.</li>
+    <li>Сортировать аннотации: темы, проблемы, общие недостатки, паттерны.</li>
+    <li>Набросать outline; главный аргумент — почему ваше исследование нужно провести именно так.</li>
+    <li><b>Write purposefully</b> — читатель должен понимать «point» каждого раздела.</li>
+    <li><b>Use the literature to back up your arguments</b> — каждый абзац делает свой тезис, подкреплённый литературой.</li>
+  </ol>
+
+  <h3>Summary</h3>
+  <ul>
+    <li>Хорошее исследование требует работы с topical, methodological и theoretical литературой.</li>
+    <li>Типы: reference materials, books, journals, grey literature, official publications, archives, writing aids. Привлекайте librarians, supervisors и других исследователей.</li>
+    <li>Нужны навыки keyword search и быстрого отсева по relevance и quality.</li>
+    <li>Аннотация: citation, author/audience, summary, critical commentary, relevance.</li>
+    <li>Формальный обзор информирует о теме, устанавливает credibility и аргументирует необходимость работы. Требует терпения, практики и черновиков.</li>
+  </ul>
+
+  <div class="lec-foot"><button class="btn primary" data-start-lec="4">Тест по лекции 4.1 →</button><button class="btn" data-cards-lec="4">Карточки L4.1</button></div>
+</article>
+
+<!-- L4.2 -->
+<article class="lec" data-lec="5" hidden>
+  <div class="lec-head">
+    <span class="eyebrow">Week 4 · Lecture 4.2</span>
+    <h2>From Literature to a Conceptual Framework</h2>
+    <p class="lede">Variables, hypotheses и research models для IT-исследований: Define → Model → Predict → Measure. Превращаем выводы прошлых исследований в модель, которую проверит ваше исследование.</p>
+  </div>
+  <div class="remember"><span class="k">Главное различие</span>Literature review говорит, <b>что нашли исследователи</b>. Conceptual framework показывает, <b>какие факторы изучит ваш проект и как они, по ожиданию, связаны</b>.</div>
+
+  <h3>Четыре результата</h3>
+  <ol class="flow">
+    <li><b>Variable table</b>определение, роль, evidence для каждого construct</li>
+    <li><b>Conceptual model</b>ожидаемые связи до выбора методов</li>
+    <li><b>Hypotheses</b>3 утверждения об измеримой связи или различии</li>
+    <li><b>Measurement plan</b>indicator и источник данных для каждой переменной</li>
+  </ol>
+  <p>Каждый элемент проверяется вопросами: можем ли мы это наблюдать? можем ли объяснить, почему это в модели?</p>
+
+  <h3>Topic vs research model</h3>
+  <div class="two">
+    <div><h4>Topic</h4><p class="mono">AI coding assistants</p><p>Называет область, но не говорит, что меняется, какой outcome важен и какую связь изучать.</p></div>
+    <div><h4>Research model</h4><p class="mono">Assistant use and task completion</p><p>Использование AI-ассистента может сокращать completion time (<b>predictor → outcome</b>), отчасти за счёт снижения cognitive load (<b>mechanism</b>); prior programming skill может менять силу эффекта (<b>condition</b>).</p></div>
+  </div>
+
+  <h3>Research question управляет framework</h3>
+  <ol class="flow">
+    <li><b>Population</b>кто/что даёт evidence</li>
+    <li><b>Context</b>где и при каких условиях</li>
+    <li><b>Variables</b>какой фактор объясняет изменение, какой outcome его фиксирует</li>
+    <li><b>Relationship</b>сравнение групп, association, prediction или процесс</li>
+  </ol>
+  <p>Типичная ошибка — сначала нарисовать много стрелок, потом написать вопрос. Порядок обратный. Пример: «How does AI assistant use relate to task completion time among third-year programming students during debugging tasks?»</p>
+
+  <h3>Три задачи conceptual framework</h3>
+  <dl class="defs">
+    <div><dt>Explain</dt><dd>Связать проблему с понятиями, подтверждёнными прошлыми исследованиями.</dd></div>
+    <div><dt>Select</dt><dd>Обосновать, какие переменные входят в исследование, а какие правдоподобные факторы остаются за его рамками.</dd></div>
+    <div><dt>Predict</dt><dd>Указать ожидаемое направление или форму связей.</dd></div>
+  </dl>
+  <p>Framework — это <b>аргумент о логике исследования</b>, а не декоративная диаграмма; «compact contract» с читателем.</p>
+
+  <h3>Construct → Variable → Indicator</h3>
+  <dl class="defs">
+    <div><dt>Construct</dt><dd>Абстрактная идея: trust, usability, cognitive load.</dd></div>
+    <div><dt>Variable</dt><dd>Определённая характеристика, которая <b>различается</b> между людьми, системами или наблюдениями.</dd></div>
+    <div><dt>Indicator</dt><dd>Конкретный вопрос, балл, событие или измерение, которым фиксируется переменная.</dd></div>
+  </dl>
+  <p><b>Пример:</b> usability → perceived ease-of-use score → mean of six survey items. Два исследования могут называть одно и то же разными мерами: trust через опрос и reliance через принятие рекомендации. Это связанные, но не идентичные меры.</p>
+
+  <h3>Роли переменных</h3>
+  <dl class="defs">
+    <div><dt>Predictor (X)</dt><dd>Фактор, связанный с изменением: <i>AI assistant use</i>.</dd></div>
+    <div><dt>Outcome (Y)</dt><dd>То, что исследование объясняет: <i>task completion time</i>.</dd></div>
+    <div><dt>Control (C)</dt><dd>Правдоподобное альтернативное влияние: <i>task difficulty</i> (сложные задачи увеличивают время независимо от ассистента). Контроль должен иметь <b>причину</b> быть в модели, а не быть списком всех доступных характеристик.</dd></div>
+  </dl>
+
+  <h3>Типы переменных</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Тип</th><th>Суть</th><th>Пример</th></tr></thead>
+    <tbody>
+      <tr><td>Categorical</td><td>Группы без числового расстояния</td><td>используемый tool, operating system</td></tr>
+      <tr><td>Ordinal</td><td>Упорядоченные категории с неопределённым шагом</td><td>low / medium / high confidence</td></tr>
+      <tr><td>Continuous</td><td>Числа со значимой разницей</td><td>latency, score, completion time</td></tr>
+      <tr><td>Count</td><td>События целыми числами</td><td>errors, commits, security incidents</td></tr>
+    </tbody>
+  </table></div>
+  <p>Тип определяют <b>до</b> сбора данных: он влияет на визуализацию, статистические тесты и интерпретацию.</p>
+
+  <h3>Operationalisation</h3>
+  <div class="two">
+    <div><h4>Too vague</h4><p class="mono">The system is effective</p><p>Effective = быстрее? точнее? проще? дешевле? Проверить нельзя.</p></div>
+    <div><h4>Operational definition</h4><p class="mono">Median debugging time</p><p>Минуты от получения задачи до прохождения всех unit tests, автоматически записанные платформой, для одного контролируемого упражнения.</p></div>
+  </div>
+  <div class="remember"><span class="k">Запомнить</span>Сильное операциональное определение называет <b>measure, unit, data source и observation conditions</b>. У каждой меры есть границы: debugging time меряет скорость, а не качество ПО.</div>
+
+  <h3>От вывода литературы к связи в модели</h3>
+  <ol class="flow">
+    <li><b>Repeated evidence</b>несколько исследований связывают фактор и outcome</li>
+    <li><b>Reasoned mechanism</b>объяснение, почему фактор может влиять</li>
+    <li><b>Proposed relationship</b>связь, которую проверит новый проект</li>
+  </ol>
+  <p>Evidence поддерживает стрелку, но <b>не гарантирует</b> результат в новом контексте.</p>
+
+  <h3>Correlation vs causation</h3>
+  <div class="two">
+    <div><h4>Association</h4><p>X и Y меняются вместе. Не говорит, что было первым и не вызвал ли оба третий фактор.</p></div>
+    <div><h4>Causal claim</h4><p>Изменение X меняет Y. Нужен дизайн, который устраняет альтернативные объяснения.</p></div>
+  </div>
+  <p>Язык гипотезы должен соответствовать силе дизайна. Cross-sectional observational data → <b>«is associated with»</b>, «predicts statistically», а не «causes».</p>
+  <h4>Confounder</h4>
+  <p><b>Prior programming skill</b> влияет и на использование ассистента, и на скорость → может создать убедительную, но ложную связь. Переменная становится confounder из-за <b>места в причинной истории</b>, а не потому, что программа пометила её significant.</p>
+
+  <h3>Правила диаграммы (Pearl, 1995)</h3>
+  <ul>
+    <li><b>Nodes</b> — каждый блок = одна чётко определённая переменная или construct.</li>
+    <li><b>Arrows</b> — каждая стрелка = предполагаемое направление, которое текст обосновывает. Отсутствие стрелки тоже о чём-то говорит.</li>
+    <li><b>Boundaries</b> — модель этого исследования, а не всех возможных влияний в мире. Перегруженная диаграмма = несфокусированный проект.</li>
+  </ul>
+
+  <h3>Worked example: AI coding assistant</h3>
+  <div class="diagram" role="img" aria-label="Модель: Assistant use влияет на Completion time напрямую и через Cognitive load; Prior skill влияет на использование и на скорость">
+    <svg viewBox="0 0 640 270" xmlns="http://www.w3.org/2000/svg">
+      <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="dg-head"/></marker></defs>
+      <line class="dg-line" x1="172" y1="118" x2="243" y2="56" marker-end="url(#ah)"/>
+      <line class="dg-line" x1="397" y1="56" x2="468" y2="118" marker-end="url(#ah)"/>
+      <line class="dg-line" x1="172" y1="138" x2="466" y2="138" marker-end="url(#ah)"/>
+      <line class="dg-line alt" x1="243" y1="220" x2="172" y2="160" marker-end="url(#ah)"/>
+      <line class="dg-line alt" x1="397" y1="220" x2="468" y2="160" marker-end="url(#ah)"/>
+      <rect class="dg-box" x="20" y="110" width="150" height="56" rx="8"/>
+      <text class="dg-s" x="34" y="130">X · predictor</text><text class="dg-t" x="34" y="152">Assistant use</text>
+      <rect class="dg-box" x="245" y="12" width="150" height="56" rx="8"/>
+      <text class="dg-s" x="259" y="32">M · mediator</text><text class="dg-t" x="259" y="54">Cognitive load</text>
+      <rect class="dg-box" x="470" y="110" width="150" height="56" rx="8"/>
+      <text class="dg-s" x="484" y="130">Y · outcome</text><text class="dg-t" x="484" y="152">Completion time</text>
+      <rect class="dg-box alt" x="245" y="202" width="150" height="56" rx="8"/>
+      <text class="dg-s" x="259" y="222">W · third variable</text><text class="dg-t" x="259" y="244">Prior skill</text>
+      <text class="dg-l" x="150" y="78">may reduce</text>
+      <text class="dg-l" x="440" y="78">explains speed</text>
+      <text class="dg-l" x="284" y="130">direct path</text>
+      <text class="dg-l" x="128" y="200">changes use</text>
+      <text class="dg-l" x="446" y="200">changes speed</text>
+    </svg>
+  </div>
+  <p><b>Main question:</b> Does assistant use relate to faster task completion, and can cognitive load explain part of that relationship? Есть прямой путь (инструмент генерирует код) и косвенный (через снижение cognitive load). Prior skill важен, потому что опытные студенты используют инструмент иначе и работают быстрее.</p>
+
+  <h3>Technology Acceptance Model (TAM)</h3>
+  <p><b>Davis, 1989, MIS Quarterly</b> — разработал и валидировал шкалы для usefulness и ease of use.</p>
+  <ul>
+    <li><b>PU — Perceived usefulness</b>: улучшает ли система работу → predicts acceptance.</li>
+    <li><b>PEOU — Perceived ease of use</b>: сколько усилий требуется → predicts acceptance и <b>supports usefulness</b> (PEOU → PU).</li>
+    <li><b>USE — User acceptance</b>.</li>
+  </ul>
+  <p>Урок не в том, чтобы копировать TAM в каждый проект, а в том, что у каждого construct есть определение и шкала, а каждая стрелка — отдельное проверяемое утверждение.</p>
+
+  <h3>Mediator vs moderator</h3>
+  <div class="two">
+    <div><h4>Mediator — How or why?</h4><p><b>Mechanism</b> между X и Y. Assistant use снижает cognitive load, который сокращает completion time.</p></div>
+    <div><h4>Moderator — When or for whom?</h4><p><b>Condition</b>: меняет силу или направление связи. Эффект ассистента сильнее у новичков, чем у опытных.</p></div>
+  </div>
+  <p>Baron &amp; Kenny (1986, Journal of Personality and Social Psychology) подчеркнули, что эти термины <b>нельзя использовать как синонимы</b>: различие меняет аргумент, данные и план анализа.</p>
+
+  <h3>Гипотезы</h3>
+  <h4>Anatomy of a testable hypothesis</h4>
+  <ol class="flow">
+    <li><b>Variables</b>те же названия, что в framework</li>
+    <li><b>Relationship</b>association или различие групп</li>
+    <li><b>Direction</b>higher/lower только если литература поддерживает</li>
+    <li><b>Boundary</b>population или context</li>
+  </ol>
+  <p class="mono">Among third-year programming students, greater AI assistant use will be associated with shorter debugging completion time.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Вид</th><th>Что предсказывает</th><th>Пример и когда</th></tr></thead>
+    <tbody>
+      <tr><td>Directional</td><td>Форму результата (faster/slower)</td><td>«Students using the assistant will complete debugging tasks faster…» — когда теория и прошлые данные оправдывают направление</td></tr>
+      <tr><td>Non-directional</td><td>Наличие различия или связи</td><td>«Completion time will differ between…» — когда evidence говорит о различии, но не о направлении (например, противоречивые результаты)</td></tr>
+      <tr><td>Research hypothesis</td><td>Ожидаемую связь или различие из framework</td><td>Часть концептуального аргумента</td></tr>
+      <tr><td>Null hypothesis</td><td>Нет связи / нет различия</td><td>Часть логики статистического теста</td></tr>
+    </tbody>
+  </table></div>
+  <div class="remember"><span class="k">Частая ошибка</span>«p &gt; .05, therefore the variables have no relationship» — <b>неверно</b>. Non-significant result не доказывает отсутствие эффекта: мало power, шумные измерения или маленький эффект. Интерпретация включает estimate, uncertainty и дизайн. Stronger prediction needs stronger justification; форму гипотезы выбирают <b>до</b> просмотра результатов.</div>
+  <div class="two">
+    <div><h4>Weak</h4><p class="mono">AI improves education</p><p>Непонятны переменные, population, вид улучшения; звучит причинно без дизайна.</p></div>
+    <div><h4>Defensible</h4><p class="mono">Among third-year programming students, higher weekly use of an AI coding assistant will be associated with shorter median debugging time across three controlled tasks.</p></div>
+  </div>
+  <p><b>Falsifiability:</b> можно ли описать результат, который <b>не подтвердит</b> предсказание? Если любой исход объясняется как успех, гипотеза слишком гибкая.</p>
+  <h4>Четыре гипотезы из одной модели</h4>
+  <ul>
+    <li><b>H1</b>: Greater assistant use → shorter completion time (главная связь).</li>
+    <li><b>H2</b>: Greater assistant use → lower cognitive load.</li>
+    <li><b>H3</b>: Lower cognitive load → shorter completion time. (H2 + H3 = медиация.)</li>
+    <li><b>H4</b>: Prior skill will <b>moderate</b> the relationship → требует <b>interaction analysis</b>, а не ещё одной корреляции.</li>
+  </ul>
+
+  <h3>Качество измерений</h3>
+  <div class="two">
+    <div><h4>Reliability = consistency</h4><p>Даёт ли мера стабильный результат в сравнимых условиях? Секундомер может быть надёжным, даже если запускается не в тот момент.</p></div>
+    <div><h4>Validity = meaning</h4><p>Отражает ли мера нужный construct? Completion time сам по себе может не отражать качество обучения.</p></div>
+  </div>
+  <p>Мера может быть стабильной, но мерить не то. Для trust или cognitive load ищите <b>established measures</b>; для системных метрик определяйте границы событий и полноту логов.</p>
+  <h4>Triangulation</h4>
+  <div class="tbl"><table>
+    <thead><tr><th>Источник</th><th>Полезен для</th><th>Слабость</th></tr></thead>
+    <tbody>
+      <tr><td>Self-report</td><td>Восприятие (trust, cognitive load)</td><td>Память, стиль ответов</td></tr>
+      <tr><td>Behavioural log</td><td>Действия и время</td><td>Не объясняет <b>причину</b> поведения</td></tr>
+      <tr><td>Performance task</td><td>Outcome в контролируемых условиях</td><td>Может не отражать повседневное использование</td></tr>
+    </tbody>
+  </table></div>
+  <p>Triangulation = комбинировать источники, потому что они <b>дополняют</b> друг друга, а не собирать больше данных без плана.</p>
+
+  <h3>HARKing</h3>
+  <div class="remember"><span class="k">Kerr, 1998</span><b>HARKing — Hypothesizing After the Results are Known</b>: гипотеза, придуманная после просмотра результатов, подаётся как заранее заданная. Читатель не отличает prediction от discovery. Правильно: записать гипотезы <b>до</b> анализа (с датой и версией), неожиданные паттерны честно сообщать как <b>exploratory</b>.</div>
+
+  <h3>Чек-лист framework (Week 4 checkpoint)</h3>
+  <ul>
+    <li><b>Question</b> — один сфокусированный вопрос, связанный с проверенной литературой (population + context).</li>
+    <li><b>Variable table</b> — role, definition, indicator, data type, source, expected limitation.</li>
+    <li><b>Framework</b> — <b>3–5 переменных</b> с подписанными связями и цитатами.</li>
+    <li><b>Hypotheses</b> — 2–3 тестируемых утверждения на языке, соответствующем дизайну.</li>
+    <li><b>Evidence</b> — минимум один проверенный источник у каждой главной связи.</li>
+  </ul>
+  <p>Ясная модель из трёх переменных сильнее диаграммы из десяти, которую нельзя измерить. Неделя 5: research design (experimental, observational, survey, case study).</p>
+
+  <div class="lec-foot"><button class="btn primary" data-start-lec="5">Тест по лекции 4.2 →</button><button class="btn" data-cards-lec="5">Карточки L4.2</button></div>
+</article>
+
+  </div>
+</div>
+</section>
+
+<!-- ============ QUIZ ============ -->
+<section class="view" id="view-quiz" hidden>
+  <div class="panel" id="quiz-setup">
+    <div>
+      <h2>Тест к мидтерму</h2>
+      <p class="sub">Вопросы на английском, как на экзамене; пояснения на русском. Варианты перемешиваются при каждой попытке. Клавиши: 1–4 выбрать ответ, Enter дальше.</p>
+    </div>
+    <div class="card">
+      <div class="field"><span class="lbl">Лекции</span><div class="chips" id="lec-chips"></div></div>
+      <div class="field"><span class="lbl">Сколько вопросов</span>
+        <div class="chips" id="count-chips">
+          <label class="chip"><input type="radio" name="qcount" id="qc-10" value="10"> 10</label>
+          <label class="chip"><input type="radio" name="qcount" id="qc-25" value="25" checked> 25</label>
+          <label class="chip"><input type="radio" name="qcount" id="qc-50" value="50"> 50</label>
+          <label class="chip"><input type="radio" name="qcount" id="qc-all" value="all"> Все</label>
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn primary" id="start-btn">Начать тест</button>
+        <button class="btn" id="mist-btn">Повторить ошибки</button>
+      </div>
+      <div class="hist" id="hist"></div>
+    </div>
+  </div>
+
+  <div class="panel" id="quiz-run" hidden>
+    <div class="card">
+      <div class="qtop"><span id="q-pos"></span><span id="q-lec"></span><span id="q-score"></span></div>
+      <div class="prog"><i id="q-bar" style="width:0"></i></div>
+      <p class="qtext" id="q-text"></p>
+      <div class="opts" id="q-opts"></div>
+      <div class="explain" id="q-exp" hidden></div>
+      <div class="row">
+        <button class="btn primary" id="next-btn" disabled>Дальше</button>
+        <button class="btn" id="quit-btn">Закончить</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="quiz-done" hidden>
+    <div class="card">
+      <div class="score"><span class="big" id="r-pct"></span><span class="of" id="r-of"></span></div>
+      <div class="breakdown" id="r-bd"></div>
+      <div class="row">
+        <button class="btn primary" id="again-btn">Новая попытка</button>
+        <button class="btn" id="redo-btn">Пройти ошибки ещё раз</button>
+        <button class="btn" id="setup-btn">К настройкам</button>
+      </div>
+    </div>
+    <h3 id="r-mh">Ошибки</h3>
+    <div class="mist" id="r-mist"></div>
+  </div>
+</section>
+
+<!-- ============ CARDS ============ -->
+<section class="view" id="view-cards" hidden>
+  <div class="panel">
+    <div>
+      <h2>Карточки с терминами</h2>
+      <p class="sub">Нажмите на карточку или пробел, чтобы перевернуть. Стрелки ← → листают.</p>
+    </div>
+    <div class="chips" id="card-chips"></div>
+    <div class="fc" id="fc" tabindex="0" role="button" aria-label="Перевернуть карточку">
+      <div class="fc-in">
+        <div class="fc-face fc-front"><span class="tag" id="fc-tag"></span><div class="fc-term" id="fc-term"></div></div>
+        <div class="fc-face fc-back"><span class="tag" id="fc-tag2"></span><div class="fc-def" id="fc-def"></div><div class="fc-ru" id="fc-ru"></div></div>
+      </div>
+    </div>
+    <div class="row" style="justify-content:space-between">
+      <div class="row"><button class="btn" id="fc-prev">← Назад</button><button class="btn primary" id="fc-next">Дальше →</button></div>
+      <div class="row"><span class="mono" id="fc-pos"></span><button class="btn" id="fc-shuf">Перемешать</button></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+const LECS = {
+  1:{s:"L1", t:"Taking a Leap into Research World"},
+  2:{s:"L2", t:"Research Questions & Scientific Search"},
+  3:{s:"L3", t:"Ethics, Verification & Mendeley"},
+  4:{s:"L4.1", t:"Literature Review"},
+  5:{s:"L4.2", t:"Conceptual Framework"}
+};
+
+/* Question format: {l: lecture, q: text, o: [correct, ...distractors], e: explanation}
+   True/False: o:["True","False"], a: index of correct, tf:1 (order kept) */
+const Q = [
+// ---------- L1 ----------
+{l:1,q:"According to the Oxford English Dictionary definition used in Lecture 1, research is:",o:["The systematic study of materials and sources in order to establish facts and reach new conclusions","Any information gathering we do in daily life, such as choosing a car","The collection of numerical data to test a hypothesis","Reading published literature to learn about a topic"],e:"Определение OED: «the systematic study of materials and sources in order to establish facts and reach new conclusions». Бытовой «research» (выбор машины) не систематичен."},
+{l:1,q:"When you tackle your own research project, you move from being a knowledge ___ to a knowledge ___.",o:["consumer … producer","producer … consumer","reviewer … publisher","learner … teacher"],e:"Вы становитесь knowledge producer: тем, кто фиксирует и сообщает «truth», а это новая ответственность."},
+{l:1,q:"Ontology is best defined as:",o:["The study of what exists, and how things that exist are understood and categorized","How we come to have legitimate knowledge of the world; rules for knowing","The overarching framework that legitimates schools of research","The plan for conducting a research project"],e:"Ontology = ЧТО существует и считается реальным. «Rules for knowing» — это epistemology."},
+{l:1,q:"Epistemology refers to:",o:["How we come to have legitimate knowledge of the world; rules for knowing","The study of what exists and is 'real'","Micro-level techniques used to collect and analyse data","The view that the world exists independently of perception"],e:"Epistemology = КАК мы получаем легитимное знание."},
+{l:1,q:"Empiricists have difficulty acknowledging anything that cannot be measured. In O'Leary's terms, their difficulty with the unmeasurable is a matter of their:",o:["Ontology, which follows from their epistemology","Methodology, which follows from their tools","Epistemology, which follows from their ontology","Methods, which follow from their research question"],e:"Эпистемология эмпириков (знание только через органы чувств) ведёт к их онтологии (трудно признать реальным то, что нельзя измерить)."},
+{l:1,q:"'The external world exists independently of perception — the truth is out there whether we can see it or not.' This describes:",o:["Realism","Relativism","Subjectivism","Social constructionism"],e:"Realism: мир существует независимо от восприятия."},
+{l:1,q:"Which position holds that all knowledge is limited to what can be observed through the senses and is the cornerstone of scientific method?",o:["Empiricism","Positivism","Realism","Subjectivism"],e:"Empiricism: знание ограничено наблюдаемым органами чувств. Positivism — что всё истинное знание научно."},
+{l:1,q:"'All true knowledge is scientific, and is best pursued by scientific method.' This is:",o:["Positivism","Empiricism","Relativism","Social constructionism"],e:"Positivism. Научное исследование «родилось» из позитивизма."},
+{l:1,q:"Which position argues that there are no universals and that truth, morals and culture can only be understood in their own socio-historic context?",o:["Relativism","Realism","Positivism","Empiricism"],e:"Relativism: нет универсалий, всё понимается в социально-историческом контексте."},
+{l:1,q:"Theories emphasizing that the world is constructed by human beings as they interact and engage in interpretation are called:",o:["Social constructionism","Subjectivism","Realism","Empiricism"],e:"Social constructionism: мир конструируется людьми в процессе взаимодействия и интерпретации."},
+{l:1,q:"Which position accepts that personal experiences are the foundation for factual knowledge?",o:["Subjectivism","Positivism","Realism","Empiricism"],e:"Subjectivism делает акцент на субъективном опыте."},
+{l:1,q:"The quantitative approach is often tied to assumptions related to:",o:["Realism, empiricism and positivism","Relativism, social constructionism and subjectivism","Postmodernism and indigenous ways of knowing","No particular assumptions at all"],e:"Quantitative ↔ realism, empiricism, positivism. Qualitative ↔ relativism, social constructionism, subjectivism."},
+{l:1,q:"The qualitative approach is highly reliant on:",o:["Words, images, experiences and observations that are not quantified","Numerical data and concepts coded with numbers","Statistical significance testing","Both numerical and textual data valued equally"],e:"Qualitative data — неквантифицированные слова, изображения, опыт и наблюдения."},
+{l:1,q:"In a mixed approach:",o:["Both qualitative and quantitative data are valued independently of ontological or epistemological assumptions","Qualitative data is used only to illustrate statistical findings","The researcher must first adopt a positivist position","Only secondary data can be used"],e:"Mixed approach использует оба типа данных и ценит их независимо от онтологических и эпистемологических допущений."},
+{l:1,q:"What is the 'best' type of research — quantitative or qualitative?",o:["Neither; a strategy is good to the degree that it fits the research question","Quantitative, because it is objective","Qualitative, because it gives deeper understanding","Mixed methods, in every case"],e:"Лучшего типа нет: подход хорош настолько, насколько подходит к вопросу, и выбор определяет исследователь, а не методология."},
+{l:1,q:"Overarching, macro-level frameworks that offer principles of reasoning associated with particular paradigmatic assumptions are called:",o:["Methodologies","Methods","Tools","Methodological designs"],e:"Methodology — macro-level. Methods — micro-level техники. Tools — инструменты (анкеты и т.п.)."},
+{l:1,q:"Scientific method, ethnography and action research are examples of:",o:["Methodologies","Methods of data collection","Research tools","Epistemologies"],e:"Это примеры методологий, которые дают стратегию и обоснование исследования."},
+{l:1,q:"Interviewing, surveying and observation are examples of:",o:["Methods (data collection techniques)","Methodologies","Tools","Ontologies"],e:"Methods — micro-level техники сбора (interviewing, surveying, observation, unobtrusive) и анализа (statistics, thematic exploration)."},
+{l:1,q:"A questionnaire, an observation checklist and an interview schedule are examples of:",o:["Tools","Methods","Methodologies","Paradigms"],e:"Tools — устройства для сбора данных."},
+{l:1,q:"The 'methodological design' is:",o:["The plan for conducting your research project that includes methodology, methods and tools","The statistical analysis plan only","The philosophical position of the researcher","The list of references used in the study"],e:"Methodological design — общий план проекта, включающий всё вышеперечисленное."},
+{l:1,q:"Which is NOT one of the assumptions of positivism listed in the lecture summary?",o:["Research that can be intuitive and holistic","A knowable and predictable world","Objective and expert researchers","Hypothesis-driven methods"],e:"«Intuitive and holistic» — это post-positivism. Позитивизм: knowable/predictable world, empirical/reductionist research, objective/expert researchers, hypothesis-driven methods, statistically significant quantitative findings."},
+{l:1,q:"Post-positivist researchers acknowledge findings that can be:",o:["Idiographic and qualitative","Universal and law-like","Only statistically significant","Free from researcher influence"],e:"Post-positivism: ambiguous world, intuitive/holistic research, subjective/collaborative researchers, inductive/exploratory methods, idiographic/qualitative findings."},
+{l:1,q:"Why does a researcher need to engage with the 'isms' and 'ologies'?",o:["Because as a producer of knowledge who will conclude something, you need to declare your positioning in relation to knowledge","Because ethics committees require a philosophy section","Because only positivist research is publishable","Because it determines the referencing style"],e:"Исследователь производит знание и должен «put your cards on the table» — знать и уметь сформулировать свою позицию."},
+{l:1,q:"Which is NOT listed as a potential of research?",o:["Proving the researcher's existing beliefs","Understanding issues and problems in all their complexity","Evaluating whether change strategies have been successful","Offering robust recommendations for practice, programmes and policy"],e:"Пять возможностей: understand, find workable solutions, work towards the solution, evaluate success, offer robust recommendations."},
+{l:1,q:"True or False: According to the lecture, research is rarely undertaken simply to satisfy curiosity; more often it seeks knowledge to tackle pressing problems.",o:["True","False"],a:0,tf:1,e:"Верно. «Knowledge for knowledge's sake» — роскошь; цель исследования — situation improvement."},
+{l:1,q:"The 'reflexive researcher' is someone who:",o:["Considers whether the assumptions of various paradigms can be explored as they relate to particular research questions","Always adopts a positivist paradigm","Avoids declaring any epistemological position","Uses only qualitative methods"],e:"Reflexive researcher не привязывает себя к одной парадигме, а рассматривает допущения разных парадигм применительно к вопросу."},
+
+// ---------- L2 ----------
+{l:2,q:"Which of these questions is the strongest starting point to guide a study?",o:["How does retrieval augmentation affect factual accuracy in a campus-service chatbot?","How can AI improve education?","Is machine learning useful?","Can I build a better chatbot?"],e:"В нём есть определённый factor (retrieval augmentation), outcome (factual accuracy) и context (campus-service chatbot)."},
+{l:2,q:"'Reported performance may not hold on imbalanced, newly collected URLs.' In the topic–problem–question logic, this statement is the:",o:["Problem","Topic","Question","Objective"],e:"Topic — область (ML for phishing detection); Problem — нерешённая неопределённость; Question — само исследование."},
+{l:2,q:"Which is NOT one of the five tests for a strong research question?",o:["Popular","Clear","Feasible","Analytical"],e:"Пять тестов: Clear, Focused, Researchable, Feasible, Analytical."},
+{l:2,q:"A research question is 'feasible' when:",o:["Time, data and skills fit","Evidence can answer it","A reader understands the terms","The answer needs reasoning"],e:"Feasible = хватает времени, данных и навыков. «Evidence can answer it» = Researchable."},
+{l:2,q:"A research question is 'researchable' when:",o:["Evidence can answer it","It concerns one central relationship","It can be finished in one week","It has never been studied before"],e:"Researchable = на него можно ответить с помощью evidence."},
+{l:2,q:"The fast check for question quality suggested in Lecture 2 is:",o:["What evidence would change your answer?","How many papers cite this topic?","Is the topic trending?","Can it be answered with yes or no?"],e:"Если нет evidence, которое могло бы изменить ответ, вопрос не researchable."},
+{l:2,q:"'To what extent does artifact A improve Y?' is which question pattern?",o:["Evaluate","Compare","Relate","Explain"],e:"Evaluate — для систем и интерфейсов. Compare: A vs B; Relate: X associated with Y; Explain: как пользователи воспринимают X."},
+{l:2,q:"'How do users experience or interpret X?' is which question pattern?",o:["Explain","Evaluate","Relate","Compare"],e:"Explain — для человеческого поведения."},
+{l:2,q:"'How is factor X associated with outcome Y?' (e.g. usage and retention) is which pattern?",o:["Relate","Compare","Explain","Evaluate"],e:"Relate — связь фактора и outcome."},
+{l:2,q:"In 'Does AI feedback improve debugging accuracy and completion time for novice Python programmers?', the phrase 'novice Python programmers' is the:",o:["Boundary (population and context)","Factor (intervention)","Outcome (evidence)","Idea"],e:"Boundary = population и context. Factor = AI-generated feedback; Outcome = debugging accuracy and time."},
+{l:2,q:"What is the difference between a research question and a research objective?",o:["The question asks; the objective states the action the study will take, often with evaluation criteria","The objective is broader than the question","The question is written after data collection","They describe different studies"],e:"Objective добавляет действие (to compare… using precision, recall and F1). Оба должны описывать одно исследование."},
+{l:2,q:"Which verb should NOT be used alone as the main verb of a research objective?",o:["Understand","Compare","Evaluate","Measure"],e:"Слабые глаголы: understand, know, learn, study. Сильные: compare, evaluate, examine, measure, explore, identify."},
+{l:2,q:"An 'alignment check' between question and objective verifies that they share the same:",o:["Factor, outcome, population and boundary","Word count","Database and query","Citation style"],e:"Same factor, outcome, population and boundary."},
+{l:2,q:"A critique asking 'Which boundary is missing?' diagnoses a question that is:",o:["Too broad","Not answerable","Misaligned","Too narrow"],e:"Too broad → назвать population, system, dataset, domain или time frame."},
+{l:2,q:"A question that relies on opinion or prediction rather than observable evidence is:",o:["Not answerable","Too broad","Misaligned","Feasible"],e:"Not answerable → заменить opinion/prediction на observable evidence."},
+{l:2,q:"According to Lecture 2, a literature search before data collection tests the question for:",o:["Terminology, evidence and boundary","Grammar, length and style","Funding, ethics and budget","Novelty only"],e:"Поиск показывает словарь области, существующие методы/датасеты/метрики и не слишком ли вопрос широк, узок или уже отвечен."},
+{l:2,q:"The correct order of the iterative search process is:",o:["Search → Screen → Select → Extract → Revise","Screen → Search → Extract → Select → Revise","Search → Extract → Screen → Revise → Select","Select → Search → Screen → Extract → Revise"],e:"Search (запрос) → Screen (titles/abstracts) → Select (критерии) → Extract (записать) → Revise (улучшить)."},
+{l:2,q:"What is the purpose of the Search Log?",o:["To preserve each decision so another person can repeat the search route","To store the full text of every paper","To count citations","To replace the reference list"],e:"Search Log делает поиск воспроизводимым."},
+{l:2,q:"When converting a research question into a database query you should:",o:["Extract two to four searchable concepts","Paste the full question as a sentence","Search only the method name","Use as many OR terms as possible"],e:"Do not search the full question as a sentence. Выделить 2–4 понятия (method, task, data, condition)."},
+{l:2,q:"In Boolean search, OR should be used:",o:["Within a synonym group, to expand","Between concept groups, to narrow","To exclude a term","Only in Google Scholar"],e:"OR — внутри группы синонимов (расширяет); AND — между группами (сужает)."},
+{l:2,q:"Which Boolean operator narrows a search by requiring both concepts?",o:["AND","OR","NOT","*"],e:"AND narrows. OR expands. NOT needs caution."},
+{l:2,q:"Why does the lecture say NOT 'needs caution'?",o:["It can remove relevant papers whose abstracts happen to mention the excluded term","It is not supported by any database","It expands the search too much","It only works in lowercase"],e:"NOT может выбросить релевантные статьи; проверяйте, что пропало."},
+{l:2,q:"Which pattern is described as the 'reliable' Boolean structure?",o:["(synonym OR synonym) AND (synonym OR synonym)","synonym AND synonym OR synonym AND synonym","(synonym AND synonym) OR (synonym AND synonym)","synonym NOT synonym"],e:"Синонимы группируются через OR в скобках, группы соединяются через AND."},
+{l:2,q:"In the query detect*, the asterisk is a:",o:["Wildcard that captures word endings (detect, detection, detecting…)","Boolean operator meaning NOT","Phrase marker","Field restriction"],e:"Wildcard ловит окончания слов, если база это поддерживает."},
+{l:2,q:"Putting \"machine learning\" in quotation marks:",o:["Keeps the phrase together as an exact phrase","Excludes the phrase","Searches only titles","Makes the search case-sensitive"],e:"Quotation marks держат фразу вместе. Parentheses управляют логикой."},
+{l:2,q:"In a query ladder, the purpose of the BROAD query (e.g. phishing AND detection) is to:",o:["Learn the field vocabulary","Target the planned method","Capture common variants","Find only peer-reviewed papers"],e:"Broad — изучить словарь; Balanced — охватить варианты; Precise — нацелиться на метод."},
+{l:2,q:"What should you do with a query that failed (e.g. too few results)?",o:["Record it — a failed query is still evidence about scope","Delete it from the log","Ignore it and start a new topic","Replace it with a Google search"],e:"Record all three. The failed query is still evidence about scope."},
+{l:2,q:"Which database is described as covering engineering and computing, useful for technical papers and standards?",o:["IEEE Xplore","Scopus","Google Scholar","ACM Digital Library"],e:"IEEE Xplore. Scopus — multidisciplinary (authors, venues, citations); ACM DL — computing research; Google Scholar — broad discovery."},
+{l:2,q:"Which database is described as broad multidisciplinary coverage, useful to map authors, venues and citations?",o:["Scopus","IEEE Xplore","ACM DL","CrossSearch"],e:"Scopus."},
+{l:2,q:"Google Scholar is especially useful for:",o:["Cited by links, related articles, versions and date filters","Guaranteeing that every result is peer reviewed","Exporting standards documents","Searching only ACM conferences"],e:"Но перед цитированием всегда проверяйте запись источника."},
+{l:2,q:"How many academic databases does Assignment 1 require at minimum?",o:["Two","One","Three","Four"],e:"Assignment 1 requires at least two academic databases."},
+{l:2,q:"In Scopus, your result set is dominated by noise (too many results). What should you do?",o:["Add a concept, phrase or field restriction","Remove the narrowest concept","Add more synonyms with OR","Change the topic"],e:"Too many → добавить concept/phrase/field restriction. Too few → убрать самое узкое понятие или добавить синонимы."},
+{l:2,q:"Your search returns too few results. The recommended fix is to:",o:["Remove the narrowest concept or add synonyms","Add another AND concept","Restrict to title only","Add NOT terms"],e:"Too few → relevant terms may be missing."},
+{l:2,q:"The 'live rule' for running searches in Scopus is:",o:["Change one search decision at a time","Apply all filters at once","Always sort by citation count","Never use field restrictions"],e:"Меняйте одно решение за раз, чтобы видеть его эффект."},
+{l:2,q:"In IEEE Xplore, Boolean operators AND, OR, NOT must be written in:",o:["Uppercase","Lowercase","Quotation marks","Parentheses only"],e:"UPPERCASE: операторы; parentheses: группы OR выполняются до AND."},
+{l:2,q:"Why does Lecture 2 recommend searching metadata first in IEEE Xplore?",o:["It reduces accidental matches from the full text","It returns more results","It is the only search mode available","It includes only open-access papers"],e:"Поиск по metadata (title, abstract, index terms) уменьшает случайные совпадения."},
+{l:2,q:"The correct order of screening layers is:",o:["Title → Abstract → Record → Full text","Full text → Abstract → Title → Record","Abstract → Title → Full text → Record","Record → Title → Full text → Abstract"],e:"Скрининг слоями, прежде чем скачивать всё подряд."},
+{l:2,q:"True or False: A high citation count can replace judgements of relevance and methodological fit.",o:["True","False"],a:1,tf:1,e:"Неверно. Высокоцитируемая работа может быть нерелевантной, устаревшей или методологически неподходящей."},
+{l:2,q:"Which of these is NOT a Search Log field listed in Lecture 2?",o:["Author's h-index","Exact query","Filters","Result count"],e:"Поля: Database, Date, Exact query, Filters, Result count, Screening decision and notes."},
+{l:2,q:"When should inclusion and exclusion criteria be written?",o:["Before screening","After choosing the best papers","After writing the literature review","Only if the supervisor asks"],e:"Write criteria before screening. Записывайте изменения после каждого значимого запроса."},
+
+// ---------- L3 ----------
+{l:3,q:"According to Lecture 3, knowledge produced by research must be credible, meaning it has:",o:["The 'power to elicit belief'","A DOI","At least ten citations","Approval from a journal editor"],e:"Credible knowledge has «the power to elicit belief»."},
+{l:3,q:"Research integrity has two responsibilities. They are:",o:["Making claims credible (knowledge) and protecting those affected (people)","Publishing fast and citing widely","Using quantitative data and avoiding bias","Getting funding and getting approval"],e:"KNOWLEDGE: accurate data, transparent methods, honest limitations, verifiable sources. PEOPLE: consent, privacy, fair treatment, secure data, downstream harm."},
+{l:3,q:"A highly accurate facial-recognition model trained on images collected without permission illustrates that:",o:["A technically correct study can still be unethical","Accuracy guarantees ethical acceptability","Ethics only matters in qualitative research","Public images never raise privacy issues"],e:"Исследование может быть успешным технически и провальным этически."},
+{l:3,q:"A student adds imaginary survey responses to reach the planned sample size. This is:",o:["Fabrication","Falsification","Plagiarism","Gift authorship"],e:"Fabrication — создание данных, которых не было."},
+{l:3,q:"A team tests six models but reports only the best run, while the other runs remain saved. This is best classified as:",o:["Falsification (selective reporting)","Fabrication","Plagiarism","No issue"],e:"Ничего не выдумано, но выборочная отчётность искажает картину. Falsification включает misleading omission."},
+{l:3,q:"Presenting someone else's method or dataset as your own is:",o:["Plagiarism","Falsification","Fabrication","Duplication"],e:"Plagiarism — чужие слова, идеи, код, изображения или данные без атрибуции."},
+{l:3,q:"Changing labels in a dataset without documenting the change is an example of:",o:["Falsification","Fabrication","Plagiarism","Hidden limits"],e:"Изменение реальных данных или процедур, вводящее в заблуждение."},
+{l:3,q:"Adding a person's name as author without a defensible contribution is called:",o:["Gift authorship","Duplication","Cherry-picking","Patchwriting"],e:"Gift (honorary) authorship искажает ответственность."},
+{l:3,q:"Describing a small convenience sample as representative is the questionable practice of:",o:["Hidden limits","Cherry-picking","Duplication","Fabrication"],e:"Hidden limits."},
+{l:3,q:"Reporting only the metric, run or subgroup that supports the claim is:",o:["Cherry-picking","Duplication","Gift authorship","Patchwriting"],e:"Cherry-picking."},
+{l:3,q:"The 'disclosure test' for questionable practices asks:",o:["Would a reasonable reader make a different decision if this were disclosed?","Is this practice legal?","Did a supervisor approve it?","Is the effect statistically significant?"],e:"Если раскрытие изменило бы решение читателя, практика вводит в заблуждение."},
+{l:3,q:"Which is the recommended repair for selective reporting of model runs?",o:["Define the reporting rule in advance and report mean and variation across repeated runs","Delete the unsuccessful runs","Report only the median run","Use a different dataset for each model"],e:"Repair: правило отчётности до выбора результата, mean и variation, один evaluation dataset, primary metric заранее, задокументированные исключения."},
+{l:3,q:"According to Lecture 3, bias is managed by:",o:["Making decisions visible (state expectations before, keep a decision log during, report limitations after)","Pretending to be completely neutral","Using only automated tools","Avoiding any prior reading"],e:"Reflexivity — не притворство нейтральности, а прозрачность решений."},
+{l:3,q:"'Informed consent is a process, not a signature.' Which is NOT one of its four elements in the lecture?",o:["Pay — participants must be compensated","Understand — purpose, tasks, risks and data use","Withdraw — clear route and practical limits","Ask — contact for questions or complaints"],e:"Четыре элемента: Understand, Choose (voluntary), Withdraw, Ask."},
+{l:3,q:"An interview file labelled P07 is stored separately from a key that links P07 to the participant's name. The data are:",o:["Confidential but not anonymous","Anonymous","Neither confidential nor anonymous","Public"],e:"Ключ связывает код с именем → личность известна команде → confidentiality, а не anonymity."},
+{l:3,q:"True or False: Using pseudonyms automatically makes data anonymous.",o:["True","False"],a:1,tf:1,e:"Неверно. Pseudonyms снижают риск, но не создают анонимность автоматически."},
+{l:3,q:"Anonymity means:",o:["Identity is not linked to the response, or the link has been irreversibly removed","The team knows the identity but controls access","Participants use nicknames","Data are stored in an encrypted folder"],e:"Anonymity — более сильное утверждение, чем confidentiality, и не всегда достижимо."},
+{l:3,q:"In the data lifecycle, the 'Collect' principle is:",o:["Collect only what the question needs","Collect as much as possible in case it is useful later","Collect only numerical data","Collect only after publication"],e:"Lifecycle: Collect (только нужное) → Store → Access → Retain → Delete/Share."},
+{l:3,q:"Which statement best reflects the rule 'Never promise a protection your workflow cannot deliver'?",o:["Consent forms must match what will actually happen to the data","Never promise anonymity in any study","Always store data in the cloud","Avoid writing a data management plan"],e:"Обещания в consent должны соответствовать реальному процессу хранения, доступа и удаления."},
+{l:3,q:"Online forum posts are publicly accessible. According to Lecture 3:",o:["Public access does not make ethical use simple; expectations, re-identification, platform terms and presentation must be considered","Public data can always be used without restriction","Only legal access matters","Usernames should always be published for transparency"],e:"Publicly accessible does not mean ethically simple. Legal access и ethical use — разные вопросы."},
+{l:3,q:"Why can an exact quotation from an online post be risky even after removing the username?",o:["The quotation can be searched online, re-identifying the author","Quotations are always copyrighted","It changes the meaning of the post","Databases do not index quotations"],e:"Sensitivity / re-identification: точную цитату можно найти поиском."},
+{l:3,q:"Your study changes after ethics approval. What should you do?",o:["Report the change and seek an amendment before proceeding","Continue, since approval was already granted","Mention it only in the limitations section","Start a new project"],e:"Change after approval → REPORT → seek amendment before proceeding."},
+{l:3,q:"Which is NOT one of the five lines of the ethics card?",o:["Budget","Data","Risk","Safeguard"],e:"Пять строк: Data, People, Risk, Safeguard, Evidence."},
+{l:3,q:"Which safeguard is 'operational' as Lecture 3 requires?",o:["Audio stored in an encrypted university folder, access limited to two named team members, key stored separately, deleted after the stated retention period","We will keep the data safe","Data will be handled responsibly","We will follow best practices"],e:"Safeguard должен быть конкретным: его можно выполнить и проверить."},
+{l:3,q:"'Verification answers existence. Evaluation answers…'",o:["quality and relevance","authorship","the DOI","the citation style"],e:"Verification — существует ли и правильно ли идентифицирован источник. Evaluation — качество и релевантность."},
+{l:3,q:"Matching title, authors, year and venue across records checks a source's:",o:["Identity","Fitness","Novelty","Impact"],e:"Identity: is it the same work? Traceability: can others find it? Fitness: can it support this claim?"},
+{l:3,q:"The 'fitness' check for a source means:",o:["Reading the method and results to see whether it can support your claim","Checking the DOI resolves","Checking the journal impact factor","Matching the author names"],e:"Fitness — читать method и results, а не только title/abstract."},
+{l:3,q:"The correct order of the verification ladder is:",o:["Read → Match → Resolve → Check → Open","Resolve → Read → Open → Match → Check","Open → Check → Match → Read → Resolve","Match → Read → Check → Resolve → Open"],e:"Read (title/abstract) → Match (publisher record) → Resolve (DOI/Crossref) → Check (corrections, retractions, version) → Open (method & result)."},
+{l:3,q:"Which can a DOI NOT prove?",o:["That the research method is sound","That the record is stable and resolvable","That metadata match","That versions can be distinguished"],e:"DOI — identifier, not a quality badge. Не доказывает sound method, ethical conduct, relevance, absence of later correction."},
+{l:3,q:"A legitimate-looking paper has no DOI. What follows?",o:["It may still be legitimate if it has a stable publisher or repository record","It must be fabricated","It cannot be cited under any circumstances","It is automatically grey literature"],e:"Missing DOI ≠ missing source."},
+{l:3,q:"If you cannot verify a source (it remains unresolved), you should:",o:["Not cite it as confirmed evidence","Cite it anyway if AI suggested it","Cite it with a made-up DOI","Cite only its abstract"],e:"If unresolved, do not cite it as confirmed evidence."},
+{l:3,q:"Replacing a few words while keeping the source's sentence structure is called:",o:["Patchwriting","Paraphrasing","Synthesis","Quoting"],e:"Patchwriting — может быть этапом обучения, но недопустимо в финальном тексте."},
+{l:3,q:"True or False: A good paraphrase in your own words and structure does not need a citation.",o:["True","False"],a:1,tf:1,e:"Неверно. Идея по-прежнему принадлежит источнику — нужна ссылка."},
+{l:3,q:"Combining multiple sources to support a new analytical point (agreement, contrast, gap) is:",o:["Synthesis","Paraphrase","Patchwriting","Quotation"],e:"Synthesis создаёт новую связь между источниками; источники при этом цитируются."},
+{l:3,q:"A literature review should be organised by:",o:["Ideas","A list of papers in alphabetical order","Publication year only","Database"],e:"A literature review is organised by ideas, not by a list of papers."},
+{l:3,q:"Technical assistance, access to equipment or language support that does not justify authorship should be:",o:["Recognised in the acknowledgements","Rewarded with co-authorship","Ignored","Listed as a conflict of interest"],e:"Acknowledgement — признание помощи, не дающей права на авторство."},
+{l:3,q:"Disclosing a conflict of interest (e.g. funding) means:",o:["Allowing the reader to evaluate the context — it is not automatically an accusation of wrongdoing","Admitting misconduct","The study must be withdrawn","The funder becomes a co-author"],e:"Раскрытие позволяет читателю оценить контекст."},
+{l:3,q:"Which AI use is described as DEFENSIBLE support?",o:["Generating search-term candidates","Citing sources you have not opened","Fabricating data or results","Uploading participant data without permission"],e:"Defensible: search terms, объяснение терминологии, грамматика после написания, оспорить аргумент, предложить проверки."},
+{l:3,q:"The 'NO SECRET DATA' rule of the AI verification contract means:",o:["No participant or protected data enters an unapproved tool","No generated reference enters the paper until opened","Required AI use is disclosed","No generated claim remains without evidence"],e:"Контракт: No source, No claim, No secret data, No hidden role."},
+{l:3,q:"The correct order of the Mendeley workflow is:",o:["Import → Verify → Organise → Read → Cite","Cite → Import → Read → Verify → Organise","Read → Cite → Import → Organise → Verify","Organise → Import → Cite → Verify → Read"],e:"Import (PDF, Web Importer, manual) → Verify metadata → Organise (collection, tags, notes) → Read/annotate → Cite in Word."},
+{l:3,q:"'Reference manager ≠ source verifier' means:",o:["If imported metadata are wrong, Mendeley will reproduce the error in every citation, so you must check metadata yourself","Mendeley cannot import PDFs","Mendeley verifies DOIs automatically","Reference managers are not allowed in Assignment 1"],e:"Автоматизация экономит время только после того, как запись очищена."},
+{l:3,q:"A useful Mendeley note should contain:",o:["Claim + evidence + limitation + possible use","Only the abstract copied in full","The journal's impact factor","The author's contact details"],e:"Note = claim + evidence + limitation + possible use. Теги — последовательно."},
+{l:3,q:"After inserting the bibliography with Mendeley Cite you should:",o:["Inspect every entry","Submit immediately","Delete the in-text citations","Convert it to plain text and delete the library"],e:"Insert bibliography, then inspect every entry: автоматика не гарантирует правильность."},
+
+// ---------- L4.1 ----------
+{l:4,q:"A literature review is defined as:",o:["A critical and purposive review of a body of knowledge including findings and theoretical and methodological contributions","A list of all sources found in a database","A summary of each article in chronological order","An analysis of policy documents as data"],e:"Определение O'Leary. Это argumentative writing, создающее «space» для вашего исследования."},
+{l:4,q:"The four areas of 'working with literature' are:",o:["Purpose, Sourcing, Managing, Reviewing","Search, Screen, Select, Extract","Import, Verify, Organise, Cite","Topic, Problem, Question, Objective"],e:"Purpose / Sourcing / Managing / Reviewing."},
+{l:4,q:"Grey literature refers to materials that:",o:["Do not have an ISBN or ISSN, such as conference papers, unpublished theses, newspaper articles and pamphlets","Are older than ten years","Are not peer reviewed journals with an ISSN","Are written in black and white"],e:"Grey literature — без ISBN/ISSN."},
+{l:4,q:"Why are journal articles central to literature reviews?",o:["They are generally peer reviewed, target academic audiences and are regularly produced, making them relevant and current","They are always free to access","They are longer than books","They never contain errors"],e:"Peer review + академическая аудитория + регулярность и специализация."},
+{l:4,q:"Why is the most contemporary research more likely to be found in journals than in books?",o:["Books have a lengthy production time","Books are not peer reviewed","Books cannot be cited","Libraries do not stock new books"],e:"Lengthy production time of books."},
+{l:4,q:"Dictionaries, thesauruses, encyclopaedias, almanacs and yearbooks are classed as:",o:["Writing aids","Grey literature","Official publications","Discipline-based reference materials"],e:"Writing aids помогают со стилем, проверкой фактов и ссылками на них."},
+{l:4,q:"Official publications, statistics and archives can serve as:",o:["Background/context and a source of primary or secondary data","Only background reading","Only writing aids","Replacements for the literature review"],e:"Контекст, обоснование, primary data (document analysis) или secondary data (statistical analysis)."},
+{l:4,q:"Which 'expert' does O'Leary say you should not overlook when searching for literature?",o:["Your university librarian","A commercial search consultant","Wikipedia editors","Journal publishers"],e:"Библиотекари — эксперты по поиску, часто subject specialists."},
+{l:4,q:"O'Leary's Google Scholar tip for finding journal articles when you don't know journal names is to:",o:["Type 'journal' in the Publication box of Advanced Search","Search only by author","Sort results by date","Use the NOT operator"],e:"Это ограничит поиск журналами со словом journal в названии. Заходите через сайт университета для полного доступа."},
+{l:4,q:"To NARROW a literature search, you can:",o:["Add additional keywords or a particular theorist","Remove keywords","Increase the time span","Use fewer variables"],e:"Добавление keywords (family background) или теоретика (Foucault) сужает поиск; удаление расширяет."},
+{l:4,q:"In the literature-search process, a Venn diagram is used to:",o:["Show the intersections of key concepts and where literature may be found","Rank articles by citation count","Draw the conceptual framework","Display survey results"],e:"Venn diagram показывает пересечения понятий; некоторые пересечения дают мало литературы."},
+{l:4,q:"'Fair dealing' and 'fair use' are terms used, respectively, in:",o:["Commonwealth countries and the US","The US and the UK","The EU and Australia","Academic and commercial publishing"],e:"Fair dealing — Commonwealth; fair use — US."},
+{l:4,q:"Under Australian fair dealing for study and non-commercial research, you can copy:",o:["5% or one chapter of a book","An entire textbook","Every article from one journal issue","Unlimited web material"],e:"Также: одну статью из номера, один доклад из proceedings, одно дело из law reports, тексты до 10 страниц, одну копию веб-материала."},
+{l:4,q:"The quickest way to assess the relevance of a journal article is to read its:",o:["Abstract or executive summary","Reference list","Acknowledgements","Full methodology section"],e:"Для книги — оглавление, аннотация, введение и выводы."},
+{l:4,q:"In O'Leary's sticky-note ranking system, a '3' means a reading is:",o:["Highly relevant","Minimally relevant","Somewhat relevant","Irrelevant"],e:"1 — minimally, 2 — somewhat, 3 — highly relevant."},
+{l:4,q:"Which is NOT one of the questions O'Leary suggests for assessing the quality of an article?",o:["Is the author famous?","Have researcher subjectivities been acknowledged and managed?","Are their methods approached with consistency?","Can the research be audited/verified?"],e:"Также: logical methods leading to valid/authentic truth; arguments relevant and appropriate."},
+{l:4,q:"Which bibliographic software is mentioned in Lecture 4.1?",o:["ProCite, Mendeley, EndNote, Reference Manager","SPSS, NVivo, R","Turnitin, Grammarly","Scopus, IEEE Xplore"],e:"Они форматируют ссылки в стилях Harvard, APA, Vancouver."},
+{l:4,q:"An annotated bibliography is:",o:["A list of citations with a brief descriptive and evaluative paragraph indicating the relevance, accuracy and quality of the cited sources","A bibliography sorted by date","The final reference list of a thesis","A list of keywords and synonyms"],e:"Определение из лекции."},
+{l:4,q:"Which set lists the key elements of an annotation in O'Leary's example?",o:["Citation, author/audience, summary, critical appraisal, relevance","Title, DOI, abstract, keywords","Question, method, data, results","Topic, problem, question, objective"],e:"Пример: «Conversations in the Kitchen» (O'Leary 2001a)."},
+{l:4,q:"In academic reviewing, the word 'critical' means:",o:["Informed and considered evaluation","Finding as many faults as possible","Negative opinion","Summarising without judgement"],e:"Не негатив, а взвешенная оценка: What did I really think of that and why?"},
+{l:4,q:"Which is one of the three purposes of the formal literature review?",o:["Establish researcher credibility","Collect primary data","Replace the methodology section","List every source on the topic"],e:"Три цели: inform readers of developments in the field; establish researcher credibility; argue the need for, and relevance of, the study."},
+{l:4,q:"Identifying 'gaps' in the literature mainly serves which purpose of the review?",o:["Arguing the need for, and relevance of, the study","Establishing copyright","Writing aids","Assessing relevance with sticky notes"],e:"Gaps показывают уместность и значимость research questions."},
+{l:4,q:"You plan to analyse policy documents and legislation as evidence. According to O'Leary, this belongs in:",o:["Your method and findings, not the literature review","Your literature review","Your acknowledgements","Your annotated bibliography only"],e:"Literature review — не document analysis."},
+{l:4,q:"In Table 6.1, 'Find potential gaps in the literature that may point to research questions' is a:",o:["Self-educative reason for reviewing the literature","Goal of the formal literature review","Copyright rule","Search Log field"],e:"Self-educative: inform yourself, form a foundation, develop critical thinking, find gaps, evaluate methods, develop own approaches."},
+{l:4,q:"In Table 6.1, 'Establish your credibility as a knowledgeable and capable researcher' is a:",o:["Goal of the formal literature review","Self-educative reason","Type of grey literature","Step of screening"],e:"Formal review: inform audience, establish credibility, argue relevance of question, provide context for method, argue appropriateness of approach."},
+{l:4,q:"Which of these IS plagiarism according to Lecture 4.1?",o:["Mentioning a source in your bibliography but not referencing it in the text","Paraphrasing an idea and citing the source","Quoting with quotation marks and a citation","Synthesising several cited sources"],e:"Также: cut and paste без ссылки, платить за написание, скачать работу, копировать у студента, пересказать чужую идею без ссылки, цитировать лекцию без указания спикера."},
+{l:4,q:"Why does cut-and-paste fail to produce a good literature review, beyond being wrong?",o:["There is no argument or driving message running through it","It is too long","It uses too many sources","It cannot be formatted in APA"],e:"Обзор должен быть custom piece, который аргументирует необходимость вашей работы."},
+{l:4,q:"O'Leary describes the literature review writing process as:",o:["Ongoing and cyclical — a moving target","A one-off task done after data collection","Something written only at the end","A purely descriptive summary"],e:"Обзор формирует вопрос, теорию и методы, а они задают рамки обзора."},
+{l:4,q:"To FOCUS (narrow) your literature review, O'Leary suggests you can:",o:["Add relevant variables and/or limit to studies from the past five or seven years","Increase the time span","Remove variables","Include all document types"],e:"Расширить — изменить/убрать переменные и увеличить период."},
+{l:4,q:"'Write purposefully' in a literature review means:",o:["Your audience should be able to identify the point of each section","Write as much as possible","Summarise each article separately","Use formal vocabulary throughout"],e:"Нельзя писать обзор без agenda."},
+{l:4,q:"'Use the literature to back up your arguments' means:",o:["Each paragraph should make a point supported by the literature","Borrow the arguments of others","Report each study's findings in order","Quote as much as possible"],e:"Используйте литературу, чтобы генерировать и поддерживать собственные аргументы."},
+{l:4,q:"True or False: Using literature 'as a primary source of data' should be part of the study's methodological design.",o:["True","False"],a:0,tf:1,e:"Верно. Документы тогда должны систематически собираться и анализироваться."},
+
+// ---------- L4.2 ----------
+{l:5,q:"What is the difference between a literature review and a conceptual framework?",o:["A literature review tells us what researchers have found; a conceptual framework shows which factors your project will examine and how you expect them to relate","They are the same thing","A conceptual framework is a list of references","A literature review contains the hypotheses"],e:"Framework — мост между чтением литературы и выбором research design."},
+{l:5,q:"Compared to a topic, a research model:",o:["Identifies a predictor, an outcome, and possibly a mechanism and a condition","Only names an area of interest","Is already proven true","Contains no variables"],e:"Model делает предположения видимыми до того, как исследователь увидит результаты."},
+{l:5,q:"What should control the conceptual framework?",o:["The research question (population, context, variables, relationship)","The software used for drawing","The most fashionable variables","The number of available datasets"],e:"Common mistake: сначала стрелки, потом вопрос. Нужно наоборот."},
+{l:5,q:"The three jobs of a conceptual framework are:",o:["Explain, Select, Predict","Search, Screen, Select","Define, Draw, Decorate","Collect, Store, Delete"],e:"Explain (связь с понятиями из литературы), Select (что входит/не входит), Predict (ожидаемое направление)."},
+{l:5,q:"Trust, usability and cognitive load are examples of:",o:["Constructs","Indicators","Control variables","Data types"],e:"Construct — абстрактная идея; variable — определённая характеристика; indicator — конкретное измерение."},
+{l:5,q:"In 'usability → perceived ease-of-use score → mean of six survey items', the 'mean of six survey items' is the:",o:["Indicator","Construct","Variable","Mediator"],e:"Indicator — реальный вопрос, балл, событие или измерение."},
+{l:5,q:"A defined characteristic that can differ across people, systems or observations is a:",o:["Variable","Construct","Indicator","Hypothesis"],e:"Variable."},
+{l:5,q:"In a model of AI assistant use → task completion time, 'task difficulty' is included because harder tasks take longer regardless of tool use. It is a:",o:["Control variable","Predictor","Outcome","Mediator"],e:"Control — правдоподобное альтернативное влияние; у него должна быть причина быть в модели."},
+{l:5,q:"'Low, medium and high confidence' is which type of variable?",o:["Ordinal","Categorical","Continuous","Count"],e:"Ordinal — упорядоченные категории с неопределённым шагом."},
+{l:5,q:"'Operating system used' is which type of variable?",o:["Categorical","Ordinal","Continuous","Count"],e:"Categorical — группы без числового расстояния."},
+{l:5,q:"'Number of commits' or 'number of security incidents' is which type of variable?",o:["Count","Ordinal","Categorical","Continuous"],e:"Count — события целыми числами."},
+{l:5,q:"'Latency in milliseconds' is which type of variable?",o:["Continuous","Count","Ordinal","Categorical"],e:"Continuous — числа со значимой разницей."},
+{l:5,q:"A strong operational definition names:",o:["The measure, unit, data source and observation conditions","Only the construct name","The author who invented the construct","The hypothesis direction"],e:"Пример: median debugging time в минутах от получения задачи до прохождения всех unit tests, записанное платформой."},
+{l:5,q:"Why is 'The system is effective' a poor outcome definition?",o:["'Effective' could mean faster, more accurate, easier, cheaper or more trusted, so it cannot be tested","It is too specific","It uses a continuous variable","It contains a mediator"],e:"Too vague: claim нельзя проверить, пока outcome не определён."},
+{l:5,q:"According to Lecture 4.2, a relationship (arrow) in a model should be supported by:",o:["Repeated evidence from previous studies and a reasoned mechanism","The researcher's intuition alone","A single blog post","Statistical software output"],e:"Evidence поддерживает стрелку, но не гарантирует результат в новом контексте."},
+{l:5,q:"With cross-sectional observational data, which wording is most appropriate?",o:["X is associated with Y","X causes Y","X determines Y","X proves Y"],e:"Язык гипотезы должен соответствовать силе дизайна."},
+{l:5,q:"Prior programming skill influences both AI assistant use and task completion time. Prior skill is therefore a potential:",o:["Confounder","Mediator","Indicator","Outcome"],e:"Confounder влияет и на predictor, и на outcome, создавая ложную связь."},
+{l:5,q:"A variable becomes a confounder because of:",o:["Its position in the causal story","A statistical program labelling it significant","Its data type","Being measured by survey"],e:"Именно поэтому связи рисуют до анализа."},
+{l:5,q:"Which is NOT one of the three rules for a useful research diagram?",o:["Include every possible real-world influence","Each node represents one clearly defined variable","Each arrow states an assumed direction justified in the text","The diagram shows the model for this study only (boundaries)"],e:"Nodes, Arrows, Boundaries. Перегруженная диаграмма = несфокусированный проект."},
+{l:5,q:"Who described graphical (causal) diagrams as a language for combining statistical and subject knowledge (1995)?",o:["Pearl","Davis","Kerr","Baron and Kenny"],e:"Pearl, 1995, Causal Diagrams for Empirical Research (Biometrika)."},
+{l:5,q:"The Technology Acceptance Model (TAM) was developed by:",o:["Davis (1989), MIS Quarterly","Pearl (1995), Biometrika","Kerr (1998)","Baron & Kenny (1986)"],e:"Davis разработал и валидировал шкалы perceived usefulness и perceived ease of use."},
+{l:5,q:"In TAM, perceived ease of use (PEOU):",o:["Predicts acceptance and also supports perceived usefulness","Is the same as perceived usefulness","Is the outcome variable","Has no relation to acceptance"],e:"PU и PEOU оба предсказывают acceptance; PEOU → PU."},
+{l:5,q:"A mediator answers which question?",o:["How or why does X relate to Y? (mechanism)","When or for whom does the relationship hold? (condition)","Which database to use?","What is the null hypothesis?"],e:"Mediator: assistant use → lower cognitive load → shorter completion time."},
+{l:5,q:"'The relationship between assistant use and completion time may be stronger for beginners than for experienced programmers.' Programming experience here is a:",o:["Moderator","Mediator","Control indicator","Outcome"],e:"Moderator меняет силу или направление связи (when / for whom)."},
+{l:5,q:"Who stressed in 1986 that 'mediator' and 'moderator' should not be used interchangeably?",o:["Baron and Kenny","Davis","Pearl","Kerr"],e:"Baron & Kenny, 1986, Journal of Personality and Social Psychology."},
+{l:5,q:"The four components of a testable hypothesis are:",o:["Variables, relationship, direction, boundary","Topic, problem, question, objective","Import, verify, organise, cite","Collect, store, access, retain"],e:"Variables с теми же названиями, что в framework; relationship; direction (если литература поддерживает); boundary (population/context)."},
+{l:5,q:"'Completion time will differ between students who use the assistant and those who do not.' This is a:",o:["Non-directional hypothesis","Directional hypothesis","Null hypothesis","Operational definition"],e:"Предсказывает различие, но не направление (faster/slower)."},
+{l:5,q:"When should you choose a directional hypothesis?",o:["When theory and prior evidence justify the expected direction","Always, because it is stronger","When the field has conflicting results","After seeing the results"],e:"A stronger prediction needs stronger justification. При противоречивых данных честнее non-directional."},
+{l:5,q:"The null hypothesis represents:",o:["No relationship or no difference in the statistical test","The researcher's expected relationship","The mediator","The operational definition"],e:"Research hypothesis — часть концептуального аргумента; null — часть логики статистического теста."},
+{l:5,q:"A student writes: 'p was above .05, therefore the variables have no relationship.' What is wrong?",o:["A non-significant result does not prove no relationship; power, noisy measurement or a small effect may explain it","Nothing — this is correct","p should be below .01","The null hypothesis was proven true"],e:"Интерпретация включает estimate, uncertainty и дизайн."},
+{l:5,q:"Falsifiability means:",o:["You can describe a result that would fail to support the prediction","The hypothesis has been proven false","The hypothesis can be explained by any result","The data were fabricated"],e:"Если любой исход можно объяснить как успех, гипотеза слишком гибкая."},
+{l:5,q:"Why is 'AI improves education' a weak hypothesis?",o:["Variables, population, type of improvement and evidence are unclear, and it sounds causal without a design","It is too specific","It is directional","It uses a moderator"],e:"Сильная версия: Among third-year programming students, higher weekly use… will be associated with shorter median debugging time across three controlled tasks."},
+{l:5,q:"'H4: Prior programming skill will moderate the relationship between assistant use and completion time' requires:",o:["An interaction analysis","Another simple correlation","No analysis","A literature review only"],e:"Moderation → interaction analysis."},
+{l:5,q:"In the worked example, H2 and H3 together represent:",o:["The possible mediating process through cognitive load","Moderation by prior skill","The null hypothesis","Control for task difficulty"],e:"H2: use → lower cognitive load; H3: lower load → shorter time."},
+{l:5,q:"Reliability concerns ___; validity concerns ___.",o:["consistency … meaning","meaning … consistency","speed … accuracy","sample size … significance"],e:"Reliability — стабильность; validity — отражает ли мера нужный construct."},
+{l:5,q:"'A stopwatch may be reliable even when it starts at the wrong moment.' This illustrates that:",o:["A measure can be consistent without measuring the right concept","Reliable measures are always valid","Stopwatches are invalid tools","Validity implies reliability"],e:"Мера может быть надёжной, но не валидной."},
+{l:5,q:"What is a key weakness of behavioural logs as an evidence source?",o:["They cannot explain the user's reason without additional evidence","They rely on memory","They cannot record timing","They only measure perceptions"],e:"Self-report — память и стиль ответов; performance task — может не отражать повседневное использование."},
+{l:5,q:"Triangulation means:",o:["Combining evidence sources because each answers a different part of the question","Collecting as much data as possible","Using three hypotheses","Drawing a triangle diagram"],e:"Не «больше данных без плана», а дополняющие источники."},
+{l:5,q:"HARKing stands for:",o:["Hypothesizing After the Results are Known","Hypothesis Analysis and Research Knowledge","Holding All Results Key","Highly Approved Research Knowledge"],e:"Kerr, 1998. Гипотеза, созданная после результатов, подаётся как заранее заданная."},
+{l:5,q:"Which practice protects against HARKing?",o:["Recording dated hypotheses before analysis and reporting unexpected patterns as exploratory","Rewriting hypotheses to match the results","Hiding unexpected findings","Avoiding hypotheses entirely"],e:"Separate confirmation and exploration."},
+{l:5,q:"For the Week 4 checkpoint, how many variables should the framework contain?",o:["Three to five","One","Ten or more","Exactly two"],e:"A clear three-variable model is stronger than a ten-variable diagram you cannot measure."},
+{l:5,q:"True or False: A missing arrow in a research diagram communicates nothing.",o:["True","False"],a:1,tf:1,e:"Неверно. Отсутствие стрелки говорит, что проект не моделирует прямую связь."}
+];
+
+const CARDS = [
+{l:1,t:"Research",d:"The systematic study of materials and sources in order to establish facts and reach new conclusions (OED).",r:"Систематическое изучение материалов и источников, чтобы установить факты и прийти к новым выводам."},
+{l:1,t:"Ontology",d:"The study of what exists, and how things that exist are understood and categorized.",r:"ЧТО реально / существует."},
+{l:1,t:"Epistemology",d:"How we come to have legitimate knowledge of the world; rules for knowing.",r:"КАК мы знаем."},
+{l:1,t:"Realism",d:"The external world exists independently of perception; the truth is out there whether we see it or not.",r:"Мир существует независимо от восприятия."},
+{l:1,t:"Empiricism",d:"All knowledge is limited to what can be observed through the senses. Cornerstone of scientific method.",r:"Знание только через органы чувств."},
+{l:1,t:"Positivism",d:"All true knowledge is scientific and is best pursued by scientific method.",r:"Истинное знание = научное."},
+{l:1,t:"Relativism",d:"No universals; truth, morals and culture can only be understood in their own socio-historic context.",r:"Нет универсалий, всё в контексте."},
+{l:1,t:"Social constructionism",d:"The world is constructed by human beings as they interact and engage in interpretation.",r:"Мир конструируется людьми."},
+{l:1,t:"Subjectivism",d:"Emphasizes subjective experience; personal experiences are the foundation for factual knowledge.",r:"Личный опыт — основа знания."},
+{l:1,t:"Qualitative / Quantitative / Mixed",d:"Qual: non-quantified words, images, observations (relativism, constructionism, subjectivism). Quant: numerical data (realism, empiricism, positivism). Mixed: both, valued independently of assumptions.",r:"Лучшего подхода нет — важно соответствие вопросу."},
+{l:1,t:"Methodology",d:"Macro-level frameworks offering principles of reasoning tied to paradigmatic assumptions, e.g. scientific method, ethnography, action research.",r:"Макро-уровень, стратегия и обоснование."},
+{l:1,t:"Methods vs Tools",d:"Methods: micro-level techniques to collect and analyse data (interviews, surveys, statistics). Tools: devices for collection (questionnaires, checklists, interview schedules).",r:"Методы = техники; инструменты = анкеты и т.п."},
+{l:1,t:"Methodological design",d:"The plan for conducting your research project that includes methodology, methods and tools.",r:"План проекта целиком."},
+{l:2,t:"Five tests of a research question",d:"Clear, Focused, Researchable, Feasible, Analytical.",r:"Ясный, сфокусированный, отвечаемый evidence, выполнимый, аналитический."},
+{l:2,t:"Research objective",d:"A precise action that shows what the study will examine or evaluate (use: compare, evaluate, examine, measure, explore, identify).",r:"Вопрос спрашивает, цель формулирует действие."},
+{l:2,t:"Question patterns",d:"Compare (A vs B on Y), Relate (X associated with Y), Evaluate (to what extent A improves Y), Explain (how users experience X).",r:"Четыре типа вопросов в IT."},
+{l:2,t:"Boolean AND / OR / NOT",d:"AND narrows (between concept groups). OR expands (within a synonym group). NOT excludes — use with caution.",r:"(synonym OR synonym) AND (synonym OR synonym)"},
+{l:2,t:"Query ladder",d:"Broad (learn vocabulary) → Balanced (capture variants) → Precise (target the method). Record all three; a failed query is evidence about scope.",r:"Три уровня запроса."},
+{l:2,t:"Search process",d:"Search → Screen → Select → Extract → Revise, documented in a Search Log.",r:"Итеративный и документированный."},
+{l:2,t:"Search Log fields",d:"Database, date, exact query, filters, result count, screening decision and notes.",r:"Чтобы другой мог повторить маршрут."},
+{l:2,t:"Screening layers",d:"Title → Abstract → Record (venue, year, authors, DOI) → Full text. Citation count cannot replace relevance.",r:"Include / exclude / uncertain + причина."},
+{l:3,t:"Fabrication",d:"Inventing data, participants, results or references that never existed.",r:"Выдумывание."},
+{l:3,t:"Falsification",d:"Changing, selecting or hiding data or procedures to misrepresent findings — includes misleading omission.",r:"Искажение реальных данных."},
+{l:3,t:"Plagiarism",d:"Using another person's words, ideas, code, images or data without clear attribution.",r:"Присвоение."},
+{l:3,t:"Questionable practices",d:"Cherry-picking, hidden limits, duplication, gift authorship. Test: would a reasonable reader decide differently if this were disclosed?",r:"Ниже явного мошенничества, но вводят в заблуждение."},
+{l:3,t:"Informed consent",d:"A process, not a signature: Understand, Choose (voluntary), Withdraw, Ask. Must match what will actually happen to the data.",r:"Competence, autonomy, voluntariness."},
+{l:3,t:"Confidentiality",d:"The research team can identify a participant but controls access and disclosure.",r:"Личность известна, доступ ограничен."},
+{l:3,t:"Anonymity",d:"Identity is not linked to the response, or the link has been irreversibly removed. Pseudonyms do not automatically create it.",r:"Личность не связана с ответом."},
+{l:3,t:"Data lifecycle",d:"Collect (only what the question needs) → Store → Access → Retain → Delete/Share.",r:"Не обещайте защиту, которую не можете обеспечить."},
+{l:3,t:"Verification vs evaluation",d:"Verification answers existence (identity, traceability). Evaluation answers quality and relevance (fitness).",r:"Реальная статья может быть слабой."},
+{l:3,t:"Verification ladder",d:"Read → Match → Resolve (DOI/Crossref) → Check (corrections, retractions, version) → Open (method & result).",r:"Пять шагов проверки источника."},
+{l:3,t:"DOI",d:"An identifier, not a quality badge: resolves a stable record, matches metadata, distinguishes versions; cannot prove sound method, ethics, relevance or absence of correction.",r:"Нет DOI ≠ нет источника."},
+{l:3,t:"Patchwriting",d:"Small word substitutions that retain the source's sentence structure — not acceptable as final prose.",r:"Copy → Patchwrite → Paraphrase → Synthesise."},
+{l:3,t:"Synthesis",d:"Combining multiple sources to support a new analytical point: agreement, contrast, development, limitation or gap.",r:"Обзор организуется по идеям, а не по списку статей."},
+{l:3,t:"AI verification contract",d:"No source (until opened), No claim (without evidence), No secret data (in unapproved tools), No hidden role (disclose use).",r:"Студент отвечает за каждое предложение."},
+{l:3,t:"Mendeley workflow",d:"Import → Verify → Organise → Read → Cite. Reference manager ≠ source verifier.",r:"Note = claim + evidence + limitation + possible use."},
+{l:4,t:"Literature review",d:"A critical and purposive review of a body of knowledge including findings and theoretical and methodological contributions.",r:"Аргументативный текст, создающий «space» для исследования."},
+{l:4,t:"Purposes of the formal review",d:"Inform readers of developments in the field; establish researcher credibility; argue the need for, and relevance of, the study (gaps).",r:"Три цели формального обзора."},
+{l:4,t:"Grey literature",d:"Published and unpublished materials without an ISBN or ISSN: conference papers, unpublished theses, newspaper articles, pamphlets/brochures.",r:"Без ISBN/ISSN."},
+{l:4,t:"Annotated bibliography",d:"A list of citations with a brief descriptive and evaluative paragraph indicating the relevance, accuracy and quality of the sources.",r:"Citation, author/audience, summary, critical appraisal, relevance."},
+{l:4,t:"'Critical' (in reviewing)",d:"Informed and considered evaluation — not negativity.",r:"What did I really think of that and why?"},
+{l:4,t:"Fair dealing / fair use",d:"Copyright exceptions in Commonwealth countries / the US. E.g. Australia: 5% or one chapter of a book, one article per journal issue.",r:"Правила разные в разных странах."},
+{l:4,t:"Literature review vs document analysis",d:"Analysing policy documents, legislation or protocols as data is document analysis — it belongs in method and findings, not the literature review.",r:"Не путать."},
+{l:5,t:"Conceptual framework",d:"Shows which factors your project will examine and how you expect them to relate. Three jobs: Explain, Select, Predict.",r:"Аргумент о логике исследования."},
+{l:5,t:"Construct → Variable → Indicator",d:"Construct: abstract idea (trust). Variable: defined characteristic that differs. Indicator: the actual question, score or measurement.",r:"usability → ease-of-use score → mean of six items"},
+{l:5,t:"Predictor / Outcome / Control",d:"Predictor (X) expected to relate to change; Outcome (Y) what the study explains; Control (C) a plausible alternative influence with a reason to be in the model.",r:"X → Y, C"},
+{l:5,t:"Variable types",d:"Categorical (OS), Ordinal (low/med/high), Continuous (latency), Count (errors, commits).",r:"Определить до сбора данных."},
+{l:5,t:"Operational definition",d:"Names the measure, unit, data source and observation conditions.",r:"Делает понятие проверяемым."},
+{l:5,t:"Confounder",d:"A variable that influences both predictor and outcome, producing a convincing but misleading association (e.g. prior skill).",r:"Определяется местом в причинной истории."},
+{l:5,t:"Mediator",d:"How or why? A mechanism between X and Y (assistant use → cognitive load → completion time).",r:"Механизм."},
+{l:5,t:"Moderator",d:"When or for whom? Changes the strength or direction of the X–Y relationship (stronger for beginners). Needs interaction analysis.",r:"Условие. Baron & Kenny, 1986."},
+{l:5,t:"Directional vs non-directional hypothesis",d:"Directional predicts the form (faster) — needs justification. Non-directional predicts a difference/relationship only.",r:"Выбрать до просмотра результатов."},
+{l:5,t:"Null hypothesis",d:"No relationship or no difference in the statistical test. A non-significant result does not prove no effect.",r:"p > .05 ≠ нет связи."},
+{l:5,t:"Reliability vs validity",d:"Reliability = consistency under comparable conditions. Validity = the measure represents the intended construct.",r:"Можно быть надёжным, но не валидным."},
+{l:5,t:"Triangulation",d:"Combining evidence sources (self-report, behavioural log, performance task) because each answers a different part of the question.",r:"Не «больше данных без плана»."},
+{l:5,t:"HARKing",d:"Hypothesizing After the Results are Known (Kerr, 1998): presenting a post hoc hypothesis as if planned.",r:"Записывать гипотезы до анализа."},
+{l:5,t:"TAM",d:"Technology Acceptance Model (Davis, 1989, MIS Quarterly): perceived usefulness and perceived ease of use predict user acceptance; ease of use also supports usefulness.",r:"PU, PEOU → USE"},
+{l:5,t:"Falsifiability",d:"You can describe a result that would fail to support the prediction.",r:"Если любой исход = успех, гипотеза слишком гибкая."}
+];
+
+/* ---------- storage (per-viewer convenience) ---------- */
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem("rm_"+k); return v==null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem("rm_"+k, JSON.stringify(v)); }catch(e){} }
+};
+Q.forEach((q,i)=>{ q.id = i; });
+
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const shuffle = a => { a = a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---------- views ---------- */
+function showView(v){
+  ["notes","quiz","cards"].forEach(n=>{
+    $("#view-"+n).hidden = n!==v;
+    $("#tab-"+n).setAttribute("aria-selected", n===v ? "true":"false");
+  });
+  store.set("view", v);
+  if(location.hash !== "#"+v){ try{ history.replaceState(null,"","#"+v); }catch(e){} }
+  window.scrollTo(0,0);
+}
+$$(".tab").forEach(b=>b.addEventListener("click",()=>showView(b.dataset.view)));
+
+function showLec(n){
+  $$("article.lec").forEach(a=>a.hidden = a.dataset.lec!==String(n));
+  $$(".lec-btn").forEach(b=>b.setAttribute("aria-current", b.dataset.lec===String(n) ? "true":"false"));
+  store.set("lec", n);
+}
+$$(".lec-btn").forEach(b=>b.addEventListener("click",()=>{ showLec(b.dataset.lec); window.scrollTo(0,0); }));
+
+/* ---------- quiz ---------- */
+const counts = {}; Q.forEach(q=>counts[q.l]=(counts[q.l]||0)+1);
+$("#lec-chips").innerHTML = Object.keys(LECS).map(k=>
+  `<label class="chip"><input type="checkbox" id="ql-${k}" value="${k}" checked> ${LECS[k].s} <span class="c">${counts[k]}</span></label>`).join("");
+
+let run = null;
+
+function renderHist(){
+  const best = store.get("best", {});
+  const last = store.get("last", null);
+  const mist = store.get("mist", []);
+  const parts = [];
+  if(last) parts.push(`Последняя попытка: <b>${last.c}/${last.n}</b> (${Math.round(100*last.c/last.n)}%)`);
+  const bl = Object.keys(LECS).filter(k=>best[k]!=null).map(k=>`${LECS[k].s} <b>${best[k]}%</b>`);
+  if(bl.length) parts.push("Лучший результат по лекциям: "+bl.join(" · "));
+  parts.push(mist.length ? `Сохранено ошибок для повтора: <b>${mist.length}</b>` : "Ошибок для повтора пока нет.");
+  $("#hist").innerHTML = parts.map(p=>`<span>${p}</span>`).join("");
+  $("#mist-btn").disabled = !mist.length;
+}
+
+function startQuiz(pool){
+  if(!pool.length) return;
+  run = { qs: pool.map(q=>({q, order: q.tf ? q.o.map((_,i)=>i) : shuffle(q.o.map((_,i)=>i))})), i:0, picks:[], correct:0 };
+  $("#quiz-setup").hidden = true; $("#quiz-done").hidden = true; $("#quiz-run").hidden = false;
+  showView("quiz");
+  renderQ();
+}
+
+function selectedLecs(){ return $$("#lec-chips input:checked").map(i=>+i.value); }
+
+$("#start-btn").addEventListener("click",()=>{
+  const ls = selectedLecs(); if(!ls.length){ $("#hist").innerHTML = "<span><b>Выберите хотя бы одну лекцию.</b></span>"; return; }
+  const c = (document.querySelector('input[name="qcount"]:checked')||{}).value || "25";
+  let pool = shuffle(Q.filter(q=>ls.includes(q.l)));
+  if(c!=="all") pool = pool.slice(0, +c);
+  startQuiz(pool);
+});
+$("#mist-btn").addEventListener("click",()=>{
+  const ids = store.get("mist", []);
+  startQuiz(shuffle(Q.filter(q=>ids.includes(q.id))));
+});
+$$("[data-start-lec]").forEach(b=>b.addEventListener("click",()=>{
+  const l = +b.dataset.startLec;
+  $$("#lec-chips input").forEach(i=>i.checked = +i.value===l);
+  startQuiz(shuffle(Q.filter(q=>q.l===l)));
+}));
+
+function correctIdx(q){ return q.a!=null ? q.a : 0; }
+
+function renderQ(){
+  const it = run.qs[run.i], q = it.q, n = run.qs.length;
+  $("#q-pos").textContent = `Вопрос ${run.i+1} из ${n}`;
+  $("#q-lec").textContent = LECS[q.l].s+" · "+LECS[q.l].t;
+  $("#q-score").textContent = `Верно: ${run.correct}`;
+  $("#q-bar").style.width = (100*run.i/n)+"%";
+  $("#q-text").textContent = q.q;
+  $("#q-opts").innerHTML = it.order.map((oi,k)=>
+    `<button class="opt" data-oi="${oi}"><span class="k">${k+1}</span><span>${esc(q.o[oi])}</span></button>`).join("");
+  $$("#q-opts .opt").forEach(b=>b.addEventListener("click",()=>pick(+b.dataset.oi)));
+  $("#q-exp").hidden = true;
+  $("#next-btn").disabled = true;
+  $("#next-btn").textContent = run.i===n-1 ? "Результаты" : "Дальше";
+}
+
+function pick(oi){
+  const it = run.qs[run.i], q = it.q;
+  if(run.picks[run.i]!=null) return;
+  const ok = oi===correctIdx(q);
+  run.picks[run.i] = oi; if(ok) run.correct++;
+  $$("#q-opts .opt").forEach(b=>{
+    const v = +b.dataset.oi; b.disabled = true;
+    if(v===correctIdx(q)) b.classList.add("right");
+    else if(v===oi) b.classList.add("wrong");
+  });
+  const ex = $("#q-exp");
+  ex.className = "explain "+(ok?"ok":"no");
+  ex.innerHTML = `<span class="verdict">${ok?"Верно":"Неверно. Правильный ответ: "+esc(q.o[correctIdx(q)])}</span><span>${esc(q.e)}</span>`;
+  ex.hidden = false;
+  $("#q-score").textContent = `Верно: ${run.correct}`;
+  $("#next-btn").disabled = false; $("#next-btn").focus();
+}
+
+$("#next-btn").addEventListener("click",()=>{
+  if(run.i < run.qs.length-1){ run.i++; renderQ(); window.scrollTo(0,0); } else finish();
+});
+$("#quit-btn").addEventListener("click",()=>{ if(run.picks.filter(p=>p!=null).length) finish(true); else backToSetup(); });
+
+function finish(partial){
+  const done = run.qs.map((it,i)=>({it, p:run.picks[i]})).filter(x=>x.p!=null);
+  const n = done.length, c = done.filter(x=>x.p===correctIdx(x.it.q)).length;
+  $("#quiz-run").hidden = true; $("#quiz-done").hidden = false;
+  $("#r-pct").textContent = Math.round(100*c/n)+"%";
+  $("#r-of").textContent = `${c} из ${n} верно`+(partial?" (тест завершён досрочно)":"");
+  // per lecture
+  const by = {};
+  done.forEach(x=>{ const l=x.it.q.l; by[l]=by[l]||{n:0,c:0}; by[l].n++; if(x.p===correctIdx(x.it.q)) by[l].c++; });
+  const best = store.get("best", {});
+  $("#r-bd").innerHTML = Object.keys(by).sort().map(l=>{
+    const p = Math.round(100*by[l].c/by[l].n);
+    if(by[l].n>=5) best[l] = Math.max(best[l]||0, p);
+    return `<div class="bd"><span>${LECS[l].s}</span><span class="bar2"><i style="width:${p}%"></i></span><span class="v">${by[l].c}/${by[l].n}</span></div>`;
+  }).join("");
+  store.set("best", best);
+  store.set("last", {c, n});
+  // mistakes: add wrong, remove now-correct
+  let mist = new Set(store.get("mist", []));
+  done.forEach(x=>{ if(x.p===correctIdx(x.it.q)) mist.delete(x.it.q.id); else mist.add(x.it.q.id); });
+  store.set("mist", [...mist]);
+  const wrong = done.filter(x=>x.p!==correctIdx(x.it.q));
+  run.wrong = wrong.map(x=>x.it.q);
+  $("#redo-btn").disabled = !wrong.length;
+  $("#r-mh").textContent = wrong.length ? `Ошибки (${wrong.length})` : "Ошибок нет";
+  $("#r-mist").innerHTML = wrong.map(x=>{ const q=x.it.q; return `<div><span class="hint">${LECS[q.l].s}</span><span class="q">${esc(q.q)}</span><span class="y">Ваш ответ: ${esc(q.o[x.p])}</span><span class="a">Правильно: ${esc(q.o[correctIdx(q)])}</span><span class="e">${esc(q.e)}</span></div>`; }).join("");
+  window.scrollTo(0,0);
+}
+function backToSetup(){ $("#quiz-run").hidden = true; $("#quiz-done").hidden = true; $("#quiz-setup").hidden = false; renderHist(); }
+$("#setup-btn").addEventListener("click", backToSetup);
+$("#again-btn").addEventListener("click",()=>{ backToSetup(); $("#start-btn").click(); });
+$("#redo-btn").addEventListener("click",()=>{ if(run && run.wrong && run.wrong.length) startQuiz(shuffle(run.wrong)); });
+
+/* ---------- flashcards ---------- */
+let fcLecs = new Set(Object.keys(LECS).map(Number)), fcDeck = [], fcI = 0;
+$("#card-chips").innerHTML = Object.keys(LECS).map(k=>{
+  const n = CARDS.filter(c=>c.l==k).length;
+  return `<label class="chip"><input type="checkbox" id="cl-${k}" value="${k}" checked> ${LECS[k].s} <span class="c">${n}</span></label>`;
+}).join("");
+function buildDeck(sh){ fcDeck = CARDS.filter(c=>fcLecs.has(c.l)); if(sh) fcDeck = shuffle(fcDeck); fcI = 0; renderCard(); }
+function renderCard(){
+  $("#fc").classList.remove("flip");
+  if(!fcDeck.length){ $("#fc-term").textContent="Выберите лекцию"; $("#fc-tag").textContent=""; $("#fc-pos").textContent="0 / 0"; return; }
+  const c = fcDeck[fcI];
+  $("#fc-tag").textContent = LECS[c.l].s+" · термин"; $("#fc-tag2").textContent = LECS[c.l].s+" · определение";
+  $("#fc-term").textContent = c.t; $("#fc-def").textContent = c.d; $("#fc-ru").textContent = c.r;
+  $("#fc-pos").textContent = `${fcI+1} / ${fcDeck.length}`;
+}
+$$("#card-chips input").forEach(i=>i.addEventListener("change",()=>{
+  fcLecs = new Set($$("#card-chips input:checked").map(x=>+x.value)); buildDeck(false);
+}));
+$("#fc").addEventListener("click",()=>$("#fc").classList.toggle("flip"));
+const fcStep = d => { if(!fcDeck.length) return; fcI = (fcI+d+fcDeck.length)%fcDeck.length; renderCard(); };
+$("#fc-next").addEventListener("click",()=>fcStep(1));
+$("#fc-prev").addEventListener("click",()=>fcStep(-1));
+$("#fc-shuf").addEventListener("click",()=>buildDeck(true));
+$$("[data-cards-lec]").forEach(b=>b.addEventListener("click",()=>{
+  const l = +b.dataset.cardsLec;
+  $$("#card-chips input").forEach(i=>i.checked = +i.value===l);
+  fcLecs = new Set([l]); buildDeck(false); showView("cards");
+}));
+
+/* ---------- keyboard ---------- */
+document.addEventListener("keydown",e=>{
+  if(e.target.matches("input, textarea")) return;
+  if(!$("#view-quiz").hidden && !$("#quiz-run").hidden){
+    const k = parseInt(e.key,10);
+    if(k>=1 && k<=6){ const b = $$("#q-opts .opt")[k-1]; if(b && !b.disabled){ b.click(); e.preventDefault(); } }
+    else if(e.key==="Enter" && !$("#next-btn").disabled && document.activeElement!==$("#next-btn")){ $("#next-btn").click(); e.preventDefault(); }
+  } else if(!$("#view-cards").hidden){
+    if(e.key==="ArrowRight") fcStep(1);
+    else if(e.key==="ArrowLeft") fcStep(-1);
+    else if(e.key===" " ){ $("#fc").classList.toggle("flip"); e.preventDefault(); }
+  }
+});
+
+/* ---------- init ---------- */
+renderHist();
+buildDeck(false);
+showLec(store.get("lec", 1));
+const h = (location.hash||"").slice(1);
+showView(["notes","quiz","cards"].includes(h) ? h : store.get("view","notes"));
+</script>
