@@ -1,0 +1,1967 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Computer Graphics · Тренажёр</title>
+<meta name="description" content="Computer Graphics Fundamentals (OKG 2214): конспекты лекций L1.1–L5.2, ключевое и подготовка к открытым вопросам мидтерма.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&family=Unbounded:wght@500;700&display=swap">
+<script>try{var t=(JSON.parse(localStorage.getItem("cfq:v1")||"{}")).theme;if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}</script>
+<style>
+/* Layout: same binder as Research Methods. Sticky tab bar; notes = lecture index + reading column;
+   open questions = filter bar + list of answer cards, or one-at-a-time practice card. */
+:root{
+  --paper:#F3F2F6; --card:#FFFFFF; --ink:#1A1622; --muted:#5E5869; --line:#DCD8E3;
+  --accent:#6B2FB3; --accent-ink:#FFFFFF; --accent-soft:#EEE6F8;
+  --mark:#F7E58A; --mark-ink:#1A1622;
+  --ok:#1F7A4A; --ok-soft:#E1F1E6; --mid:#9A6200; --mid-soft:#FBEFD6; --bad:#B03F36; --bad-soft:#F8E3E0;
+  --f-display:"Unbounded", "IBM Plex Sans", system-ui, sans-serif;
+  --f-body:"IBM Plex Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#121016; --card:#1B1820; --ink:#E9E5EF; --muted:#A39DAD; --line:#2E2A36;
+    --accent:#C3A2F2; --accent-ink:#140F1C; --accent-soft:#2A2140;
+    --mark:#5C5220; --mark-ink:#F4EDC8;
+    --ok:#6CC28E; --ok-soft:#183026; --mid:#E2B356; --mid-soft:#3A2E14; --bad:#E7847A; --bad-soft:#3A1E1B;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#121016; --card:#1B1820; --ink:#E9E5EF; --muted:#A39DAD; --line:#2E2A36;
+  --accent:#C3A2F2; --accent-ink:#140F1C; --accent-soft:#2A2140;
+  --mark:#5C5220; --mark-ink:#F4EDC8;
+  --ok:#6CC28E; --ok-soft:#183026; --mid:#E2B356; --mid-soft:#3A2E14; --bad:#E7847A; --bad-soft:#3A1E1B;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16.5px;line-height:1.6;padding-inline:16px;padding-block:0 64px}
+h1,h2,h3,h4{line-height:1.2;text-wrap:balance;margin:0}
+h1,h2{font-family:var(--f-display);font-weight:700;letter-spacing:-.01em}
+h3,h4{font-family:var(--f-body);font-weight:700}
+p{margin:0}
+a{color:var(--accent)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+mark{background:var(--mark);color:var(--mark-ink);padding:0 .15em;border-radius:2px}
+code,.mono{font-family:var(--f-mono);font-size:.86em}
+pre{margin:0;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px;overflow-x:auto;font-size:14px;line-height:1.5}
+pre code{font-size:13px}
+.wrap{max-width:1120px;margin-inline:auto}
+[hidden]{display:none!important}
+
+/* top bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--paper);border-bottom:1px solid var(--line);margin-inline:-16px;padding:10px 16px}
+.bar .wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.brand-btn{display:flex;align-items:center;gap:10px;background:none;border:0;padding:0;cursor:pointer;text-align:left;margin-right:auto}
+.brand-mark{width:34px;height:34px;border-radius:9px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font:700 13px/1 var(--f-mono);flex:none}
+.brand{display:flex;flex-direction:column;line-height:1.15}
+.brand b{font-family:var(--f-display);font-size:17px;font-weight:700}
+.brand span{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.back{font-size:14px;font-weight:600;text-decoration:none;color:var(--muted)}
+.back:hover{color:var(--accent)}
+.theme-btn{border:1px solid var(--line);background:none;border-radius:999px;padding:6px 14px;font-size:14px;cursor:pointer;white-space:nowrap}
+.theme-btn:hover{border-color:var(--muted)}
+.tabs{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px}
+.tab{border:0;background:none;padding:6px 16px;border-radius:999px;cursor:pointer;font-weight:600;font-size:15px;color:var(--muted);white-space:nowrap}
+.tab[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+.view{padding-top:28px}
+
+/* shared bits */
+.eyebrow,.h-eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.btn{border:1px solid var(--line);background:var(--card);padding:9px 18px;border-radius:8px;cursor:pointer;font-weight:600;font-size:15px}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.sub{color:var(--muted)}
+
+/* matrices: <span class="mx" data-m="a b;c d"> is expanded by script into a bracketed grid */
+.mx-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;overflow-x:auto;padding:2px 0}
+.mx{display:inline-grid;gap:2px 14px;padding:6px 10px;border-left:2px solid var(--ink);border-right:2px solid var(--ink);border-radius:6px;font-family:var(--f-mono);font-size:13.5px;line-height:1.35;text-align:center;background:var(--card)}
+.mx-eq{font-family:var(--f-mono);font-size:13.5px;color:var(--ink)}
+
+/* ---------- HOME ---------- */
+.h-hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:40px;padding-block:20px 32px;align-items:start}
+.h-hero h1{font-size:clamp(28px,4.4vw,48px);line-height:1.1;margin-top:16px}
+.h-hero h1 em{font-style:normal;color:var(--accent)}
+.h-lede{margin-top:18px;color:var(--muted);font-size:17.5px;max-width:34em}
+.h-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.h-btn{display:inline-flex;align-items:center;gap:10px;border:0;border-radius:999px;padding:12px 22px;font-weight:700;font-size:16px;cursor:pointer;background:var(--accent);color:var(--accent-ink)}
+.h-btn:hover{filter:brightness(1.08)}
+.h-btn.sec{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.h-btn.sec:hover{border-color:var(--muted);filter:none}
+.h-stats{display:flex;flex-wrap:wrap;gap:28px;margin-top:34px;padding-top:22px;border-top:1px solid var(--line)}
+.h-stat b{display:block;font-family:var(--f-display);font-size:30px;line-height:1;font-weight:700;font-variant-numeric:tabular-nums}
+.h-stat span{display:block;margin-top:6px;font-size:14px;color:var(--muted)}
+.h-map{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;min-width:0;box-shadow:0 1px 2px rgba(0,0,0,.05),0 8px 24px rgba(0,0,0,.05)}
+.h-map-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:2px 4px 12px}
+.h-map-head h2{font-family:var(--f-body);font-size:17px;font-weight:700;letter-spacing:0}
+.h-row{display:grid;grid-template-columns:52px minmax(0,1fr) 70px;gap:12px;align-items:center;padding:8px 6px;border-radius:8px;background:none;border:0;text-align:left;cursor:pointer;width:100%}
+.h-row:hover{background:var(--accent-soft)}
+.h-row .code{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--muted)}
+.h-row .name{font-size:14.5px;line-height:1.3;min-width:0}
+.h-row .name small{display:block;font-family:var(--f-mono);font-size:11px;color:var(--muted);margin-top:2px}
+.h-meter{display:block;height:6px;border-radius:99px;background:var(--paper);border:1px solid var(--line);overflow:hidden;position:relative}
+.h-meter i{position:absolute;inset:0 auto 0 0;background:var(--ok);border-radius:99px}
+.h-row .pct{display:block;font-family:var(--f-mono);font-size:11px;color:var(--muted);text-align:right;margin-top:4px;font-variant-numeric:tabular-nums}
+.h-section{padding-block:12px 24px}
+.h-section>.h-eyebrow{display:block;margin-bottom:10px}
+.h-section h2.big{font-size:clamp(22px,2.8vw,28px);margin-bottom:22px}
+.h-modes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.h-mode{display:flex;flex-direction:column;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;text-align:left;cursor:pointer;min-width:0;transition:border-color .15s,transform .15s}
+.h-mode:hover{border-color:var(--accent);transform:translateY(-2px)}
+.h-mode.featured{border-color:var(--accent);background:var(--accent-soft)}
+.h-mode.featured .h-chip{background:var(--card)}
+.h-mode .tag{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--accent);letter-spacing:.04em}
+.h-mode h3{font-size:20px}
+.h-mode p{color:var(--muted);font-size:15px;line-height:1.5}
+.h-facts{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+.h-chip{font-family:var(--f-mono);font-size:12px;line-height:1;padding:6px 9px;border-radius:99px;background:var(--paper);border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.h-mode .go{display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px solid var(--line);font-weight:700;font-size:15px}
+.h-info{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.h-box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.h-box h3{font-size:18px}
+.h-box ol,.h-box ul{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+.h-box .tbl{background:var(--paper)}
+@media (max-width:1080px){.h-modes{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:880px){.h-hero,.h-info{grid-template-columns:minmax(0,1fr);gap:28px}.h-hero{padding-block:8px 16px}}
+
+/* ---------- NOTES ---------- */
+.notes{display:grid;grid-template-columns:260px minmax(0,1fr);gap:40px;align-items:start}
+.lec-index{position:sticky;top:calc(env(safe-area-inset-top,0px) + 84px);display:flex;flex-direction:column;gap:2px}
+.lec-index .lbl{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:0 12px 8px}
+.lec-btn{display:grid;grid-template-columns:44px 1fr;gap:8px;align-items:baseline;text-align:left;border:0;background:none;padding:9px 12px;border-radius:8px;cursor:pointer;color:var(--ink)}
+.lec-btn .n{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.lec-btn .t{font-size:14.5px;line-height:1.3}
+.lec-btn:hover{background:var(--accent-soft)}
+.lec-btn[aria-current="true"]{background:var(--card);box-shadow:inset 3px 0 0 var(--accent)}
+.lec-btn[aria-current="true"] .n{color:var(--accent);font-weight:600}
+article.lec{max-width:780px;display:flex;flex-direction:column;gap:20px}
+.lec-head{display:flex;flex-direction:column;gap:10px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+.lec-head .eyebrow{color:var(--accent)}
+.lec-head h2{font-size:clamp(24px,3.4vw,32px)}
+.lede{color:var(--muted);font-size:17px}
+article.lec h3{font-size:21px;margin-top:12px;scroll-margin-top:90px}
+article.lec h4{font-size:17px}
+article.lec ul,article.lec ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+dl.defs{margin:0;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--r);background:var(--card);overflow:hidden}
+dl.defs>div{display:grid;grid-template-columns:190px minmax(0,1fr);gap:16px;padding:11px 16px;border-top:1px solid var(--line)}
+dl.defs>div:first-child{border-top:0}
+dl.defs dt{font-weight:700}
+dl.defs dt small{display:block;font-weight:400;color:var(--muted);font-size:13px}
+dl.defs dd{margin:0}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{text-align:left;vertical-align:top;padding:9px 14px;border-top:1px solid var(--line)}
+thead th{border-top:0;font-family:var(--f-mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--paper)}
+td:first-child{font-weight:600}
+.flow{list-style:none;padding:0!important;display:flex!important;flex-direction:row!important;flex-wrap:wrap;gap:8px!important;counter-reset:f}
+.flow li{counter-increment:f;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:14.5px;line-height:1.3;flex:1 1 130px;min-width:0}
+.flow li::before{content:counter(f);display:block;font-family:var(--f-mono);font-size:11px;color:var(--accent);font-weight:600}
+.flow li b{display:block}
+.remember{border-left:4px solid var(--mark);background:var(--card);padding:12px 16px;border-radius:0 var(--r) var(--r) 0}
+.remember .k{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:4px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.two>div{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.two h4{font-size:16.5px}
+.lec-foot{display:flex;gap:12px;flex-wrap:wrap;align-items:center;padding-top:18px;border-top:1px solid var(--line)}
+
+/* ---------- KEYS ---------- */
+.keys-wrap{max-width:840px;margin-inline:auto;display:flex;flex-direction:column;gap:24px}
+.keys-wrap>header{display:flex;flex-direction:column;gap:8px}
+.keys-wrap>header h2,.panel>header h2{font-size:clamp(24px,3vw,30px)}
+.keys-jump{display:flex;flex-wrap:wrap;gap:8px}
+.keys-jump a{font-family:var(--f-mono);font-size:13px;font-weight:600;text-decoration:none;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 14px;color:var(--ink)}
+.keys-jump a:hover{border-color:var(--accent);color:var(--accent)}
+.kblock{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;display:flex;flex-direction:column;gap:14px;scroll-margin-top:90px;min-width:0}
+.kblock h3{font-size:20px;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.kblock h3 .n{font-family:var(--f-mono);font-size:13px;color:var(--accent);font-weight:600}
+ul.klist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+ul.klist li{padding:9px 0 9px 22px;border-top:1px solid var(--line);position:relative;line-height:1.5}
+ul.klist li:first-child{border-top:0}
+ul.klist li::before{content:"";position:absolute;left:4px;top:18px;width:7px;height:7px;border-radius:2px;background:var(--accent)}
+.kblock .tbl,.kblock .mx{background:var(--paper)}
+.fgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.fcell{border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;background:var(--paper);min-width:0}
+.fcell b{font-size:14.5px}
+.fcell code{font-size:13px}
+.fcell .mx{background:var(--card)}
+
+/* ---------- OPEN QUESTIONS ---------- */
+.panel{max-width:860px;margin-inline:auto;display:flex;flex-direction:column;gap:18px}
+.panel>header{display:flex;flex-direction:column;gap:8px}
+.filters{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:14px}
+.f-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.f-lbl{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;min-width:72px}
+.chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:6px 12px;cursor:pointer;font-size:14px;user-select:none;white-space:nowrap}
+.chip input{accent-color:var(--accent);margin:0}
+.chip:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.chip .c{font-family:var(--f-mono);font-size:11.5px;color:var(--muted)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--paper)}
+.seg button{border:0;background:none;border-radius:999px;padding:6px 14px;font-weight:600;font-size:14px;cursor:pointer;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.linkbtn{background:none;border:0;padding:0;color:var(--accent);cursor:pointer;font-size:14px;font-weight:600}
+.oq-sum{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted)}
+.oq-sum b{color:var(--ink);font-variant-numeric:tabular-nums}
+.oq-list{display:flex;flex-direction:column;gap:12px}
+.oq{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.oq[data-rate="2"]{border-left:4px solid var(--ok)}
+.oq[data-rate="1"]{border-left:4px solid var(--mid)}
+.oq[data-rate="0"]{border-left:4px solid var(--bad)}
+.oq-top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.tagl{font-weight:600;color:var(--accent)}
+.star{color:var(--mid);font-weight:700}
+.oq-q{font-size:18px;font-weight:700;line-height:1.4}
+.oq-ru{color:var(--muted);font-size:15px}
+.oq details>summary{cursor:pointer;font-weight:600;color:var(--accent);list-style:none;display:inline-flex;align-items:center;gap:8px}
+.oq details>summary::-webkit-details-marker{display:none}
+.oq details>summary::before{content:"▸";font-size:12px;transition:transform .15s}
+.oq details[open]>summary::before{transform:rotate(90deg)}
+.ans{margin-top:12px;display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line);padding-top:12px}
+.ans ul,.ans ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:4px}
+.ans>div{display:flex;flex-direction:column;gap:8px}
+.ans pre{background:var(--paper)}
+.ans .mx{background:var(--paper)}
+.kw{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.kw .lbl{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-right:4px}
+.kw span.k{font-size:13px;padding:4px 9px;border-radius:99px;background:var(--accent-soft);color:var(--ink)}
+.rate{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.rate .lbl{font-size:13.5px;color:var(--muted);margin-right:4px}
+.rbtn{border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:5px 13px;font-size:14px;font-weight:600;cursor:pointer}
+.rbtn[data-r="2"]:hover,.rbtn[data-r="2"][aria-pressed="true"]{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.rbtn[data-r="1"]:hover,.rbtn[data-r="1"][aria-pressed="true"]{border-color:var(--mid);background:var(--mid-soft);color:var(--mid)}
+.rbtn[data-r="0"]:hover,.rbtn[data-r="0"][aria-pressed="true"]{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}
+.empty{background:var(--card);border:1px dashed var(--line);border-radius:14px;padding:28px;text-align:center;color:var(--muted)}
+.pcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:16px}
+.ptop{display:flex;justify-content:space-between;gap:12px;font-family:var(--f-mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+.prog{height:4px;background:var(--line);border-radius:4px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--accent);transition:width .25s}
+.pq{font-size:21px;font-weight:700;line-height:1.35}
+textarea{width:100%;min-height:150px;resize:vertical;border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--paper);color:var(--ink);font:inherit;font-size:15.5px;line-height:1.5}
+textarea:focus{outline:none;border-color:var(--accent)}
+.hint{font-size:13px;color:var(--muted)}
+.howto ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+.done-score{display:flex;gap:18px;flex-wrap:wrap}
+.done-score div{display:flex;flex-direction:column;gap:4px}
+.done-score b{font-family:var(--f-display);font-size:34px;line-height:1}
+.done-score .g b{color:var(--ok)} .done-score .m b{color:var(--mid)} .done-score .x b{color:var(--bad)}
+@media (prefers-reduced-motion: reduce){.prog i,.h-mode{transition:none}}
+
+@media (max-width:900px){
+  .notes{grid-template-columns:minmax(0,1fr);gap:20px}
+  .lec-index{position:static;flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:6px}
+  .lec-index .lbl{display:none}
+  .lec-btn{grid-template-columns:auto;flex:0 0 auto;max-width:220px;background:var(--card);border:1px solid var(--line)}
+  .lec-btn .t{font-size:13px}
+  .lec-btn[aria-current="true"]{box-shadow:none;border-color:var(--accent);background:var(--accent-soft)}
+}
+@media (max-width:620px){
+  body{font-size:16px}
+  .h-modes,.fgrid,.two{grid-template-columns:minmax(0,1fr)}
+  .brand-btn{flex:1 1 100%}
+  .theme-btn{margin-left:auto}
+  .h-row{grid-template-columns:44px minmax(0,1fr) 56px}
+  dl.defs>div{grid-template-columns:minmax(0,1fr);gap:4px}
+  .tabs{max-width:100%;overflow-x:auto}
+  .tab{padding:6px 11px;font-size:14px}
+  .kblock,.oq,.pcard{padding:16px}
+  .pq{font-size:18px}
+  .f-lbl{min-width:0;width:100%}
+}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <button class="brand-btn" type="button" id="brand" aria-label="Главная Computer Graphics">
+      <span class="brand-mark">CG</span>
+      <span class="brand"><b>Computer Graphics Fundamentals</b><span>OKG 2214 · мидтерм · лекции L1.1–L5.2</span></span>
+    </button>
+    <a class="back" href="../">← Все курсы</a>
+    <button class="theme-btn" type="button" id="theme-btn" aria-label="Переключить тему">Тема</button>
+    <nav class="tabs" role="tablist" aria-label="Разделы">
+      <button class="tab" role="tab" id="tab-home" data-view="home" aria-selected="true">Главная</button>
+      <button class="tab" role="tab" id="tab-notes" data-view="notes" aria-selected="false">Конспекты</button>
+      <button class="tab" role="tab" id="tab-keys" data-view="keys" aria-selected="false">Ключевое</button>
+      <button class="tab" role="tab" id="tab-open" data-view="open" aria-selected="false">Open questions</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ============ HOME ============ -->
+<section class="view" id="view-home">
+  <div class="h-hero">
+    <div>
+      <span class="h-eyebrow">Computer Graphics Fundamentals · Midterm</span>
+      <h1>Десять лекций, <span id="h-q1">—</span> открытых вопросов. <em>Пиши ответ, сверяй с образцом.</em></h1>
+      <p class="h-lede">Мидтерм в формате open questions, поэтому здесь не тест с вариантами, а вопросы, на которые надо ответить своими словами. К каждому вопросу есть образец ответа на английском, список того, что обязательно упомянуть, и суть по-русски. Плюс подробные конспекты и выжимка с формулами.</p>
+      <div class="h-actions">
+        <button class="h-btn" type="button" id="h-practice">Тренировка: 10 вопросов <span aria-hidden="true">→</span></button>
+        <button class="h-btn sec" type="button" data-go="keys">Ключевое и формулы</button>
+      </div>
+      <div class="h-stats">
+        <div class="h-stat"><b>10</b><span>лекций в конспектах</span></div>
+        <div class="h-stat"><b id="h-q">—</b><span>открытых вопросов с ответами</span></div>
+        <div class="h-stat"><b id="h-ready">—</b><span>готовность (оценки «знаю»)</span></div>
+      </div>
+    </div>
+    <aside class="h-map" aria-label="Карта курса">
+      <div class="h-map-head"><h2>Карта курса</h2><span class="h-eyebrow">готовность</span></div>
+      <div id="h-map"></div>
+    </aside>
+  </div>
+
+  <div class="h-section">
+    <span class="h-eyebrow">Режимы</span>
+    <h2 class="big">Как готовиться</h2>
+    <div class="h-modes">
+      <button class="h-mode featured" type="button" data-go="open" data-omode="practice">
+        <span class="tag">PRACTICE</span>
+        <h3>Тренировка</h3>
+        <p>По одному вопросу: пишешь ответ, открываешь образец, честно оцениваешь себя. Черновики сохраняются.</p>
+        <span class="h-facts"><span class="h-chip">свой ответ</span><span class="h-chip">самооценка</span></span>
+        <span class="go">Начать <span aria-hidden="true">→</span></span>
+      </button>
+      <button class="h-mode" type="button" data-go="open" data-omode="list">
+        <span class="tag">OPEN QUESTIONS</span>
+        <h3>Все вопросы</h3>
+        <p>Список с фильтром по лекциям, ★ вероятным темам и оценке. Ответ раскрывается по клику.</p>
+        <span class="h-facts"><span class="h-chip" id="h-q2">— вопросов</span><span class="h-chip" id="h-star">★ —</span></span>
+        <span class="go">Открыть <span aria-hidden="true">→</span></span>
+      </button>
+      <button class="h-mode" type="button" data-go="keys">
+        <span class="tag">KEY POINTS</span>
+        <h3>Ключевое</h3>
+        <p>Главное по каждой лекции, что путают, и шпаргалка: матрицы, проекции, Phong.</p>
+        <span class="h-facts"><span class="h-chip">10 лекций</span><span class="h-chip">формулы</span></span>
+        <span class="go">Читать <span aria-hidden="true">→</span></span>
+      </button>
+      <button class="h-mode" type="button" data-go="notes">
+        <span class="tag">NOTES</span>
+        <h3>Конспекты</h3>
+        <p>Подробно по слайдам: определения, код OpenGL/GLSL, матрицы и схемы pipeline.</p>
+        <span class="h-facts"><span class="h-chip">L1.1–L5.2</span><span class="h-chip">EN-термины</span></span>
+        <span class="go">Читать <span aria-hidden="true">→</span></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="h-section">
+    <span class="h-eyebrow">Формат</span>
+    <h2 class="big">Как отвечать на open question</h2>
+    <div class="h-info">
+      <div class="h-box howto">
+        <h3>Структура ответа</h3>
+        <ol>
+          <li><b>Define.</b> Одно предложение-определение термина из вопроса.</li>
+          <li><b>Explain how / why.</b> Как работает и зачем нужно (2–4 предложения).</li>
+          <li><b>Formula, matrix or code.</b> Если есть формула, матрица или функция OpenGL, напиши её.</li>
+          <li><b>Example.</b> Короткий пример: color cube, Sierpinski gasket, LookAt.</li>
+          <li><b>Compare.</b> Если вопрос «compare / difference», сделай пары по одним и тем же критериям, можно таблицей.</li>
+        </ol>
+        <p class="sub">Образцы ответов написаны на английском, как и слайды. Блок «Обязательно упомянуть» = термины, за которые обычно дают баллы.</p>
+      </div>
+      <div class="h-box">
+        <h3>Курс и оценивание</h3>
+        <div class="tbl"><table>
+          <thead><tr><th>1st attestation</th><th>Баллы</th></tr></thead>
+          <tbody>
+            <tr><td>Assignment 1 (week 2)</td><td>7 · written report</td></tr>
+            <tr><td>Assignment 2 (week 4)</td><td>7 · written report</td></tr>
+            <tr><td>Midterm (week 5)</td><td>21</td></tr>
+          </tbody>
+        </table></div>
+        <p class="sub">Итог: 0.3 · 1st Att + 0.3 · 2nd Att + 0.4 · Final (final project, week 10). Лектор: Kamila Batkuldinova. Учебник: Angel &amp; Shreiner, Interactive Computer Graphics 6E.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NOTES ============ -->
+<section class="view" id="view-notes" hidden>
+<div class="notes">
+  <nav class="lec-index" aria-label="Лекции" id="lec-index"></nav>
+  <div>
+
+<!-- L1.1 -->
+<article class="lec" data-lec="1.1">
+  <div class="lec-head">
+    <span class="eyebrow">Week 1 · Lecture 1.1</span>
+    <h2>Introduction &amp; Image Formation</h2>
+    <p class="lede">Что такое курс, как формируется изображение (свет, цвет, восприятие), synthetic camera model, почему не ray tracing, и архитектура графической системы: pipeline.</p>
+  </div>
+
+  <h3>Курс</h3>
+  <p>Top-down подход, <b>shader-based OpenGL</b>, совместимый с OpenGL 3.1+, OpenGL ES 2.0 и WebGL. Нужны программирование, структуры данных, геометрия и <b>linear algebra</b> (векторы и матрицы). Каждую неделю programming assignments (written reports), в конце final project в формате research paper. Ресурсы: learnopengl.com, OpenGL Programmer's Guide 9th ed. (OpenGL 4.5), OpenGL Shading Language 3rd ed., GLUT/freeglut и GLEW.</p>
+
+  <h3>Image formation</h3>
+  <p>В компьютерной графике мы формируем (обычно 2D) изображения процессом, похожим на физические системы: <b>cameras, microscopes, telescopes, human visual system</b>.</p>
+  <div class="remember"><span class="k">Elements of image formation</span><b>Objects · Viewer · Light source(s) · Attributes</b> (как свет взаимодействует с материалом). Важна <mark>независимость</mark> объектов, наблюдателя и источников света.</div>
+
+  <h3>Свет и цвет</h3>
+  <p><b>Light</b> = часть электромагнитного спектра, на которую реагирует зрение: примерно <b>350–750 nm</b>. Длинные волны выглядят красными, короткие синими (violet 388–440, blue 440–490, green 490–565, yellow 565–590, orange 590–630, red 630–780 nm). Спектр описывается <i>spectral energy distribution</i>: белый (все волны), серый (меньше энергии), лазер (одна волна).</p>
+  <div class="two">
+    <div><h4>Luminance image</h4><p>Монохромное: значения = уровни серого, как ч/б плёнка или ТВ.</p></div>
+    <div><h4>Color image</h4><p>Перцептивные атрибуты: <b>hue, saturation, lightness</b>. Совпадать по каждой частоте спектра <b>не нужно</b>.</p></div>
+  </div>
+  <h4>Three-color theory</h4>
+  <p>В глазу два типа сенсоров: <b>rods</b> (монохромные, ночное зрение) и <b>cones</b> (цветовые, <b>три типа</b>). В мозг идут только три числа, <mark>tristimulus values</mark>, поэтому достаточно совпасть по трём значениям, то есть хватает <b>трёх primary colors</b>.</p>
+
+  <h4>Цветовые модели</h4>
+  <div class="tbl"><table>
+    <thead><tr><th>Модель</th><th>Как получается цвет</th><th>Где</th></tr></thead>
+    <tbody>
+      <tr><td>Additive (RGB)</td><td>Складываем свет трёх primaries R, G, B. Пространство = <b>RGB color cube</b></td><td>CRT, мониторы, проекторы, positive film. ТВ использует похожую кодировку <b>YIQ</b></td></tr>
+      <tr><td>Subtractive (CMY)</td><td>Фильтруем белый свет фильтрами Cyan, Magenta, Yellow. Cyan поглощает red и отражает green+blue; blue = cyan (убирает red) + magenta (убирает green)</td><td>Печать (hardcopy), negative film, взаимодействие свет–материал</td></tr>
+      <tr><td>HSB / HSV</td><td><b>Hue</b> в градусах по конусу (red 0/360, yellow 60, green 120); <b>Saturation</b> 0–100% от центра к поверхности (при 0% hue не имеет смысла); <b>Brightness</b> 0 (чёрный) – 100 (белый)</td><td>Интуитивный выбор цвета</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Ray tracing и synthetic camera</h3>
+  <p><b>Ray tracing</b>: прослеживаем лучи от источника и смотрим, какие попадают в линзу. Но каждый луч может много раз взаимодействовать с объектами. <b>Global vs local lighting</b>: цвет объекта нельзя посчитать независимо, потому что объекты загораживают свет, отражают его друг на друга и бывают полупрозрачными.</p>
+  <p><b>Synthetic camera model</b>: от точки <i>p</i> идёт <b>projector</b> к <b>center of projection</b>; пересечение с <b>image plane</b> = проекция <i>p</i>. Геометрия проецируется на плоскость, точка закрашивается по локальной информации (<b>local lighting</b>).</p>
+  <div class="remember"><span class="k">Pinhole camera</span>Точка (x, y, z), плёнка на расстоянии d: <code>xp = −x/(z/d), yp = −y/(z/d), zp = d</code>. Это уравнения <b>simple perspective</b> (подобные треугольники).</div>
+  <h4>Почему local lighting удобно</h4>
+  <ul>
+    <li>объекты, наблюдатель и свет разделены;</li>
+    <li>2D-графика — частный случай 3D;</li>
+    <li>простой API: задаём objects, lights, camera, attributes, а изображение строит реализация;</li>
+    <li>быстрая аппаратная реализация, <b>pipelined и parallel</b> вычисления.</li>
+  </ul>
+  <h4>Why not ray tracing?</h4>
+  <p>Для простых объектов (полигоны, quadrics) и точечных источников он несложен и даёт глобальные эффекты (тени, многократные отражения), но <b>медленный</b> и плохо подходит для интерактивных приложений. Железо для ray tracing (Pixel Machines) не выжило на рынке; на современных GPU ray tracing близок к real time.</p>
+
+  <h3>Models and Architectures</h3>
+  <p>API должен задать только <b>objects, materials, viewer, lights</b>. Как его реализовать?</p>
+  <div class="two">
+    <div><h4>Physical approaches</h4><p><b>Ray tracing</b>: следим за лучами от COP, пока они не поглотятся или не уйдут в бесконечность. Глобальные эффекты есть, но медленно и нужна <b>вся база объектов</b> сразу. <b>Radiosity</b>: подход через перенос энергии, очень медленный.</p></div>
+    <div><h4>Practical approach</h4><p>Обрабатываем объекты <b>по одному</b> в порядке генерации приложением, только <b>local lighting</b>. <b>Pipeline architecture</b>: все шаги в железе на видеокарте.</p></div>
+  </div>
+  <h4>Graphics pipeline</h4>
+  <ol class="flow">
+    <li><b>Vertex processing</b>object → camera → screen coords; каждая смена координат = матрица; цвета вершин</li>
+    <li><b>Clipping &amp; primitive assembly</b>вершины собираются в отрезки, полигоны; всё вне view volume отсекается</li>
+    <li><b>Rasterization</b>для каждого объекта набор <b>fragments</b>; атрибуты вершин интерполируются</li>
+    <li><b>Fragment processing</b>цвет пикселя (texture или интерполяция), <b>hidden-surface removal</b></li>
+  </ol>
+  <dl class="defs">
+    <div><dt>Projection</dt><dd>Объединяет 3D-вид с 3D-объектами в 2D-изображение. <b>Perspective</b>: все projectors сходятся в center of projection (как фото). <b>Parallel</b>: projectors параллельны, вместо COP — direction of projection; хорошо передаёт форму и размеры.</dd></div>
+    <div><dt>Fragment</dt><dd>«Potential pixel»: позиция в frame buffer + color и depth. Может быть закрыт более близким фрагментом.</dd></div>
+    <div><dt>Clipping</dt><dd>Виртуальная камера, как настоящая, видит только часть мира; объекты вне объёма <i>clipped out</i>.</dd></div>
+  </dl>
+
+  <h3>API</h3>
+  <ul>
+    <li><b>Objects</b>: ограниченный набор primitives — points (0D), line segments (1D), polygons (2D), некоторые curves и surfaces (quadrics, parametric polynomials). Всё задаётся через <b>vertices</b>.</li>
+    <li><b>Camera</b>: <b>6 degrees of freedom</b> (позиция центра линзы + ориентация), lens, film size, ориентация film plane.</li>
+    <li><b>Lights</b>: point vs distributed, spot lights, near/far, цвет. <b>Materials</b>: absorption (цвет), scattering (diffuse, specular).</li>
+    <li>Также ввод с устройств (мышь, клавиатура) и возможности системы.</li>
+  </ul>
+  <div class="two">
+    <div><h4>Old style</h4><pre><code>glBegin(GL_POLYGON);
+glVertex3f(0.0, 0.0, 0.0);
+glVertex3f(0.0, 1.0, 0.0);
+glVertex3f(0.0, 0.0, 1.0);
+glEnd();</code></pre></div>
+    <div><h4>GPU based</h4><pre><code>vec3 points[3];
+points[0] = vec3(0.0, 0.0, 0.0);
+points[1] = vec3(0.0, 1.0, 0.0);
+points[2] = vec3(0.0, 0.0, 1.0);
+// send array to GPU,
+// render as triangle</code></pre></div>
+  </div>
+  <div class="lec-foot"><button class="btn primary" data-oq-lec="1.1">Open questions L1.1 →</button></div>
+</article>
+
+<!-- L1.2 -->
+<article class="lec" data-lec="1.2">
+  <div class="lec-head">
+    <span class="eyebrow">Week 1 · Lecture 1.2</span>
+    <h2>Programming with OpenGL: Background &amp; Complete Programs</h2>
+    <p class="lede">Immediate vs retained mode, история API до OpenGL, версии OpenGL, библиотеки (GLUT, GLEW), OpenGL как state machine, формат функций, структура программы, VAO и buffer objects, системы координат.</p>
+  </div>
+
+  <h3>Immediate vs Retained mode</h3>
+  <div class="two">
+    <div><h4>Immediate</h4><ul><li>геометрия рисуется, когда CPU отправляет её на GPU</li><li>всё надо слать заново, даже если ничего не изменилось</li><li>после отрисовки на GPU удаляется</li><li>большой bandwidth CPU↔GPU, мало памяти GPU</li></ul></div>
+    <div><h4>Retained</h4><ul><li>геометрия отправляется на GPU и <b>хранится</b></li><li>показывается по команде CPU</li><li>CPU может слать только трансформации</li><li>мало передач, но GPU нужно много памяти</li></ul></div>
+  </div>
+
+  <h3>История API</h3>
+  <ol class="flow">
+    <li><b>IFIPS 1973</b>два комитета: GKS (2D, ISO/ANSI в 80-х) и Core (2D+3D)</li>
+    <li><b>PHIGS</b>из CAD, database model, retained graphics (structures)</li>
+    <li><b>X Window</b>DEC/MIT, client–server; PEX = PHIGS+X, неудобный</li>
+    <li><b>SGI GL 1982</b>pipeline в железе, 3D-интерактив стал простым</li>
+    <li><b>OpenGL 1992</b>platform-independent, близко к железу, только rendering</li>
+  </ol>
+  <p>OpenGL <mark>не включает windowing и input</mark>, чтобы не зависеть от оконной системы. Изначально immediate mode, позже добавил retained. Управлялся <b>ARB</b> (SGI, Microsoft, Nvidia, HP, 3DLabs, IBM…), теперь <b>Khronos Group</b>. До версии 2.5 стабилен и backward compatible; новые возможности железа (3D textures, vertex и fragment programs) приходили через <b>extensions</b>.</p>
+
+  <h3>Modern OpenGL</h3>
+  <p>Производительность за счёт <b>GPU</b>, которым управляют программы-<b>shaders</b>. Работа приложения — отправить данные на GPU; рендерит GPU.</p>
+  <div class="remember"><span class="k">OpenGL 3.1 (2009)</span>Полностью <b>shader-based</b>: нет default shaders, каждое приложение даёт <b>vertex и fragment shader</b>. Нет immediate mode, мало state variables, большинство функций 2.5 <b>deprecated</b> (помечены устаревшими, чтобы постепенно убрать). Backward compatibility не обязательна.</div>
+  <dl class="defs">
+    <div><dt>OpenGL ES</dt><dd>Для embedded systems. 1.0 ≈ упрощённый 2.1; <b>2.0 ≈ упрощённый 3.1</b> (shader based); 3.0 ≈ упрощённый 4.3.</dd></div>
+    <div><dt>WebGL</dt><dd>JavaScript-реализация ES 2.0 в браузерах.</dd></div>
+    <div><dt>OpenGL 4.1–4.5</dt><dd>Добавили geometry и compute shaders и tessellator.</dd></div>
+    <div><dt>DirectX</dt><dd>Только Windows. Плюсы: лучше контроль ресурсов, высокоуровневые функции. Минусы: новые версии не backward compatible, только Windows. Шейдеры сближают его с OpenGL.</dd></div>
+  </dl>
+
+  <h3>Библиотеки</h3>
+  <dl class="defs">
+    <div><dt>GL (core)<small>OpenGL32 / libGL</small></dt><dd>Основная библиотека.</dd></div>
+    <div><dt>GLU</dt><dd>Utility library поверх core, чтобы не переписывать код; работает только с legacy-кодом.</dd></div>
+    <div><dt>GLX / WGL / AGL</dt><dd>Связь с оконной системой: X Window / Windows / Macintosh.</dd></div>
+    <div><dt>GLUT</dt><dd>Общая для всех окон функциональность: открыть окно, ввод с мыши и клавиатуры, меню, event-driven. Переносим, но нет slide bars и других виджетов.</dd></div>
+    <div><dt>freeglut</dt><dd>Обновлённый GLUT: новые возможности, context checking (часть старого GLUT требует deprecated-функций).</dd></div>
+    <div><dt>GLEW</dt><dd>Extension Wrangler: простой доступ к extensions системы; <code>#include &lt;GL/glew.h&gt;</code> и <code>glewInit()</code>.</dd></div>
+  </dl>
+
+  <h3>OpenGL как state machine</h3>
+  <p>Группы функций: primitives (points, line segments, triangles), attributes, data transfer &amp; control (color, transformation, lighting), control и input (GLUT), query. Два типа функций:</p>
+  <div class="two">
+    <div><h4>Primitive generating</h4><p>Могут дать вывод, если примитив виден. Как обрабатываются вершины и как выглядит примитив, определяет <b>state</b>.</p></div>
+    <div><h4>State changing</h4><p>Transformation и attribute функции. В 3.1 большинство state variables задаёт приложение и шлёт в шейдеры.</p></div>
+  </div>
+  <p>OpenGL <b>не объектно-ориентированный</b>, поэтому у одной логической функции много версий: <code>glUniform3f</code>, <code>glUniform2i</code>, <code>glUniform3dv</code>.</p>
+  <div class="remember"><span class="k">Формат имени</span><code>glUniform3fv(p)</code>: <b>gl</b> — библиотека GL, <b>Uniform</b> — имя, <b>3</b> — размерность, <b>f</b> — float, <b>v</b> — p указатель на массив. Константы в gl.h/glu.h/glut.h: <code>GL_DEPTH_TEST</code>, <code>GL_COLOR_BUFFER_BIT</code>; типы <code>GLfloat</code>, <code>GLdouble</code>.</div>
+  <p>Shader-based OpenGL — скорее <b>data flow</b>, чем state machine: действие происходит в шейдерах. <b>GLSL</b> — C-подобный язык с vector/matrix типами, перегрузкой операторов, C++-конструкторами (как Cg и HLSL); шейдеры передаются как исходный код и компилируются.</p>
+
+  <h3>Структура программы</h3>
+  <ul>
+    <li><b>main()</b> — задаёт callbacks, открывает окна, входит в event loop (последний оператор).</li>
+    <li><b>init()</b> — state variables (viewing, attributes), VAO, buffers, clear color.</li>
+    <li><b>initShader()</b> — read, compile, link shaders.</li>
+    <li><b>callbacks</b> — display, input, window functions.</li>
+  </ul>
+  <pre><code>int main(int argc, char** argv){
+  glutInit(&amp;argc, argv);                        // init + command line
+  glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);  // window properties (ORed)
+  glutInitWindowSize(500, 500);                 // pixels
+  glutInitWindowPosition(0, 0);                 // from top-left of display
+  glutCreateWindow("simple");
+  glutDisplayFunc(mydisplay);                   // display callback
+  glewInit();
+  init();                                       // state + shaders
+  glutMainLoop();                               // infinite event loop
+}
+void mydisplay(){
+  glClear(GL_COLOR_BUFFER_BIT);
+  glDrawArrays(GL_TRIANGLES, 0, 3);
+  glFlush();
+}</code></pre>
+  <p>Старый «простой» код с <code>glBegin(GL_QUAD)…glEnd()</code> больше не работает: функции deprecated и он опирался на default-значения состояния (viewing, colors, window), которых больше нет. Но <b>processing loop тот же</b>. Display callback обязателен в каждой GLUT-программе и вызывается, когда окно надо обновить (например, при открытии).</p>
+
+  <h3>VAO и Buffer Objects</h3>
+  <p>У вершины много атрибутов: position, color, texture coordinates, application data.</p>
+  <dl class="defs">
+    <div><dt>VAO</dt><dd>Vertex Array Object объединяет все данные вершин. <code>glGenVertexArrays(1,&amp;a); glBindVertexArray(a);</code> Bind позволяет переключаться между массивами.</dd></div>
+    <div><dt>Buffer object</dt><dd>Переносит много данных на GPU. Create → bind → data.</dd></div>
+  </dl>
+  <pre><code>GLuint buffer;
+glGenBuffers(1, &amp;buffer);                       // create ids
+glBindBuffer(GL_ARRAY_BUFFER, buffer);          // make current
+glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);</code></pre>
+  <ul>
+    <li><code>glBindBuffer(target, id)</code>: <b>GL_ARRAY_BUFFER</b> — атрибуты вершин; <b>GL_ELEMENT_ARRAY_BUFFER</b> — массив индексов для glDrawElements. Первый вызов создаёт буфер нулевого размера.</li>
+    <li><code>glBufferData(target, size, data, usage)</code>: size в байтах; <b>usage</b> = подсказка производительности.</li>
+    <li><code>glBufferSubData(target, offset, size, data)</code> — заменяет часть данных; общий размер должен быть задан glBufferData заранее.</li>
+    <li><code>glDeleteBuffers(n, ids)</code> — удалить, содержимое теряется.</li>
+  </ul>
+  <div class="tbl"><table>
+    <thead><tr><th>Usage</th><th>Значение</th></tr></thead>
+    <tbody>
+      <tr><td>STATIC</td><td>данные не меняются</td></tr>
+      <tr><td>DYNAMIC</td><td>меняются часто</td></tr>
+      <tr><td>STREAM</td><td>меняются каждый кадр</td></tr>
+      <tr><td>DRAW / READ / COPY</td><td>для рисования на GPU / читает приложение / и то и другое</td></tr>
+    </tbody>
+  </table></div>
+  <p><b>Зачем BO:</b> memory manager кладёт данные в лучшую память (system, GPU, video) по подсказкам; буфер на стороне сервера, его могут разделять несколько клиентов.</p>
+
+  <h3>Координаты, камера, viewport</h3>
+  <ul>
+    <li><b>Object (world, model, problem) coordinates</b> — единицы задаёт приложение → <b>camera (eye) coordinates</b> → <b>window coordinates</b> (пиксели).</li>
+    <li>Камера OpenGL в начале координат смотрит в <b>−z</b>. Default view volume — <b>куб со стороной 2</b> с центром в начале: (−1,−1,−1) → (1,1,1).</li>
+    <li>Default <b>orthographic</b> проекция: точки проецируются вдоль z на плоскость z = 0.</li>
+    <li><code>glViewport(x, y, w, h)</code> — часть окна под изображение, в пикселях.</li>
+    <li>Проекция делается projection matrix. Старые функции трансформаций deprecated; варианты: свой код, GLSL-функции или <code>vec.h</code>/<code>mat.h</code>.</li>
+  </ul>
+  <div class="lec-foot"><button class="btn primary" data-oq-lec="1.2">Open questions L1.2 →</button></div>
+</article>
+
+<!-- L2.1 -->
+<article class="lec" data-lec="2.1">
+  <div class="lec-head">
+    <span class="eyebrow">Week 2 · Lecture 2.1</span>
+    <h2>Math Preliminaries, Shaders, Color &amp; Attributes</h2>
+    <p class="lede">Векторы, dot и cross product, матрицы; vertex и fragment shaders, GLSL (типы, qualifiers, функции, swizzling); примитивы OpenGL, triangulation, атрибуты и цвет.</p>
+  </div>
+
+  <h3>Геометрия: что нужно знать</h3>
+  <ul>
+    <li><b>Affine geometry</b>: scalars, points, vectors и операции над ними. Нет углов и расстояний. Affine combination α₁v₁ + … + αₙvₙ при Σα = 1.</li>
+    <li><b>Euclidean geometry</b> добавляет <b>inner (dot) product</b>: длина, расстояние, нормализация, угол, ортогональность, ортогональная проекция.</li>
+    <li><b>Projective geometry</b> — для перспективы.</li>
+  </ul>
+  <p>Vector = n-ка чисел; сложение (коммутативно, ассоциативно, есть 0) и умножение на скаляр. <b>Vectors ≠ points</b>: точки складывать нельзя, но можно найти вектор между двумя точками.</p>
+  <div class="fgrid">
+    <div class="fcell"><b>Dot product</b><code>u·v = u₁v₁ + … + uₙvₙ = |u||v| cos θ</code><span>длина |v| = √(v·v), нормализация v/|v|, ортогональность u·v = 0, проекция</span></div>
+    <div class="fcell"><b>Cross product</b><code>A×B = (a<sub>y</sub>b<sub>z</sub> − a<sub>z</sub>b<sub>y</sub>, a<sub>z</sub>b<sub>x</sub> − a<sub>x</sub>b<sub>z</sub>, a<sub>x</sub>b<sub>y</sub> − a<sub>y</sub>b<sub>x</sub>)</code><span>вектор, ортогональный A и B (не параллельным) → нормаль</span></div>
+    <div class="fcell"><b>Matrices</b><span>сложение, identity (1 на диагонали), умножение — <b>не коммутативно</b>; индекс с 0 или 1 — как договоришься</span></div>
+    <div class="fcell"><b>Determinant, transpose, inverse</b><span>det [a b; c d] = ad − bc (рекурсивно для больших); transpose меняет строки и столбцы; AB = BA = I → B = A⁻¹ (только квадратные)</span></div>
+  </div>
+
+  <h3>Shaders</h3>
+  <div class="two">
+    <div><h4>Vertex shader</h4><p>Раз на вершину. <b>Moving vertices</b>: transformations (modeling, projection), morphing, wave motion, fractals, particle systems. <b>Lighting</b>: более реалистичные модели, cartoon shaders.</p></div>
+    <div><h4>Fragment shader</h4><p>Раз на фрагмент. <b>Per-fragment lighting</b> (Phong shading, а per-vertex — Gouraud), <b>texture mapping</b>, procedural textures, environment mapping, bump mapping.</p></div>
+  </div>
+  <p>Эволюция: сначала шейдеры на ассемблере → extensions OpenGL → <b>Cg</b> (C for graphics; OpenGL и DirectX) → <b>GLSL</b>, часть OpenGL 2.0+. С 3.1 приложение <b>обязано</b> дать шейдеры.</p>
+  <ol class="flow">
+    <li><b>Application</b>glDrawArrays, vertex data</li>
+    <li><b>Vertex shader</b>gl_Position</li>
+    <li><b>Primitive assembly</b>+ clipping</li>
+    <li><b>Rasterizer</b>fragments, интерполяция</li>
+    <li><b>Fragment shader</b>fragment color</li>
+    <li><b>Frame buffer</b></li>
+  </ol>
+  <div class="two">
+    <div><h4>Simple vertex shader</h4><pre><code>in vec4 vPosition;
+void main(void){
+  gl_Position = vPosition;
+}
+// GLSL 1.4: attribute vec4 vPosition;</code></pre></div>
+    <div><h4>Simple fragment shader</h4><pre><code>out vec4 fragcolor;
+void main(void){
+  fragcolor = vec4(1.0, 0.0, 0.0, 1.0);
+}   // every fragment red
+// old: gl_FragColor = ...</code></pre></div>
+  </div>
+
+  <h3>GLSL</h3>
+  <ul>
+    <li><b>Типы</b>: int, float, bool, uint, double; <code>vec2/3/4</code> (ivec, bvec, uvec, dvec); <code>mat2/3/4</code> — хранятся <b>по столбцам</b>, обращение m[row][column]; samplers. Конструкторы: <code>vec3 a = vec3(1.0, 2.0, 3.0); vec2 b = vec2(a);</code></li>
+    <li><b>Нет указателей</b>; structs можно возвращать; матрицы и векторы — базовые типы: <code>mat3 func(mat3 a)</code>.</li>
+    <li>Функции как в C, но <b>нет рекурсии</b>; передача <b>call by value-return</b>: <code>in</code>, <code>out</code>, <code>inout</code>.</li>
+    <li>Встроенные: тригонометрия, арифметика, <code>normalize</code>, <code>reflect</code>, <code>length</code>; перегрузка для векторов и матриц.</li>
+    <li><b>Swizzling</b>: компоненты по x,y,z,w / r,g,b,a / s,t,p,q; <code>a[2], a.b, a.z, a.p</code> — одно и то же; <code>a.yz = vec2(1.0, 2.0); a.xw = b.yy;</code></li>
+  </ul>
+  <h4>Qualifiers</h4>
+  <div class="tbl"><table>
+    <thead><tr><th>Qualifier</th><th>Как часто меняется</th><th>Смысл</th></tr></thead>
+    <tbody>
+      <tr><td>attribute → <code>in</code></td><td>не чаще раза на вершину</td><td>данные вершины из приложения: <code>in vec3 velocity;</code> Встроенные (gl_Position) почти все deprecated</td></tr>
+      <tr><td><code>uniform</code></td><td>постоянна для всего primitive</td><td>задаёт приложение, в шейдере <b>нельзя менять</b>; например bounding box, угол, матрица</td></tr>
+      <tr><td>varying → <code>out</code>/<code>in</code></td><td>раз на фрагмент</td><td>из vertex в fragment shader, <b>интерполируется rasterizer'ом</b></td></tr>
+      <tr><td><code>const</code></td><td>никогда</td><td>как в C</td></tr>
+    </tbody>
+  </table></div>
+  <pre><code>// vertex shader                         // fragment shader
+const vec4 red = vec4(1.0, 0.0, 0.0, 1.0); in vec4 color_out;
+in vec4 vPosition;                         out vec4 fragcolor;
+out vec4 color_out;                        void main(void){
+void main(void){                             fragcolor = color_out;
+  gl_Position = vPosition;                 }
+  color_out = vPosition.x * red;
+}</code></pre>
+
+  <h3>Примитивы и полигоны</h3>
+  <p><code>GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP, GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN</code>.</p>
+  <div class="remember"><span class="k">OpenGL рисует только треугольники</span>Полигон корректно рисуется, если он <b>simple</b> (рёбра не пересекаются), <b>convex</b> (отрезок между любыми двумя точками внутри) и <b>flat</b> (все вершины в одной плоскости). Проверка дорогая, поэтому приложение делает <b>tessellation / triangulation</b> (в OpenGL 4.1 есть tessellator).</div>
+  <ul>
+    <li>Длинные тонкие треугольники рисуются плохо, равносторонние хорошо → <b>maximize minimum angle</b>; для неструктурированных точек — <b>Delaunay triangulation</b>.</li>
+    <li>Convex polygon: abc, убрать b, потом acd… Concave: рекурсивное деление.</li>
+  </ul>
+
+  <h3>Attributes и цвет</h3>
+  <ul>
+    <li>Attributes: color, size и width (points, lines), stipple pattern, polygon mode (filled, edges, vertices). Функцией OpenGL осталось мало (<code>glPointSize</code>).</li>
+    <li><b>RGB</b>: каждая компонента отдельно в frame buffer, обычно 8 бит; 0.0–1.0 (float) или 0–255 (unsigned byte).</li>
+    <li><b>Smooth shading</b> (default) — интерполяция цветов вершин; <b>flat</b> — цвет первой вершины, делается в шейдере.</li>
+    <li>Цвет окончательно задаётся в fragment shader, но может прийти из приложения (<b>uniform</b> или <b>vertex attribute</b>), из vertex shader (varying) или вычисляться в fragment shader.</li>
+  </ul>
+  <div class="lec-foot"><button class="btn primary" data-oq-lec="2.1">Open questions L2.1 →</button></div>
+</article>
+
+<!-- L2.2 -->
+<article class="lec" data-lec="2.2">
+  <div class="lec-head">
+    <span class="eyebrow">Week 2 · Lecture 2.2</span>
+    <h2>More GLSL &amp; Three Dimensions</h2>
+    <p class="lede">Как связать шейдеры с приложением, vertex attributes и uniforms, double buffering и idle callback, цвет для каждой вершины, примеры vertex shaders, Sierpinski gasket и z-buffer.</p>
+  </div>
+
+  <h3>Linking shaders with application</h3>
+  <ol class="flow">
+    <li><b>Read</b>файл → null-terminated string</li>
+    <li><b>Create shader</b>glCreateShader, glShaderSource</li>
+    <li><b>Compile</b>glCompileShader</li>
+    <li><b>Program object</b>glCreateProgram, glAttachShader</li>
+    <li><b>Link</b>glLinkProgram, glUseProgram</li>
+    <li><b>Link variables</b>attributes и uniforms</li>
+  </ol>
+  <p><b>Program object</b> — контейнер для шейдеров (может содержать несколько). Шейдер-ридер: fopen → fseek в конец → ftell (размер) → fread в буфер size+1 → <code>buf[size] = '\0'</code>.</p>
+  <pre><code>GLuint vShader = glCreateShader(GL_VERTEX_SHADER);
+glShaderSource(vShader, 1, &amp;vSource, NULL);
+glCompileShader(vShader);
+glAttachShader(myProgObj, vShader);</code></pre>
+  <p>Linker строит таблицу имён переменных шейдеров; приложение берёт индекс и связывает со своей переменной.</p>
+  <div class="two">
+    <div><h4>Vertex attribute</h4><pre><code>GLuint loc = glGetAttribLocation(program, "vPosition");
+glEnableVertexAttribArray(loc);
+glVertexAttribPointer(loc, 2, GL_FLOAT,
+    GL_FALSE, 0, BUFFER_OFFSET(0));</code></pre></div>
+    <div><h4>Uniform</h4><pre><code>GLint angleParam =
+  glGetUniformLocation(myProgObj, "angle");
+GLfloat my_angle = 5.0;
+glUniform1f(angleParam, my_angle);</code></pre></div>
+  </div>
+
+  <h3>Анимация: double buffering и idle</h3>
+  <p>Меняем uniform в display callback и форсируем перерисовку <code>glutPostRedisplay()</code>. Но нельзя показывать <b>частично перерисованный</b> frame buffer.</p>
+  <div class="remember"><span class="k">Double buffering</span>Рисуем в <b>back buffer</b>, показываем <b>front buffer</b>, после отрисовки <b>swap</b>. <code>glutInitDisplayMode(GLUT_DOUBLE)</code>, в конце display — <code>glutSwapBuffers()</code>.</div>
+  <pre><code>glutIdleFunc(myIdle);       // when no other actions pending
+void myIdle(){ /* change something */ glutPostRedisplay(); }</code></pre>
+  <p>С GLSL 1.5 <code>attribute</code>/<code>varying</code> заменены на <code>in</code>/<code>out</code>, в приложении ничего менять не надо.</p>
+
+  <h3>Цвет для каждой вершины</h3>
+  <p>Цвет из приложения отправляем как <b>vertex attribute</b> или <b>uniform</b> — по тому, как часто он меняется. Для цвета на вершину: массив цветов того же размера, что позиции, в один buffer object:</p>
+  <pre><code>glBufferData(GL_ARRAY_BUFFER, sizeof(points) + sizeof(colors), NULL, GL_STATIC_DRAW);
+glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(points), points);
+glBufferSubData(GL_ARRAY_BUFFER, sizeof(points), sizeof(colors), colors);
+// vPosition: offset 0;  vColor: offset sizeof(points)
+loc2 = glGetAttribLocation(program, "vColor");
+glEnableVertexAttribArray(loc2);
+glVertexAttribPointer(loc2, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(points)));</code></pre>
+  <div class="two">
+    <div><pre><code>// vertex shader
+in vec3 vPosition, vColor;
+out vec3 color;
+void main(){
+  gl_Position = vec4(vPosition, 1);
+  color = vColor; }</code></pre></div>
+    <div><pre><code>// fragment shader
+in vec3 color;
+out vec4 fragcolor;
+void main(){
+  fragcolor = vec4(color, 1); }</code></pre></div>
+  </div>
+
+  <h3>Примеры vertex shaders</h3>
+  <div class="two">
+    <div><h4>Wave motion</h4><pre><code>uniform float xs, zs, h, time;
+vec4 t = vPosition;
+t.y = vPosition.y
+  + h*sin(time + xs*vPosition.x)
+  + h*sin(time + zs*vPosition.z);
+gl_Position = t;</code></pre></div>
+    <div><h4>Particle system</h4><pre><code>uniform vec3 vel; uniform float g, m, t;
+pos.x = vPosition.x + vel.x*t;
+pos.y = vPosition.y + vel.y*t
+      + g/(2.0*m)*t*t;
+pos.z = vPosition.z + vel.z*t;
+gl_Position = MVP * vec4(pos, 1);</code></pre></div>
+  </div>
+  <p>Геометрия отправляется один раз, каждый кадр меняется только uniform <code>time</code>.</p>
+
+  <h3>Three dimensions: Sierpinski gasket</h3>
+  <p>В OpenGL 2D — частный случай 3D. Переход к 3D: <code>vec3</code>, <code>glUniform3f</code> и забота о <b>порядке</b> отрисовки или hidden-surface removal.</p>
+  <ol class="flow">
+    <li><b>Start</b>с треугольника</li>
+    <li><b>Connect</b>середины сторон</li>
+    <li><b>Remove</b>центральный треугольник</li>
+    <li><b>Repeat</b>для трёх оставшихся</li>
+  </ol>
+  <pre><code>void divide_triangle(point2 a, point2 b, point2 c, int m){
+  point2 ab, ac, bc;
+  if(m > 0){
+    ab = (a + b)/2;  ac = (a + c)/2;  bc = (b + c)/2;
+    divide_triangle(a, ab, ac, m-1);
+    divide_triangle(c, ac, bc, m-1);
+    divide_triangle(b, bc, ac, m-1);
+  }
+  else triangle(a, b, c);   // store points[i++] = a, b, c
+}
+void display(){ glClear(GL_COLOR_BUFFER_BIT); glDrawArrays(GL_TRIANGLES, 0, NumVertices); glFlush(); }</code></pre>
+  <div class="remember"><span class="k">Fractal</span>При продолжении деления <b>площадь → 0</b>, а <b>периметр → ∞</b>. Объект ни 2D, ни 1D: <b>fractional dimension</b>.</div>
+  <p><b>3D gasket</b>: <code>point3</code>, начинаем с <b>tetrahedron</b>, делим каждую из 4 граней (как будто из центра вынули тетраэдр, осталось 4 меньших). Можно делить и <b>volume</b>: середины рёбер задают 4 тетраэдра у вершин. Проблема: треугольники рисуются в порядке задания, и задние иногда оказываются поверх передних.</p>
+
+  <h3>Hidden-surface removal: z-buffer</h3>
+  <p>OpenGL использует <b>z-buffer (depth buffer)</b> algorithm: при рендеринге сохраняется глубина, и в изображении остаются только передние объекты.</p>
+  <ul>
+    <li>Visible-surface detection, реализуется в железе и софте.</li>
+    <li>Нужна доп. структура — z-buffer того же размера, что frame buffer; хранит глубину [0..ZMAX] каждой точки.</li>
+    <li>Если новая точка <b>ближе</b> сохранённой, она заменяет значение в z-buffer и цвет в frame buffer.</li>
+  </ul>
+  <pre><code>for each pixel: F[x][y] = BACKGROUND; Z[x][y] = -1;   // back value in NPC
+for each polygon
+  for each pixel in polygon's projection {
+    pz = polygon's z at (x,y);
+    if (pz &lt; FRONT &amp;&amp; pz &gt; Z[x][y]) {   // in front of back plane, closer
+      Z[x][y] = pz;  F[x][y] = polygon's color at (x,y);
+    } }</code></pre>
+  <div class="tbl"><table>
+    <thead><tr><th>Шаг</th><th>Код</th></tr></thead>
+    <tbody>
+      <tr><td>Request (main)</td><td><code>glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH)</code></td></tr>
+      <tr><td>Enable (init)</td><td><code>glEnable(GL_DEPTH_TEST)</code></td></tr>
+      <tr><td>Clear (display)</td><td><code>glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)</code></td></tr>
+    </tbody>
+  </table></div>
+  <div class="lec-foot"><button class="btn primary" data-oq-lec="2.2">Open questions L2.2 →</button></div>
+</article>
+
+<!-- L3.1 -->
+<article class="lec" data-lec="3.1">
+  <div class="lec-head">
+    <span class="eyebrow">Week 3 · Lecture 3.1</span>
+    <h2>Input and Interaction</h2>
+    <p class="lede">Physical и logical devices, measure и trigger, request и event mode, GLUT callbacks и event loop, double buffering для анимации, мышь, клавиатура, reshape, timers, menus, несколько окон.</p>
+  </div>
+
+  <h3>Project Sketchpad</h3>
+  <p><b>Ivan Sutherland (MIT, 1963)</b> задал парадигму интерактивной графики: пользователь видит объект → указывает на него (<b>pick</b>) устройством (light pen, mouse, trackball) → объект меняется (moves, rotates, morphs) → повтор.</p>
+
+  <h3>Устройства</h3>
+  <div class="two">
+    <div><h4>Physical</h4><p>Mouse, keyboard, trackball, light pen, data tablet, joystick, space ball.</p></div>
+    <div><h4>Logical</h4><p>Что возвращается программе через API: position, object identifier, scalar value. <code>scanf("%d",&amp;x)</code> — по коду не понять, клавиатура это, файл или другая программа: программа получает int.</p></div>
+  </div>
+  <p><b>Absolute vs incremental:</b> data tablet возвращает позицию сразу. Mouse, trackball, joystick возвращают <b>приращения или скорости</b>, их надо интегрировать: абсолютную позицию получить трудно, зато можно менять чувствительность.</p>
+  <h4>Шесть логических устройств (GKS, PHIGS)</h4>
+  <div class="tbl"><table>
+    <thead><tr><th>Device</th><th>Возвращает</th></tr></thead>
+    <tbody>
+      <tr><td>Locator</td><td>position</td></tr>
+      <tr><td>Pick</td><td>ID объекта</td></tr>
+      <tr><td>Keyboard</td><td>string of characters</td></tr>
+      <tr><td>Stroke</td><td>array of positions</td></tr>
+      <tr><td>Valuator</td><td>floating point number</td></tr>
+      <tr><td>Choice</td><td>one of n items</td></tr>
+    </tbody>
+  </table></div>
+  <p><b>X Window</b> ввёл client–server модель: client = OpenGL-программа, graphics server = bitmap display + pointing device + keyboard.</p>
+
+  <h3>Input modes</h3>
+  <dl class="defs">
+    <div><dt>Trigger</dt><dd>Сигнал ОС: кнопка мыши, нажатие или отпускание клавиши.</dd></div>
+    <div><dt>Measure</dt><dd>Что устройство возвращает при срабатывании: мышь — позицию, клавиатура — ASCII.</dd></div>
+    <div><dt>Request mode</dt><dd>Ввод отдаётся программе только при срабатывании триггера. Как клавиатура: редактируешь (backspace), пока не нажмёшь Enter.</dd></div>
+    <div><dt>Event mode</dt><dd>Устройств много, каждое срабатывает когда угодно. Каждый триггер создаёт <b>event</b>, его measure кладётся в <b>event queue</b>, которую проверяет программа.</dd></div>
+  </dl>
+  <p>Event types: <b>window</b> (resize, expose, iconify), <b>mouse</b> (click), <b>motion</b>, <b>keyboard</b> (press/release), <b>idle</b> (non-event: что делать, если очередь пуста).</p>
+
+  <h3>Callbacks и event loop</h3>
+  <p>Для каждого типа события задаём <b>callback</b>; он выполняется, когда событие происходит: <code>glutMouseFunc(mymouse)</code>. GLUT распознаёт подмножество событий Windows, X, Mac: <code>glutDisplayFunc, glutMouseFunc, glutReshapeFunc, glutKeyboardFunc, glutIdleFunc, glutMotionFunc, glutPassiveMotionFunc</code>.</p>
+  <div class="remember"><span class="k">glutMainLoop()</span>Последняя строка main, бесконечный цикл. На каждом проходе GLUT смотрит события в очереди и вызывает подходящий callback; если callback не задан, событие <b>игнорируется</b>.</div>
+  <ul>
+    <li><b>Display callback</b> вызывается: при первом открытии окна, reshape, expose, когда программа хочет изменить картинку. Обязателен.</li>
+    <li><b>glutPostRedisplay()</b> ставит <b>флаг</b>; в конце цикла GLUT проверяет флаг и вызывает display <b>один раз</b>. Иначе много событий → много лишних перерисовок за один проход. Вызывать в конце всех callbacks, которые меняют картинку.</li>
+    <li><b>Animating:</b> рисование в frame buffer отделено от его показа (<i>dual ported memory</i>), поэтому виден недорисованный кадр → <b>double buffering</b>: front (показывается, не пишется), back (пишется, не показывается), <code>GLUT_DOUBLE</code> + <code>glutSwapBuffers()</code>.</li>
+    <li><b>Idle callback</b> выполняется, когда очередь пуста: <code>t += dt; glutPostRedisplay();</code></li>
+    <li>Сигнатуры callbacks <b>фиксированы</b> (<code>void mymouse(GLint button, GLint state, GLint x, GLint y)</code>), поэтому данные передаются через <b>globals</b>.</li>
+  </ul>
+
+  <h3>Mouse</h3>
+  <p><code>mymouse(button, state, x, y)</code>: button = GLUT_LEFT/MIDDLE/RIGHT_BUTTON, state = GLUT_UP/GLUT_DOWN, позиция в окне.</p>
+  <div class="remember"><span class="k">Инверсия y</span>Позиция в окне меряется в пикселях от <b>верхнего левого</b> угла (экран обновляется сверху вниз), а мировая система OpenGL — от <b>нижнего левого</b>. Поэтому <code>y = h − y;</code> Высота h меняется → хранить в global (из reshape) или узнать через <code>glGetIntegerv / glGetFloatv</code>.</div>
+  <pre><code>void mymouse(int btn, int state, int x, int y){
+  if(btn==GLUT_RIGHT_BUTTON &amp;&amp; state==GLUT_DOWN) exit(0);   // terminate
+  if(btn==GLUT_LEFT_BUTTON  &amp;&amp; state==GLUT_DOWN) drawSquare(x, y);
+}
+void drawSquare(int x, int y){
+  y = h - y;                        // invert y
+  points[i]   = point2(x+size, y+size);  points[i+1] = point2(x-size, y+size);
+  points[i+2] = point2(x-size, y-size);  points[i+3] = point2(x+size, y-size);
+  i += 4;  glutPostRedisplay();
+}</code></pre>
+  <ul>
+    <li><code>glutMotionFunc(drawSquare)</code> — мышь движется <b>с нажатой</b> кнопкой; <code>glutPassiveMotionFunc</code> — без нажатия (порог движения зависит от системы).</li>
+    <li><code>glutEntryFunc(f)</code> — курсор входит/выходит из окна: GLUT_ENTERED / GLUT_LEFT.</li>
+  </ul>
+
+  <h3>Keyboard</h3>
+  <ul>
+    <li><code>glutKeyboardFunc(mykey)</code>, <code>void mykey(unsigned char key, int x, int y)</code> — ASCII + позиция мыши. <code>if(key=='Q' || key=='q') exit(0);</code></li>
+    <li><code>glutSpecialFunc(myspecial)</code> — function и arrow keys: <code>GLUT_KEY_F1</code>, <code>GLUT_KEY_UP</code>.</li>
+    <li><code>glutGetModifiers()</code> — GLUT_ACTIVE_SHIFT / CTRL / ALT; можно эмулировать трёхкнопочную мышь.</li>
+  </ul>
+
+  <h3>Reshape</h3>
+  <p>Пользователь тянет угол окна → приложение должно перерисовать. Два варианта: показать <b>часть мира</b> или <b>весь мир, подогнав под окно</b> (может исказиться <b>aspect ratio</b>).</p>
+  <pre><code>glutReshapeFunc(myreshape);
+void myReshape(int w, int h){   // new size in pixels
+  glViewport(0, 0, w, h);       // viewport = window
+  // viewing (projection) goes here too
+}   // redisplay is posted automatically</code></pre>
+  <p>Хорошее место для viewing-функций: reshape вызывается и при первом открытии окна. У GLUT есть default reshape, но обычно пишут свой.</p>
+
+  <h3>Timers, callbacks, menus, windows</h3>
+  <ul>
+    <li><code>glutTimerFunc(1000, timerColor, 0)</code> — вызов через N мс, <b>один раз</b>; чтобы повторять, внутри снова вызвать glutTimerFunc.</li>
+    <li>Callbacks можно <b>переопределять</b> во время работы и отключать: <code>glutReshapeFunc(NULL)</code>.</li>
+    <li><b>Widgets</b> (menus, slidebars, dials, input boxes) дают toolkits, но они платформозависимы; в GLUT есть только меню и немного другого.</li>
+  </ul>
+  <h4>Menus (pop-up, с submenus) — три шага</h4>
+  <ol><li>определить пункты меню;</li><li>определить действие для каждого пункта;</li><li>привязать меню к кнопке мыши.</li></ol>
+  <pre><code>menu_id = glutCreateMenu(mymenu);
+glutAddMenuEntry("clear Screen", 1);
+glutAddMenuEntry("exit", 2);
+glutAttachMenu(GLUT_RIGHT_BUTTON);
+void mymenu(int id){ if(id == 1) glClear(...); if(id == 2) exit(0); }
+// submenu: glutAddSubMenu("RGB Menu", submenu_id);</code></pre>
+  <h4>Multiple windows</h4>
+  <p><code>glutCreateWindow, glutDestroyWindow, glutGetWindow, glutSetWindow, glutCreateSubWindow(parent, x, y, w, h), glutPostWindowRedisplay(id)</code>. OpenGL рисует в <b>текущее</b> окно. У каждого окна свой <b>graphics context</b>: свои VAO, буферы, шейдеры и display callback; меню привязаны к конкретному окну.</p>
+  <div class="lec-foot"><button class="btn primary" data-oq-lec="3.1">Open questions L3.1 →</button></div>
+</article>
+
+<!-- L3.2 -->
+<article class="lec" data-lec="3.2">
+  <div class="lec-head">
+    <span class="eyebrow">Week 3 · Lecture 3.2</span>
+    <h2>Geometry &amp; Representation</h2>
+    <p class="lede">Scalars, vectors, points и coordinate-free геометрия; affine space, прямые, convexity, плоскости, нормали, barycentric coordinates; базис, frames, homogeneous coordinates и смена системы координат.</p>
+  </div>
+
+  <h3>Coordinate-free geometry</h3>
+  <p>В школе геометрия декартова: точка p = (x, y, z), результаты через алгебру координат. Но это <b>нефизично</b>: точки существуют независимо от произвольной системы координат, и большинство результатов от неё не зависит (два треугольника равны, если равны две стороны и угол между ними). Нужен минимальный набор элементов: <b>scalars, vectors, points</b>.</p>
+  <dl class="defs">
+    <div><dt>Scalars</dt><dd>Элементы множества с двумя операциями (сложение, умножение) и аксиомами (ассоциативность, коммутативность, обратные). Real, complex numbers. Геометрических свойств нет.</dd></div>
+    <div><dt>Vectors</dt><dd>Величина с <b>direction</b> и <b>magnitude</b>: сила, скорость, directed line segment. Есть обратный (−v), умножение на скаляр, zero vector (нулевая длина, направление не определено), сумма head-to-tail. <mark>Vectors lack position</mark>: одинаковые длина и направление = один и тот же вектор.</dd></div>
+    <div><dt>Points</dt><dd>Положение в пространстве. <code>v = P − Q</code> (точка − точка = вектор), <code>P = v + Q</code> (точка + вектор = точка). Точки складывать нельзя.</dd></div>
+    <div><dt>Linear vector space</dt><dd>Scalar–vector multiplication и vector–vector addition: <code>v = u + 2w − 3r</code>. Для геометрии мало — нет точек.</dd></div>
+    <div><dt>Affine space</dt><dd>Точки + векторное пространство: vector+vector, scalar·vector, <b>point+vector</b>, scalar ops. Определяем <code>1·P = P</code>, <code>0·P = 0</code> (zero vector).</dd></div>
+  </dl>
+
+  <h3>Lines, rays, segments</h3>
+  <div class="remember"><span class="k">Parametric form</span><code>P(α) = P₀ + α d</code> — все точки через P₀ в направлении d. <b>α ≥ 0</b> — ray. Через две точки: <code>P(α) = Q + α(R − Q) = αR + (1 − α)Q</code>, при <b>0 ≤ α ≤ 1</b> — отрезок QR.</div>
+  <p>Формы прямой в 2D: explicit <code>y = mx + h</code>, implicit <code>ax + by + c = 0</code>, parametric <code>x(α) = αx₀ + (1−α)x₁</code>. Параметрическая форма <b>устойчивее и общее</b>, обобщается на <b>curves</b> (P(α), нелинейная функция) и <b>surfaces</b> (P(α, β)); линейные функции дают плоскости и полигоны.</p>
+
+  <h3>Convexity, affine sums, convex hull</h3>
+  <ul>
+    <li><b>Convex</b>: для любых двух точек объекта весь отрезок между ними в объекте.</li>
+    <li><b>Affine sum</b>: <code>P = α₁P₁ + … + αₙPₙ</code> имеет смысл при <code>α₁ + … + αₙ = 1</code>.</li>
+    <li>Если ещё все <b>αᵢ ≥ 0</b> — <b>convex hull</b>: наименьший выпуклый объект, содержащий точки («shrink wrapping»).</li>
+  </ul>
+
+  <h3>Planes, triangles, normals</h3>
+  <p>Плоскость задаётся точкой и двумя векторами или тремя точками: <code>P(α, β) = R + α(Q − R) + β(P − R) = R + αu + βv</code>.</p>
+  <p><b>Triangle</b>: convex sum точек → при 0 ≤ α, β ≤ 1 получаем все точки треугольника.</p>
+  <div class="remember"><span class="k">Barycentric coordinates</span>Треугольник выпуклый, поэтому любая точка внутри — affine sum: <code>P(α₁, α₂, α₃) = α₁P + α₂Q + α₃R</code>, <code>α₁ + α₂ + α₃ = 1</code>, <code>αᵢ ≥ 0</code>.</div>
+  <p><b>Normal</b>: у каждой плоскости есть вектор n, перпендикулярный ей. Из формы R + αu + βv: <code>n = u × v</code>, эквивалентная форма плоскости <code>(P(α, β) − P₀) · n = 0</code>.</p>
+
+  <h3>Linear independence, dimension, basis</h3>
+  <ul>
+    <li>v₁…vₙ <b>linearly independent</b>, если α₁v₁ + … + αₙvₙ = 0 только при всех α = 0: ни один нельзя выразить через другие.</li>
+    <li><b>Dimension</b> = максимальное число линейно независимых векторов.</li>
+    <li>В n-мерном пространстве любые n независимых векторов — <b>basis</b>; любой v = α₁v₁ + … + αₙvₙ, коэффициенты <b>единственны</b>.</li>
+    <li>Список {α₁…αₙ} = <b>representation</b> вектора в этом базисе: <code>v = 2v₁ + 3v₂ − 4v₃ → a = [2, 3, −4]ᵀ</code>. В OpenGL сначала object basis, потом нужна запись в camera (eye) basis.</li>
+  </ul>
+  <p>Чтобы связать объекты с миром, нужна <b>frame of reference</b>: «где точка?» без неё не ответить (world coordinates, camera coordinates).</p>
+
+  <h3>Frames</h3>
+  <p>Coordinate system (только базис) <b>недостаточна для точек</b>: векторы не имеют положения, так что два одинаковых вектора в разных местах — «оба правильные». В affine space добавляем к базису одну точку, <b>origin</b> P₀, и получаем <b>frame (P₀, v₁, v₂, v₃)</b>:</p>
+  <ul><li>вектор: <code>v = α₁v₁ + α₂v₂ + α₃v₃</code>;</li><li>точка: <code>P = P₀ + β₁v₁ + β₂v₂ + β₃v₃</code>.</li></ul>
+  <p>Проблема: записи <code>p = [β₁ β₂ β₃]</code> и <code>v = [α₁ α₂ α₃]</code> выглядят одинаково — точку легко спутать с вектором.</p>
+
+  <h3>Homogeneous coordinates</h3>
+  <div class="remember"><span class="k">Single representation</span>Определив 0·P = 0 и 1·P = P: <code>v = [α₁ α₂ α₃ 0][v₁ v₂ v₃ P₀]ᵀ</code>, <code>P = [β₁ β₂ β₃ 1][v₁ v₂ v₃ P₀]ᵀ</code>. Значит <b>вектор = [α₁ α₂ α₃ 0]ᵀ</b>, <b>точка = [β₁ β₂ β₃ 1]ᵀ</b>.</div>
+  <ul>
+    <li>Общая форма точки [x y z]: <code>p = [wx wy wz w]ᵀ</code>; обратно (w ≠ 0): x ← x′/w, y ← y′/w, z ← z′/w.</li>
+    <li>w = 0 → вектор; для точки обычно w = 1: <code>[x y z 1]</code>.</li>
+    <li>Точка 3D заменяется <b>прямой через начало координат в 4D</b>.</li>
+  </ul>
+  <h4>Почему это ключ ко всей графике</h4>
+  <ul>
+    <li>все стандартные трансформации (rotation, <b>translation</b>, scaling) — умножение на матрицы <b>4×4</b>;</li>
+    <li>hardware pipeline работает с 4-мерными представлениями;</li>
+    <li>для orthographic viewing держим w = 0 для векторов и w = 1 для точек;</li>
+    <li>для перспективы нужна <b>perspective division</b>.</li>
+  </ul>
+
+  <h3>Change of coordinate systems</h3>
+  <p>Один вектор в двух базисах: <code>v = α₁v₁ + α₂v₂ + α₃v₃ = β₁u₁ + β₂u₂ + β₃u₃</code>. Каждый uᵢ выражается через {v}: <code>uᵢ = γᵢ₁v₁ + γᵢ₂v₂ + γᵢ₃v₃</code>. Коэффициенты дают матрицу M 3×3, и <code>a = Mᵀb</code>.</p>
+  <p><b>Change of frames</b> (P₀, v₁, v₂, v₃) → (Q₀, u₁, u₂, u₃): дополнительно <code>Q₀ = γ₄₁v₁ + γ₄₂v₂ + γ₄₃v₃ + P₀</code> → матрица <b>4×4</b>. Для точек и векторов в обоих frames <code>a = Mᵀb</code> (4-я компонента 1 у точек, 0 у векторов). M задаёт <b>affine transformation</b> в homogeneous coordinates.</p>
+  <div class="mx-row"><span class="mx-eq">M =</span><span class="mx" data-m="γ11 γ12 γ13 0;γ21 γ22 γ23 0;γ31 γ32 γ33 0;γ41 γ42 γ43 1"></span></div>
+  <h4>World и camera frames</h4>
+  <p>Работаем с n-ками чисел; смена frame — матрица 4×4. В OpenGL стартуем в <b>world frame</b>, затем переводим всё в <b>camera frame</b> через <b>model-view matrix</b>; изначально frames совпадают (M = I). Если объекты по обе стороны z = 0, надо сдвинуть camera frame:</p>
+  <div class="mx-row"><span class="mx-eq">M =</span><span class="mx" data-m="1 0 0 0;0 1 0 0;0 0 1 −d;0 0 0 1"></span></div>
+  <p>Пример цепочки frames: M₁₂ = T(4, 2), M₂₃ = T(2, 3)·S(0.5, 0.5), M₃₄ = T(6.7, 1.8)·R(45°) — одна точка P имеет разные координаты в четырёх системах.</p>
+  <div class="lec-foot"><button class="btn primary" data-oq-lec="3.2">Open questions L3.2 →</button></div>
+</article>
+
+<!-- L4.1 -->
+<article class="lec" data-lec="4.1">
+  <div class="lec-head">
+    <span class="eyebrow">Week 4 · Lecture 4.1</span>
+    <h2>Transformations</h2>
+    <p class="lede">Affine transformations, translation, rotation, scaling, reflection, shear в homogeneous coordinates; inverses, concatenation и порядок; rotation about a fixed point, instancing; трансформации в OpenGL (CTM, mat.h); smooth rotation, Euler angles и quaternions.</p>
+  </div>
+
+  <h3>General и affine transformations</h3>
+  <p>Трансформация переводит точки в точки и/или векторы в векторы: <code>Q = T(P)</code>, <code>v = T(u)</code>.</p>
+  <div class="remember"><span class="k">Affine transformation</span><b>Line preserving</b>. Сюда входят <b>rigid body</b> (rotation, translation), <b>scaling</b>, <b>shear</b>. В графике важно, что достаточно преобразовать <b>концы отрезков</b> (вершины), а линию между ними нарисует реализация.</div>
+  <p>Pipeline: vertices → transformation T (из приложения) → rasterizer → pixels в frame buffer.</p>
+  <p><b>Notation:</b> P, Q, R — точки; u, v, w — векторы; α, β, γ — скаляры; p, q, r и u, v, w жирным — их представления (массивы из 4 чисел в homogeneous coordinates).</p>
+
+  <h3>Translation</h3>
+  <p>Сдвиг точки на вектор d (3 степени свободы): <code>P′ = P + d</code>. Для многих точек обычно единственный способ — все сдвигаются на <b>один и тот же</b> вектор. В координатах: p = [x y z 1]ᵀ, d = [dx dy dz 0]ᵀ, p′ = p + d (точка = вектор + точка).</p>
+  <div class="mx-row"><span class="mx-eq">p′ = Tp,  T(dx, dy, dz) =</span><span class="mx" data-m="1 0 0 dx;0 1 0 dy;0 0 1 dz;0 0 0 1"></span></div>
+  <p>Матричная форма лучше: все affine transformations выражаются так же, и их можно <b>перемножать</b>.</p>
+
+  <h3>Rotation</h3>
+  <p>2D, вокруг начала координат на θ: радиус тот же, угол растёт на θ. Из x = r cos φ, y = r sin φ: <code>x′ = r cos(φ + θ) = x cos θ − y sin θ</code>, <code>y′ = x sin θ + y cos θ</code>.</p>
+  <p>Вокруг оси <b>z</b> в 3D z не меняется (2D-поворот в плоскостях z = const); вокруг x не меняется x, вокруг y не меняется y.</p>
+  <div class="fgrid">
+    <div class="fcell"><b>R<sub>z</sub>(θ)</b><span class="mx" data-m="cosθ −sinθ 0 0;sinθ cosθ 0 0;0 0 1 0;0 0 0 1"></span></div>
+    <div class="fcell"><b>R<sub>x</sub>(θ)</b><span class="mx" data-m="1 0 0 0;0 cosθ −sinθ 0;0 sinθ cosθ 0;0 0 0 1"></span></div>
+    <div class="fcell"><b>R<sub>y</sub>(θ)</b><span class="mx" data-m="cosθ 0 sinθ 0;0 1 0 0;−sinθ 0 cosθ 0;0 0 0 1"></span></div>
+    <div class="fcell"><b>Arbitrary axis n</b><span>c = cos θ, s = sin θ, t = 1 − c (Graphics Gems)</span><span class="mx" data-m="tx²+c txy−sz txz+sy 0;txy+sz ty²+c tyz−sx 0;txz−sy tyz+sx tz²+c 0;0 0 0 1"></span></div>
+  </div>
+  <p><b>Rodrigues formula:</b> <code>P_rot = P cos θ + (n × P) sin θ + n(n · P)(1 − cos θ)</code>.</p>
+
+  <h3>Scaling, reflection, shear</h3>
+  <div class="fgrid">
+    <div class="fcell"><b>Scaling S(sx, sy, sz)</b><span>растяжение/сжатие по осям, fixed point = origin: x′ = sₓx …</span><span class="mx" data-m="sx 0 0 0;0 sy 0 0;0 0 sz 0;0 0 0 1"></span></div>
+    <div class="fcell"><b>Shear H(θ) вдоль x</b><span>«тянем грани в разные стороны»: x′ = x + y cot θ, y′ = y, z′ = z</span><span class="mx" data-m="1 cotθ 0 0;0 1 0 0;0 0 1 0;0 0 0 1"></span></div>
+  </div>
+  <p><b>Reflection</b> = отрицательные коэффициенты масштаба: sₓ = −1, s<sub>y</sub> = 1; sₓ = −1, s<sub>y</sub> = −1; sₓ = 1, s<sub>y</sub> = −1.</p>
+
+  <h3>Inverses</h3>
+  <p>Можно не считать общей формулой, а использовать геометрию:</p>
+  <ul>
+    <li><code>T⁻¹(dx, dy, dz) = T(−dx, −dy, −dz)</code></li>
+    <li><code>R⁻¹(θ) = R(−θ)</code>; так как cos(−θ) = cos θ, sin(−θ) = −sin θ, то <b><code>R⁻¹(θ) = Rᵀ(θ)</code></b> (верно для любой rotation matrix)</li>
+    <li><code>S⁻¹(sx, sy, sz) = S(1/sx, 1/sy, 1/sz)</code></li>
+  </ul>
+
+  <h3>Concatenation и порядок</h3>
+  <p>Любую affine transformation строим перемножением R, T, S. Одна матрица применяется к множеству вершин, поэтому стоимость построения M = ABCD мала по сравнению с вычислением Mp для всех p. Сложно — понять, какую трансформацию собрать из описания задачи.</p>
+  <div class="remember"><span class="k">Порядок</span><code>p′ = ABCp = A(B(Cp))</code> — <b>правая матрица применяется первой</b> (pre-multiply). Для строк: <code>p′ᵀ = pᵀCᵀBᵀAᵀ</code> (post-multiply). Умножение матриц <b>не коммутативно</b>: M₁M₂ ≠ M₂M₁ (например, отражение относительно y и поворот).</div>
+  <ul>
+    <li><b>Euler angles:</b> поворот вокруг произвольной оси раскладывается: <code>R(θ) = Rz(θz) Ry(θy) Rx(θx)</code>. Повороты не коммутируют; в другом порядке нужны другие углы.</li>
+    <li><b>Rotation about a fixed point</b> p<sub>f</sub>: перенести p<sub>f</sub> в начало → повернуть → вернуть: <code>M = T(p_f) R(θ) T(−p_f)</code>.</li>
+    <li><b>Instancing:</b> объект в начале координат, по осям, стандартного размера; instance transformation: <b>Scale → Orient → Locate</b>, т.е. <code>M = T R S</code>.</li>
+  </ul>
+
+  <h3>Трансформации в OpenGL</h3>
+  <p>До 3.1 матрицы были частью состояния: Model-View (GL_MODELVIEW), Projection, Texture, Color; выбор через <code>glMatrixMode</code>. Концептуально была <b>CTM (current transformation matrix)</b> 4×4, применяемая ко всем вершинам: <code>p′ = Cp</code>; она = model-view × projection.</p>
+  <p>Операции делали <b>post-multiplication</b>: C ← I, C ← CT, C ← CR, C ← CT⁻¹ даёт C = TRT⁻¹ — «задом наперёд». Чтобы получить C = T⁻¹RT, операции задают в обратном порядке. <mark>Последняя заданная операция выполняется первой.</mark></p>
+  <h4>vec.h и mat.h</h4>
+  <p>Типы vec2/3/4, mat2/3/4, перегруженные операторы (+, −, *, /, +=, [] …), генераторы <code>RotateX/Y/Z, Translate, Scale, Ortho, Ortho2D, Frustum, Perspective, LookAt</code>.</p>
+  <pre><code>// rotation about z by 30° with fixed point (1, 2, 3)
+mat4 m = identity();
+m = Translate(1.0, 2.0, 3.0) * Rotate(30.0, 0.0, 0.0, 1.0) * Translate(-1.0, -2.0, -3.0);
+// last matrix specified in the program is the first applied</code></pre>
+  <ul>
+    <li>Матрицы хранятся как массив 16 элементов <b>по столбцам</b>; функции позволяют слать матрицу или её transpose.</li>
+    <li><b>Matrix stacks</b> (сохранить матрицу на потом: иерархии, display lists) — раньше были в OpenGL, теперь простой свой stack class.</li>
+    <li>Можно слать в шейдер готовую матрицу или угол и ось, а матрицу строит шейдер. Это эффективнее, чем трансформировать данные в приложении и пересылать.</li>
+  </ul>
+  <div class="remember"><span class="k">Важно в коде</span>GLSL-матрицы <b>column major</b>, поэтому транспонируем при отправке: <code>glUniformMatrix4fv(matrix_loc, 1, GL_TRUE, model_view);</code> В шейдере: <code>gl_Position = xform * vPosition;</code></div>
+  <p>Model-view matrix: позиционирует камеру (rotations + translations или LookAt) и строит модели. Projection matrix: view volume и линза. Они больше не часть состояния OpenGL, но создавать их в приложении — хорошая стратегия.</p>
+  <p>Пример: вращающийся куб — idle увеличивает <code>theta[axis] += 2.0</code> (по модулю 360) и вызывает glutPostRedisplay; mouse выбирает ось (left/middle/right → x/y/z); display: clear color+depth, glUniform, glDrawArrays, glutSwapBuffers.</p>
+
+  <h3>Smooth rotation и quaternions</h3>
+  <p>Задача: найти последовательность model-view матриц M₀…Mₙ для плавного перехода. Любой поворот — часть большого круга на сфере: найти ось и угол (<b>virtual trackball</b>).</p>
+  <ul>
+    <li>Для каждой Rᵢ находить Euler angles, <code>Rᵢ = Rᵢz Rᵢy Rᵢx</code> — неэффективно.</li>
+    <li>По конечным положениям найти ось и угол, увеличивать только угол.</li>
+    <li><b>Quaternions</b> эффективнее и стабильнее.</li>
+  </ul>
+  <div class="two">
+    <div><h4>Проблемы Euler angles</h4><ul><li>как интерполировать keyframes?</li><li>углы не независимы</li><li>интерполяция даёт <b>gimbal lock</b> — потерю степени свободы, когда оси совпадают</li></ul></div>
+    <div><h4>Quaternions</h4><ul><li><code>q = q₀ + q₁i + q₂j + q₃k</code> — 1 real + 3 imaginary</li><li>поворот на θ вокруг единичной n: <code>r = (cos θ/2, sin θ/2 · n)</code>, точка <code>p = (0, x)</code>, <code>p′ = r p r⁻¹</code></li><li>model-view → quaternion → операции → model-view</li></ul></div>
+  </div>
+  <p><b>slerp</b> (spherical linear interpolation) — равные шаги по сфере между quaternions A и B. Для нескольких keyframes Shoemake (SIGGRAPH '85) предложил Bézier curves на сфере: вариант De Casteljau со slerp.</p>
+  <div class="lec-foot"><button class="btn primary" data-oq-lec="4.1">Open questions L4.1 →</button></div>
+</article>
+
+<!-- L4.2 -->
+<article class="lec" data-lec="4.2">
+  <div class="lec-head">
+    <span class="eyebrow">Week 4 · Lecture 4.2</span>
+    <h2>Building Models &amp; Classical Viewing</h2>
+    <p class="lede">Right/left-handed системы, представление mesh (vertex lists, edge lists), outward-facing polygons, программа вращающегося color cube; классические проекции: taxonomy, orthographic, axonometric, oblique, perspective и vanishing points.</p>
+  </div>
+
+  <h3>Системы координат</h3>
+  <div class="two">
+    <div><h4>Right-handed</h4><p>Глядя «вниз» на начало координат, положительный поворот — <b>против часовой (CCW)</b>.</p></div>
+    <div><h4>Left-handed</h4><p>Положительный поворот — <b>по часовой (CW)</b>. Естественнее для дисплеев: большой z = «далеко» (в экран). Z = глубина.</p></div>
+  </div>
+
+  <h3>Representing a mesh</h3>
+  <p>Пример mesh: <b>8 nodes и 12 edges</b>, 5 interior polygons, 6 interior (shared) edges; у каждой вершины положение vᵢ = (xᵢ, yᵢ, zᵢ).</p>
+  <dl class="defs">
+    <div><dt>Simple representation</dt><dd>Каждый полигон хранит координаты вершин: <code>vertex[i] = vec3(x1,y1,z1); vertex[i+1] = vec3(x6,y6,z6); …</code> Неэффективно и неструктурированно: чтобы сдвинуть вершину, нужно найти все её копии.</dd></div>
+    <div><dt>Geometry vs topology</dt><dd><b>Geometry</b> — положения вершин. <b>Topology</b> — как связаны вершины и рёбра (polygon = упорядоченный список вершин, рёбра между соседними и от последней к первой). Topology сохраняется, даже если geometry меняется. Хорошие структуры их <b>разделяют</b>.</dd></div>
+    <div><dt>Vertex list</dt><dd>Geometry в одном массиве вершин; polygon list хранит указатели (индексы) в него. Filled polygons рисуются правильно, но если рисовать рёбрами, <b>общие рёбра рисуются дважды</b>.</dd></div>
+    <div><dt>Edge list</dt><dd>Каждое ребро — пара индексов вершин; общие рёбра хранятся один раз. Полигоны при этом <b>не представлены</b>.</dd></div>
+  </dl>
+
+  <h3>Inward / outward facing polygons</h3>
+  <p>Порядки {v₁, v₆, v₇} и {v₆, v₇, v₁} эквивалентны (тот же полигон), а {v₁, v₇, v₆} — другой. Первые два — <b>outward facing</b>.</p>
+  <div class="remember"><span class="k">Right-hand rule</span>Обход вершин <b>counter-clockwise</b> (если смотреть снаружи) охватывает <b>outward-pointing normal</b>. OpenGL может по-разному обрабатывать front и back faces.</div>
+
+  <h3>Rotating color cube</h3>
+  <ul>
+    <li>8 вершин единичного куба с центром в начале и сторонами по осям (<code>point4(±0.5, ±0.5, ±0.5, 1.0)</code>) и 8 цветов RGBA: black, red, yellow, green, blue, magenta, white, cyan.</li>
+    <li><code>quad(a, b, c, d)</code> делает <b>2 треугольника</b> (a,b,c и a,c,d) и копирует позиции и цвета; <code>colorcube()</code>: quad(1,0,3,2), quad(2,3,7,6), quad(3,0,4,7), quad(6,5,1,2), quad(4,5,6,7), quad(5,4,0,1) → <b>12 треугольников, 36 вершин и 36 цветов</b>. Порядок вершин даёт outward normals.</li>
+    <li><b>init:</b> colorcube(); VAO; один buffer размера sizeof(points)+sizeof(colors) с NULL + два glBufferSubData; <code>InitShader("vshdrcube.glsl", "fshdrcube.glsl")</code>; vPosition (offset 0) и vColor (offset sizeof(points)), 4 float; <code>thetaLoc = glGetUniformLocation(program, "theta")</code>.</li>
+    <li><b>display:</b> clear color+depth, <code>glUniform3fv(thetaLoc, 1, theta)</code>, <code>glDrawArrays(GL_TRIANGLES, 0, NumVertices)</code>, <code>glutSwapBuffers()</code>.</li>
+    <li><b>mouse:</b> GLUT_DOWN + left/middle/right → axis = X/Y/Z. <b>idle:</b> <code>theta[axis] += 0.01</code>, если > 360 то −360, glutPostRedisplay.</li>
+    <li><b>vertex shader:</b> <code>gl_Position = rot * vPosition; color = vColor;</code></li>
+  </ul>
+  <p><b>Default view volume</b>: куб со сторонами 2, (−1,−1,−1) → (1,1,1); вся геометрия внутри проецируется <b>параллельно на z = 0</b> и рендерится.</p>
+
+  <h3>Classical viewing</h3>
+  <p>Три элемента: <b>objects</b>, <b>viewer с projection surface</b>, <b>projectors</b> от объекта к поверхности. Классические виды основаны на их взаимном расположении; наблюдатель сам поворачивает объект, как хочет его видеть. Объекты состоят из плоских <b>principal faces</b> (здания, многогранники, изделия).</p>
+  <p><b>Planar geometric projections</b>: проекция на плоскость; projectors либо сходятся в <b>center of projection</b>, либо <b>параллельны</b>. Сохраняют прямые, но не обязательно углы. Для карт нужны nonplanar projections.</p>
+  <p>Компьютерная графика реализует все проекции <b>одним pipeline</b>; классическое черчение имело отдельную технику для каждой. Главное разделение — parallel vs perspective, хотя математически parallel = предел perspective.</p>
+  <h4>Taxonomy</h4>
+  <div class="tbl"><table>
+    <thead><tr><th>Ветка</th><th>Тип</th><th>Подтипы</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="3">Parallel</td><td>Orthographic: multiview</td><td>front, top, side</td></tr>
+      <tr><td>Orthographic: axonometric</td><td>isometric, dimetric, trimetric</td></tr>
+      <tr><td>Oblique</td><td>plan oblique, elevation oblique</td></tr>
+      <tr><td>Perspective</td><td>по числу vanishing points</td><td>1-point, 2-point, 3-point</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Parallel projections</h3>
+  <p><b>Orthographic</b>: projectors <b>ортогональны</b> projection surface.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Проекция</th><th>Плюсы</th><th>Минусы</th></tr></thead>
+    <tbody>
+      <tr><td>Multiview orthographic<br><small>плоскость параллельна principal face</small></td><td>Сохраняет <b>расстояния и углы</b>, форму; можно мерить: building plans, manuals</td><td>Не видно, как объект выглядит на самом деле, много поверхностей скрыто → в CAD добавляют isometric</td></tr>
+      <tr><td>Axonometric<br><small>плоскость повернута относительно объекта</small></td><td>Видно <b>три грани</b> коробки; линии укорачиваются (foreshortened), но коэффициенты можно найти; CAD</td><td>Углы не сохраняются (круг → эллипс); оптические иллюзии (параллельные линии будто расходятся); нереалистично: дальние объекты того же масштаба, что ближние</td></tr>
+      <tr><td>Oblique<br><small>произвольный угол projectors к плоскости</small></td><td>Можно выбрать углы, чтобы выделить грань; углы в гранях, параллельных плоскости, сохраняются, и при этом видно «вокруг» сбоку</td><td>Простой камерой не получить, нужна bellows camera или специальный объектив (architectural)</td></tr>
+    </tbody>
+  </table></div>
+  <p>Axonometric классифицируют по тому, сколько углов у угла спроецированного куба <b>равны</b>: три → <b>isometric</b>, два → <b>dimetric</b>, ни одного → <b>trimetric</b>.</p>
+
+  <h3>Perspective projection</h3>
+  <p>Projectors сходятся в center of projection. <b>Vanishing point</b>: параллельные линии объекта, <b>не параллельные</b> projection plane, сходятся в одну точку проекции; ручные рисунки перспективы строятся по этим точкам.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Тип</th><th>Условие</th><th>VP для куба</th></tr></thead>
+    <tbody>
+      <tr><td>Three-point</td><td>ни одна principal face не параллельна плоскости</td><td>3</td></tr>
+      <tr><td>Two-point</td><td>одно principal direction параллельно плоскости</td><td>2</td></tr>
+      <tr><td>One-point</td><td>одна principal face параллельна плоскости</td><td>1</td></tr>
+    </tbody>
+  </table></div>
+  <div class="two">
+    <div><h4>Плюсы</h4><p>Дальние объекты меньше таких же ближних (<b>diminution</b>) — выглядит реалистично.</p></div>
+    <div><h4>Минусы</h4><p>Равные отрезки на прямой проецируются неравными (<b>nonuniform foreshortening</b>); углы сохраняются только в плоскостях, параллельных projection plane; сложнее строить вручную (но не компьютером).</p></div>
+  </div>
+  <div class="lec-foot"><button class="btn primary" data-oq-lec="4.2">Open questions L4.2 →</button></div>
+</article>
+
+<!-- L5.1 -->
+<article class="lec" data-lec="5.1">
+  <div class="lec-head">
+    <span class="eyebrow">Week 5 · Lecture 5.1</span>
+    <h2>Computer Viewing &amp; Projection Matrices</h2>
+    <p class="lede">Три части viewing, камера OpenGL по умолчанию, перемещение камеры и LookAt, математика перспективы и perspective division, Ortho / Frustum / Perspective, projection normalization, матрицы ортографической, косой и перспективной проекций.</p>
+  </div>
+
+  <h3>Три аспекта viewing</h3>
+  <ol class="flow">
+    <li><b>Positioning the camera</b>model-view matrix</li>
+    <li><b>Selecting a lens</b>projection matrix</li>
+    <li><b>Clipping</b>view volume</li>
+  </ol>
+  <p><b>OpenGL camera по умолчанию:</b> object и camera frames совпадают (model-view = identity); камера в начале координат смотрит в <b>−z</b>; default view volume — куб со стороной 2 с центром в начале; default projection matrix = identity, проекция <b>orthographic</b>, всё вне куба clipped out.</p>
+
+  <h3>Moving the camera</h3>
+  <p>Чтобы видеть объекты с положительными и отрицательными z, можно сдвинуть камеру в +z (translate camera frame) или объекты в −z (translate world frame). Это <b>эквивалентно</b> и задаётся model-view: <code>Translate(0.0, 0.0, −d)</code>, d &gt; 0. На самом деле <mark>двигается мир относительно камеры</mark>.</p>
+  <p>Любое положение — серия rotations и translations. Side view: повернуть сцену, отодвинуть от начала: <code>C = TR</code>.</p>
+  <pre><code>mat4 t  = Translate(0.0, 0.0, -d);
+mat4 ry = RotateY(-90.0);
+mat4 m  = t * ry;   // moves world frame relative to camera:
+                    // the inverse of the desired camera movement</code></pre>
+  <div class="remember"><span class="k">LookAt(eye, at, up)</span><b>eye</b> — где камера, <b>at</b> — куда смотрит, <b>up</b> — вектор «вверх», <b>не параллелен</b> направлению взгляда. Был gluLookAt в GLU, теперь <code>mat4 mv = LookAt(vec4 eye, vec4 at, vec4 up);</code> в mat.h; можно умножать на modeling transformations (пример: isometric view куба).</div>
+  <p><b>Другие viewing APIs:</b> view reference point / view plane normal / view up (PHIGS, GKS-3D); yaw, pitch, roll; elevation, azimuth, twist; direction angles.</p>
+
+  <h3>Projections</h3>
+  <p>Default в eye frame — orthographic: <code>xp = x, yp = y, zp = 0</code> (в homogeneous: M = diag(1, 1, 0, 1); на практике M = I, а z обнуляют позже). Большинство систем используют <b>view normalization</b>: все виды переводятся в default view трансформациями, задающими projection matrix → один pipeline для всех видов.</p>
+  <h4>Simple perspective</h4>
+  <p>COP в начале координат, projection plane <code>z = d</code> (d &lt; 0). По видам сверху и сбоку: <code>xp = x/(z/d), yp = y/(z/d), zp = d</code>.</p>
+  <div class="mx-row"><span class="mx-eq">M =</span><span class="mx" data-m="1 0 0 0;0 1 0 0;0 0 1 0;0 0 1/d 0"></span><span class="mx-eq">p = [x y z 1]ᵀ → q = Mp = [x y z z/d]ᵀ</span></div>
+  <div class="remember"><span class="k">Perspective division</span>w ≠ 1, поэтому делим на w, чтобы вернуться из homogeneous coordinates: получаем ровно xp = x/(z/d), yp = y/(z/d), zp = d. Матрица делает линейную часть, деление — нелинейную.</div>
+
+  <h3>OpenGL projection functions</h3>
+  <dl class="defs">
+    <div><dt>Ortho(l, r, b, t, near, far)</dt><dd>Orthogonal view, параллелепипед в camera coordinates; near и far отсчитываются от камеры.</dd></div>
+    <div><dt>Frustum(l, r, b, t, near, far)</dt><dd>Perspective; усечённая пирамида в camera coordinates; может быть <b>несимметричной</b>. l &lt; r, b &lt; t, near &lt; far, near и far положительны. Часто трудно получить нужный вид.</dd></div>
+    <div><dt>Perspective(fovy, aspect, near, far)</dt><dd>Менее гибко (симметрично), но <b>интуитивнее</b>: field of view в градусах, aspect = w/h, near &lt; far &gt; 0.</dd></div>
+  </dl>
+
+  <h3>Normalization</h3>
+  <p>Вместо отдельной матрицы для каждой проекции <b>все проекции превращаем в ортогональные с default view volume</b>. Можно использовать стандартные трансформации в pipeline и эффективно клиппировать.</p>
+  <ol class="flow">
+    <li><b>Model-view</b>4D, nonsingular</li>
+    <li><b>Projection</b>4D, nonsingular; = vertex shader output</li>
+    <li><b>Perspective division</b>4D → 3D</li>
+    <li><b>Clipping</b>против default cube</li>
+    <li><b>Projection</b>3D → 2D</li>
+  </ol>
+  <ul>
+    <li>Через model-view и projection остаёмся в 4D homogeneous coordinates; обе матрицы невырожденные, по умолчанию identity (orthogonal view).</li>
+    <li>Normalization позволяет клиппировать против простого куба при любой проекции.</li>
+    <li>Финальную проекцию откладываем до конца: важно для <b>hidden-surface removal</b> сохранять глубину как можно дольше.</li>
+  </ul>
+
+  <h3>Orthographic normalization</h3>
+  <p>Найти трансформацию, которая переводит заданный clipping volume Ortho(left, right, bottom, top, near, far) в default. Два шага:</p>
+  <ol>
+    <li>перенести центр в начало: <code>T(−(left+right)/2, −(bottom+top)/2, (near+far)/2)</code>;</li>
+    <li>масштабировать до сторон 2: <code>S(2/(right−left), 2/(top−bottom), 2/(near−far))</code>.</li>
+  </ol>
+  <div class="mx-row"><span class="mx-eq">P = ST =</span><span class="mx" data-m="2/(r−l) 0 0 −(r+l)/(r−l);0 2/(t−b) 0 −(t+b)/(t−b);0 0 −2/(f−n) −(f+n)/(f−n);0 0 0 1"></span></div>
+  <p>Final projection: z = 0, M<sub>orth</sub> = diag(1, 1, 0, 1); общая ортографическая проекция в 4D: <code>P = M_orth S T</code>.</p>
+
+  <h3>Oblique projections</h3>
+  <p>Функции OpenGL не дают общих параллельных проекций. Но косой вид куба похож на <b>скошенный (sheared)</b> куб: <mark>Oblique = Shear + Orthographic</mark>.</p>
+  <div class="mx-row"><span class="mx-eq">H(θ, φ) =</span><span class="mx" data-m="1 0 −cotθ 0;0 1 −cotφ 0;0 0 1 0;0 0 0 1"></span><span class="mx-eq">xy shear, z не меняется</span></div>
+  <p>Projection matrix <code>P = M_orth H(θ, φ)</code>, в общем случае <code>P = M_orth S T H(θ, φ)</code>. Матрица STH переводит исходный clipping volume в default; искажённый объект проецируется правильно.</p>
+
+  <h3>Perspective normalization</h3>
+  <p>Простая перспектива: COP в начале, near plane z = −1, угол обзора 90° (плоскости x = ±z, y = ±z). Матрица с последней строкой [0 0 −1 0]: x′ = x, y′ = y, z′ = z, <b>w′ = −z</b> → x″ = −x/z, y″ = −y/z. Матрица <b>не зависит от far plane</b>.</p>
+  <div class="mx-row"><span class="mx-eq">N =</span><span class="mx" data-m="1 0 0 0;0 1 0 0;0 0 α β;0 0 −1 0"></span><span class="mx-eq">после деления: x″ = −x/z, y″ = −y/z, z″ = −(α + β/z)</span></div>
+  <p>Точка проецируется ортогонально в нужное место при любых α и β. Выбираем</p>
+  <p><code>α = −(far + near)/(far − near),  β = −2·near·far/(far − near)</code></p>
+  <p>Тогда near plane → <b>z = −1</b>, far plane → <b>z = 1</b>, стороны → x = ±1, y = ±1: новый clipping volume = default.</p>
+  <div class="remember"><span class="k">Normalization и hidden-surface removal</span>Форма матрицы выбрана так, что если z₁ &gt; z₂ в исходном объёме, то z₁′ &gt; z₂′ после трансформации: <b>порядок по глубине сохраняется</b>, поэтому HSR работает после нормализации. Но <code>z″ = −(α + β/z)</code> <b>искажает расстояния</b> → численные проблемы (depth precision), особенно при <b>маленьком near</b>.</div>
+  <p><b>Frustum</b> требует сначала <b>shear</b> (чтобы пирамида стала прямой), затем <b>scale</b> к нормализованному объёму, затем perspective matrix: <code>P = N S H</code>, после чего нужна только ортографическая проекция.</p>
+  <h4>Почему так</h4>
+  <ul>
+    <li>один pipeline для perspective и orthogonal;</li>
+    <li>4D homogeneous coordinates как можно дольше, чтобы сохранить 3D-информацию для hidden-surface removal и shading;</li>
+    <li>проще clipping.</li>
+  </ul>
+
+  <h3>Код</h3>
+  <pre><code>// application
+model_view = LookAt(eye, at, up);
+projection = Ortho(left, right, bottom, top, near, far);
+// or projection = Perspective(fov, aspect, near, far);
+glUniformMatrix4fv(matrix_loc, 1, GL_TRUE, model_view);   // transpose: GLSL is column major
+// vertex shader
+gl_Position = projection * model_view * vPosition;</code></pre>
+  <p><b>Simple Mesh Format (SMF)</b> (Michael Garland): список 3D-вершин и список граней-треугольников со ссылками на вершины; индексы <b>с 1</b>. Нормаль треугольника: <code>n = (p₂ − p₀) × (p₁ − p₀)</code>, нормализовать; plane: n·(p − p₀) = 0; right-hand rule задаёт внешнюю сторону.</p>
+  <div class="lec-foot"><button class="btn primary" data-oq-lec="5.1">Open questions L5.1 →</button></div>
+</article>
+
+<!-- L5.2 -->
+<article class="lec" data-lec="5.2">
+  <div class="lec-head">
+    <span class="eyebrow">Week 5 · Lecture 5.2</span>
+    <h2>Shading</h2>
+    <p class="lede">Зачем shading, взаимодействие света и материала, rendering equation, local vs global, источники света, Phong и Blinn–Phong model, нормали, shading в OpenGL: flat, Gouraud и Phong, шейдеры освещения.</p>
+  </div>
+
+  <h3>Lessons learned from A2</h3>
+  <ul>
+    <li><code>idle()</code> нужен, только если что-то анимируется; когда анимация остановлена, idle = <b>NULL</b>.</li>
+    <li>Если keyboard/mouse/menu меняет что-то на экране, в конце callback — <code>glutPostRedisplay()</code>.</li>
+    <li>Геометрию (вершины, цвета) слать, <b>только когда она меняется</b>; если не меняется — один раз.</li>
+    <li>Матрицы трансформаций применять в <b>правильном порядке</b>.</li>
+  </ul>
+
+  <h3>Зачем shading</h3>
+  <p>Сфера из многих полигонов одного цвета выглядит плоской. Настоящая сфера выглядит объёмной, потому что из-за взаимодействия света и материала у каждой точки свой оттенок. Нужно учитывать: <b>light sources</b>, <b>material properties</b>, <b>location of viewer</b>, <b>surface orientation</b>.</p>
+  <h4>Scattering и rendering equation</h4>
+  <p>Свет попадает на A: часть рассеивается, часть поглощается; рассеянный попадает на B, снова частично рассеивается, часть возвращается на A, и так далее. Бесконечное рассеяние описывает <b>rendering equation</b>: в общем виде <b>не решается</b>; ray tracing — частный случай для идеально отражающих поверхностей. Она <b>глобальна</b>: тени, многократное рассеяние между объектами, полупрозрачность.</p>
+  <div class="two">
+    <div><h4>Global</h4><p>Правильное shading требует расчёта по всем объектам и источникам сразу. Несовместимо с pipeline.</p></div>
+    <div><h4>Local</h4><p>Pipeline закрашивает каждый polygon <b>независимо</b>. В real-time достаточно, чтобы «<b>look right</b>»; глобальные эффекты аппроксимируют отдельными техниками.</p></div>
+  </div>
+
+  <h3>Light–material interaction</h3>
+  <p>Свет частично <b>поглощается</b>, частично <b>рассеивается (отражается)</b>. Отражённое количество задаёт цвет и яркость: поверхность красная в белом свете, потому что red отражается, остальное поглощается. Характер рассеяния зависит от <b>гладкости и ориентации</b>: гладкая поверхность концентрирует отражённый свет около зеркального направления, шероховатая рассеивает во все стороны.</p>
+  <h4>Источники света</h4>
+  <p>Общие (протяжённые) источники сложны: надо интегрировать свет со всех точек источника. Простые:</p>
+  <dl class="defs">
+    <div><dt>Point source</dt><dd>Позиция + цвет. <b>Distant source</b> — бесконечно далеко, лучи параллельны.</dd></div>
+    <div><dt>Spotlight</dt><dd>Ограниченный точечный источник: direction, <b>cutoff</b>, ослабление ∝ cos<sup>e</sup>φ.</dd></div>
+    <div><dt>Ambient light</dt><dd>Одинаковое количество света везде; моделирует вклад многих источников и отражающих поверхностей.</dd></div>
+  </dl>
+
+  <h3>Phong model</h3>
+  <p>Простая модель, быстро считается. <b>Три компоненты</b>: diffuse, specular, ambient. <b>Четыре вектора</b>: к источнику <b>l</b>, к наблюдателю <b>v</b>, нормаль <b>n</b>, идеальное отражение <b>r</b>.</p>
+  <div class="remember"><span class="k">Ideal reflector</span>Нормаль определяется локальной ориентацией; <b>угол падения = углу отражения</b>; три вектора компланарны: <code>r = 2(l · n)n − l</code> (все единичные).</div>
+  <dl class="defs">
+    <div><dt>Diffuse (Lambertian)</dt><dd>Идеальный рассеиватель: свет рассеивается <b>одинаково во все стороны</b>. Отражение ∝ вертикальной составляющей падающего света: ~cos θᵢ = <b>l · n</b>. Коэффициенты k<sub>r</sub>, k<sub>g</sub>, k<sub>b</sub> — сколько каждой компоненты отражается.</dd></div>
+    <div><dt>Specular</dt><dd>Большинство поверхностей ни идеально диффузные, ни зеркальные. Гладкие дают <b>specular highlights</b> около направления идеального отражения. Phong: член убывает с ростом угла φ между v и r: <code>I_r ~ ks I cos^α φ</code>. <b>α = shininess</b>: 100–200 — металл, 5–10 — пластик.</dd></div>
+    <div><dt>Ambient</dt><dd>Результат многократного взаимодействия с окружением; зависит от цвета источников и материала: добавляем <code>ka Ia</code>.</dd></div>
+    <div><dt>Distance terms</dt><dd>Свет точечного источника ∝ 1/d²; добавляем множитель <code>1/(a + bd + cd²)</code> к diffuse и specular; константа и линейный член смягчают эффект.</dd></div>
+  </dl>
+  <div class="remember"><span class="k">Phong model</span>Для каждого источника и каждой цветовой компоненты (без distance terms): <code>I = kd Id (l · n) + ks Is (v · r)^α + ka Ia</code>. Вклады всех источников складываются.</div>
+  <ul>
+    <li>У каждого источника отдельные diffuse, specular, ambient (без физического обоснования, ради гибкости) × R, G, B → <b>9 коэффициентов</b>: Idr, Idg, Idb, Isr, Isg, Isb, Iar, Iag, Iab.</li>
+    <li>Материал: <b>9 absorption coefficients</b> kdr…kab + <b>shininess</b> α.</li>
+  </ul>
+  <h4>Too intense: I &gt; 1</h4>
+  <ul>
+    <li><code>MIN(I, 1)</code> — объект может менять цвет, уходя в белый: (0.1, 0.4, 0.8) + (0.5, 0.5, 0.5) = (0.6, 0.9, 1.0).</li>
+    <li>Перенормировать все I в 0…1: без пересвета, но надо посчитать все I до рендеринга, картинка может быть слишком яркой, контраст сбит.</li>
+    <li>Image processing по исходным I — лучше, но дорого.</li>
+  </ul>
+
+  <h3>Modified Phong (Blinn) model</h3>
+  <p>Specular-член Phong требует новый reflection vector и view vector для каждой вершины. Blinn предложил аппроксимацию через <b>halfway vector</b>:</p>
+  <div class="remember"><span class="k">Halfway vector</span><code>h = (l + v)/|l + v|</code>; заменяем <code>(v · r)^α</code> на <code>(n · h)^β</code>, β подбирают под блеск. Если векторы компланарны, угол ψ между n и h — половина угла между r и v. Это <b>modified Phong / Blinn lighting model</b>, он в стандарте OpenGL.</div>
+
+  <h3>Нормали</h3>
+  <p>l и v задаёт приложение, r считается из l и n. Проблема — <b>n</b>: способ зависит от представления поверхности. OpenGL оставляет это приложению (кроме deprecated GLU quadrics и Bézier surfaces).</p>
+  <dl class="defs">
+    <div><dt>Plane</dt><dd>ax + by + cz + d = 0; по трём точкам: <code>n = (p₂ − p₀) × (p₁ − p₀)</code>, нормализовать.</dd></div>
+    <div><dt>Sphere, implicit</dt><dd>f(x, y, z) = 0 → нормаль = <b>gradient</b>. f(p) = p·p − 1 → <code>n = [∂f/∂x, ∂f/∂y, ∂f/∂z]ᵀ = p</code>.</dd></div>
+    <div><dt>Parametric</dt><dd>x = cos u sin v, y = cos u cos v, z = sin u. Касательная плоскость задаётся ∂p/∂u и ∂p/∂v → <code>n = ∂p/∂u × ∂p/∂v</code>. Так же для quadrics и parametric polynomial surfaces (Bézier patches).</dd></div>
+  </dl>
+
+  <h3>Shading в OpenGL</h3>
+  <p>Нужны normals, material properties, lights. Старые state-функции (<code>glNormal, glMaterial, glLight</code>) deprecated — считаем в приложении или шлём атрибуты в шейдеры.</p>
+  <ul>
+    <li><b>Normalization:</b> косинусы через dot product; удобнее единичные векторы, но длину меняют трансформации (<b>scaling не сохраняет длину</b>) → в GLSL есть <code>normalize()</code>.</li>
+    <li><b>Point light:</b> позиция + RGBA для diffuse, specular, ambient: <code>vec4 diffuse0 = vec4(1,0,0,1); vec4 light0_pos = vec4(1.0, 2.0, 3.0, 1.0);</code></li>
+    <li><b>Позиция в homogeneous coordinates:</b> <b>w = 1</b> — конечная точка, <b>w = 0</b> — параллельный источник с заданным направлением. Distance terms обычно квадратичные: <code>1/(a + b·d + c·d²)</code>.</li>
+    <li><b>Spotlight:</b> direction, cutoff, attenuation ∝ cos<sup>e</sup>φ.</li>
+    <li><b>Global ambient:</b> ambient зависит от цвета источников (красный свет в белой комнате даёт красный ambient, который исчезает при выключении); глобальный ambient удобен для тестов.</li>
+    <li><b>Moving lights:</b> источники — геометрические объекты, на них действует model-view. Можно двигать свет вместе с объектами, фиксировать объекты и двигать свет, фиксировать свет и двигать объекты, или двигать всё независимо.</li>
+    <li><b>Material:</b> соответствует членам модели; w-компонента = opacity (alpha): <code>ambient(0.2,0.2,0.2,1), diffuse(1,0.8,0,1), specular(1,1,1,1), shine = 100</code>.</li>
+    <li><b>Front and back faces:</b> у каждой грани две стороны; заднюю часто не видно, если важно — обрабатываем в шейдере.</li>
+    <li><b>Transparency:</b> A в RGBA делает поверхность полупрозрачной, но по умолчанию всё непрозрачно; позже включим blending.</li>
+  </ul>
+
+  <h3>Polygonal shading</h3>
+  <p><b>Per-vertex shading</b>: расчёт в каждой вершине; цвета вершин становятся shades и идут в vertex shader как атрибут, либо шейдер сам считает по параметрам. По умолчанию shades интерполируются (varying) → <b>smooth shading</b>; uniform даёт один цвет → <b>flat shading</b>.</p>
+  <p>У треугольника одна нормаль; shades в вершинах почти одинаковые (идентичные для далёкого наблюдателя или без specular). Для сферы хотим <b>разные нормали в вершинах</b>: если центр в начале, <code>n = p</code> — тогда smooth shading работает (но силуэт остаётся многоугольным).</p>
+  <p><b>Mesh shading</b> (Gouraud): нормаль вершины = среднее нормалей соседних граней <code>n = (n₁+n₂+n₃+n₄)/|n₁+n₂+n₃+n₄|</code>. Алгоритм (SMF-файл: v… и f…): массив нормалей размера массива вершин → для каждой грани unit normal и прибавить к её вершинам → нормализовать все.</p>
+  <div class="tbl"><table>
+    <thead><tr><th></th><th>Gouraud shading</th><th>Phong shading</th></tr></thead>
+    <tbody>
+      <tr><td>Нормали</td><td>усреднённые нормали вершин</td><td>усреднённые нормали вершин</td></tr>
+      <tr><td>Где модель освещения</td><td>в каждой <b>вершине</b> (vertex shader)</td><td>в каждом <b>фрагменте</b> (fragment shader)</td></tr>
+      <tr><td>Что интерполируется</td><td><b>shades (цвета)</b></td><td><b>нормали</b> (и векторы L, E)</td></tr>
+      <tr><td>Результат</td><td>на сильно изогнутых поверхностях видны рёбра</td><td>гладко</td></tr>
+      <tr><td>Стоимость</td><td>дешевле</td><td>намного дороже; раньше не было в real time, теперь через fragment shaders</td></tr>
+    </tbody>
+  </table></div>
+  <p>Обоим нужны структуры данных mesh, чтобы получить нормали вершин.</p>
+
+  <h3>Шейдеры освещения</h3>
+  <div class="two">
+    <div><h4>Per-vertex (Gouraud)</h4><pre><code>vec3 pos = (ModelView*vec4(vPosition,1)).xyz;
+vec3 L = normalize(LightPosition - pos);
+vec3 E = normalize(-pos);
+vec3 H = normalize(L + E);
+vec3 N = normalize(ModelView*vec4(vNormal,0)).xyz;
+float d = max(dot(L,N), 0.0);
+float s = pow(max(dot(N,H),0.0), Shininess);
+vec3 spec = s*SpecularProduct;
+if(dot(L,N) &lt; 0.0) spec = vec3(0.0);
+color = AmbientProduct + d*DiffuseProduct + spec;
+gl_Position = Projection*ModelView*vPosition;
+// fragment: frag_color = vec4(color, 1.0);</code></pre></div>
+    <div><h4>Per-fragment (Phong)</h4><pre><code>// vertex shader: outputs interpolated
+fN = vNormal;
+fE = EyePosition - vPosition.xyz;
+fL = (LightPosition.w != 0.0)
+   ? LightPosition.xyz - vPosition.xyz
+   : LightPosition.xyz;
+// fragment shader
+vec3 N = normalize(fN), E = normalize(fE),
+     L = normalize(fL), H = normalize(L + E);
+// same ambient + diffuse + specular,
+// specular = 0 if dot(L,N) &lt; 0
+frag_color = vec4(ambient+diffuse+specular, 1.0);</code></pre></div>
+  </div>
+  <p>AmbientProduct, DiffuseProduct, SpecularProduct = цвет источника × свойство материала, считаются в приложении и передаются uniform'ами.</p>
+  <div class="lec-foot"><button class="btn primary" data-oq-lec="5.2">Open questions L5.2 →</button></div>
+</article>
+
+  </div>
+</div>
+</section>
+
+<!-- ============ KEY POINTS ============ -->
+<section class="view" id="view-keys" hidden>
+<div class="keys-wrap">
+  <header>
+    <h2>Ключевое из лекций</h2>
+    <p class="sub">Самое важное без лишнего. Подробности и код во вкладке «Конспекты», вопросы для тренировки во вкладке «Open questions».</p>
+    <nav class="keys-jump" aria-label="Разделы">
+      <a href="#" data-jump="k-pairs">Путают</a><a href="#" data-jump="k-f">Формулы</a><a href="#" data-jump="k1.1">L1.1</a><a href="#" data-jump="k1.2">L1.2</a><a href="#" data-jump="k2.1">L2.1</a><a href="#" data-jump="k2.2">L2.2</a><a href="#" data-jump="k3.1">L3.1</a><a href="#" data-jump="k3.2">L3.2</a><a href="#" data-jump="k4.1">L4.1</a><a href="#" data-jump="k4.2">L4.2</a><a href="#" data-jump="k5.1">L5.1</a><a href="#" data-jump="k5.2">L5.2</a>
+    </nav>
+  </header>
+
+  <div class="kblock" id="k-pairs">
+    <h3>Что чаще всего путают</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>Пара</th><th>Разница</th></tr></thead>
+      <tbody>
+        <tr><td>Additive / Subtractive</td><td>RGB складывает излучаемый свет (мониторы) / CMY фильтрует белый свет (печать)</td></tr>
+        <tr><td>Rods / Cones</td><td>монохромные, ночное зрение / цветовые, 3 типа → tristimulus values</td></tr>
+        <tr><td>Global / Local lighting</td><td>учитывает все объекты (тени, отражения, ray tracing) / каждый объект отдельно (pipeline)</td></tr>
+        <tr><td>Perspective / Parallel</td><td>projectors сходятся в COP / параллельны, direction of projection</td></tr>
+        <tr><td>Fragment / Pixel</td><td>потенциальный пиксель из rasterizer'а (позиция, цвет, глубина) / итоговое значение в frame buffer</td></tr>
+        <tr><td>Immediate / Retained</td><td>шлём и рисуем каждый раз / храним на GPU, шлём только команды</td></tr>
+        <tr><td>VAO / VBO</td><td>объединяет все атрибуты вершин / сам буфер с данными на GPU</td></tr>
+        <tr><td>glBufferData / glBufferSubData</td><td>выделяет и заполняет буфер / заменяет часть с offset</td></tr>
+        <tr><td>Attribute (in) / Uniform / Varying (out→in)</td><td>раз на вершину / постоянна на primitive, только чтение в шейдере / из vertex в fragment, интерполируется</td></tr>
+        <tr><td>Vertex / Fragment shader</td><td>каждая вершина, gl_Position / каждый фрагмент, цвет</td></tr>
+        <tr><td>Gouraud / Phong shading</td><td>освещение в вершинах, интерполируем цвета / интерполируем нормали, освещение во фрагментах</td></tr>
+        <tr><td>Phong model / Phong shading</td><td>модель отражения (ambient+diffuse+specular) / способ интерполяции (per-fragment)</td></tr>
+        <tr><td>Phong / Blinn–Phong</td><td>(v·r)^α / (n·h)^β, h = (l+v)/|l+v|, дешевле</td></tr>
+        <tr><td>Request / Event mode</td><td>ввод только по trigger, программа ждёт / события в очередь, callbacks</td></tr>
+        <tr><td>Measure / Trigger</td><td>что возвращает устройство / сигнал, когда возвращать</td></tr>
+        <tr><td>Motion / Passive motion</td><td>мышь движется с нажатой кнопкой / без нажатия</td></tr>
+        <tr><td>glutPostRedisplay / display()</td><td>ставит флаг, перерисовка один раз за цикл / прямой вызов, возможны лишние перерисовки</td></tr>
+        <tr><td>Vector / Point</td><td>направление + длина, без положения, w = 0 / положение, w = 1</td></tr>
+        <tr><td>Coordinate system / Frame</td><td>только базис векторов / базис + origin P₀ (можно задать точки)</td></tr>
+        <tr><td>Affine sum / Convex hull</td><td>Σα = 1 / Σα = 1 и все α ≥ 0</td></tr>
+        <tr><td>Geometry / Topology</td><td>координаты вершин / как вершины соединены</td></tr>
+        <tr><td>Vertex list / Edge list</td><td>индексы вершин в полигонах, общие рёбра рисуются дважды / пары вершин, полигонов нет</td></tr>
+        <tr><td>Right / Left-handed</td><td>положительный поворот CCW / CW, z в экран</td></tr>
+        <tr><td>Isometric / Dimetric / Trimetric</td><td>равны 3 / 2 / 0 угла у угла куба</td></tr>
+        <tr><td>1 / 2 / 3-point perspective</td><td>грань параллельна плоскости / одно направление параллельно / ничего не параллельно</td></tr>
+        <tr><td>Ortho / Frustum / Perspective</td><td>параллельная (box) / перспектива, может быть несимметричной / симметричная через fovy и aspect</td></tr>
+        <tr><td>Model-view / Projection</td><td>позиция камеры и моделирование / линза и view volume</td></tr>
+        <tr><td>Moving camera / Moving world</td><td>эквивалентно; в коде пишем обратное движение мира: Translate(0,0,−d)</td></tr>
+        <tr><td>Diminution / Foreshortening</td><td>дальнее меньше (перспектива) / укорачивание отрезков (axonometric — равномерно, perspective — нет)</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="kblock" id="k-f">
+    <h3>Шпаргалка: формулы и матрицы</h3>
+    <div class="fgrid">
+      <div class="fcell"><b>Translation T(d)</b><span class="mx" data-m="1 0 0 dx;0 1 0 dy;0 0 1 dz;0 0 0 1"></span><span>T⁻¹ = T(−d)</span></div>
+      <div class="fcell"><b>Rotation R<sub>z</sub>(θ)</b><span class="mx" data-m="cosθ −sinθ 0 0;sinθ cosθ 0 0;0 0 1 0;0 0 0 1"></span><span>R⁻¹ = R(−θ) = Rᵀ</span></div>
+      <div class="fcell"><b>Scaling S(s)</b><span class="mx" data-m="sx 0 0 0;0 sy 0 0;0 0 sz 0;0 0 0 1"></span><span>S⁻¹ = S(1/s); s &lt; 0 → reflection</span></div>
+      <div class="fcell"><b>Shear H(θ) вдоль x</b><span class="mx" data-m="1 cotθ 0 0;0 1 0 0;0 0 1 0;0 0 0 1"></span><span>x′ = x + y cot θ</span></div>
+      <div class="fcell"><b>Simple perspective (plane z = d)</b><span class="mx" data-m="1 0 0 0;0 1 0 0;0 0 1 0;0 0 1/d 0"></span><span>w = z/d → xp = x/(z/d)</span></div>
+      <div class="fcell"><b>Perspective normalization N</b><span class="mx" data-m="1 0 0 0;0 1 0 0;0 0 α β;0 0 −1 0"></span><span>α = −(f+n)/(f−n), β = −2fn/(f−n); near → −1, far → 1</span></div>
+    </div>
+    <div class="tbl"><table>
+      <thead><tr><th>Что</th><th>Формула</th></tr></thead>
+      <tbody>
+        <tr><td>Pinhole camera</td><td><code>xp = −x/(z/d), yp = −y/(z/d), zp = d</code></td></tr>
+        <tr><td>Homogeneous</td><td>точка <code>[x y z 1]</code>, вектор <code>[x y z 0]</code>; <code>[wx wy wz w]</code> → делим на w</td></tr>
+        <tr><td>Dot / cross</td><td><code>u·v = |u||v|cos θ</code>; <code>A×B = (a<sub>y</sub>b<sub>z</sub> − a<sub>z</sub>b<sub>y</sub>, a<sub>z</sub>b<sub>x</sub> − a<sub>x</sub>b<sub>z</sub>, a<sub>x</sub>b<sub>y</sub> − a<sub>y</sub>b<sub>x</sub>)</code></td></tr>
+        <tr><td>Line / ray / segment</td><td><code>P(α) = P₀ + αd</code>; α ≥ 0; <code>αR + (1−α)Q</code>, 0 ≤ α ≤ 1</td></tr>
+        <tr><td>Plane, normal</td><td><code>P(α,β) = R + αu + βv</code>, <code>n = u × v</code>, <code>(P − P₀)·n = 0</code></td></tr>
+        <tr><td>Barycentric</td><td><code>P = α₁P + α₂Q + α₃R</code>, Σα = 1, α ≥ 0</td></tr>
+        <tr><td>Change of basis / frame</td><td><code>a = Mᵀb</code> (3×3 / 4×4)</td></tr>
+        <tr><td>Order</td><td><code>p′ = ABCp</code> — C первой; fixed point: <code>T(p_f) R(θ) T(−p_f)</code>; instance: <code>T R S</code></td></tr>
+        <tr><td>Rodrigues</td><td><code>P cos θ + (n×P) sin θ + n(n·P)(1 − cos θ)</code></td></tr>
+        <tr><td>Quaternion rotation</td><td><code>r = (cos θ/2, sin θ/2·n)</code>, <code>p = (0, x)</code>, <code>p′ = r p r⁻¹</code></td></tr>
+        <tr><td>Ortho normalization</td><td><code>P = ST</code>: T(−(l+r)/2, −(b+t)/2, (n+f)/2), S(2/(r−l), 2/(t−b), 2/(n−f)); M<sub>orth</sub> = diag(1,1,0,1)</td></tr>
+        <tr><td>Oblique</td><td><code>P = M_orth S T H(θ, φ)</code></td></tr>
+        <tr><td>Frustum</td><td><code>P = N S H</code></td></tr>
+        <tr><td>Vertex shader</td><td><code>gl_Position = projection * model_view * vPosition</code></td></tr>
+        <tr><td>Reflection vector</td><td><code>r = 2(l·n)n − l</code></td></tr>
+        <tr><td>Phong</td><td><code>I = kd Id (l·n) + ks Is (v·r)^α + ka Ia</code>; attenuation <code>1/(a + bd + cd²)</code></td></tr>
+        <tr><td>Blinn halfway</td><td><code>h = (l + v)/|l + v|</code>, <code>(n·h)^β</code></td></tr>
+        <tr><td>Normals</td><td>triangle <code>(p₂−p₀)×(p₁−p₀)</code>; sphere <code>n = p</code>; parametric <code>∂p/∂u × ∂p/∂v</code>; mesh — среднее</td></tr>
+        <tr><td>Mouse y</td><td><code>y = h − y</code></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="kblock" id="k1.1">
+    <h3><span class="n">L1.1</span>Introduction &amp; Image Formation</h3>
+    <ul class="klist">
+      <li>Elements of image formation: <b>objects, viewer, light sources, material attributes</b>; они независимы.</li>
+      <li>Видимый свет ≈ <b>350–750 nm</b>; длинные волны красные, короткие синие.</li>
+      <li><b>Three-color theory</b>: rods (ночь, ч/б) и 3 типа cones → 3 tristimulus values → хватает 3 primaries.</li>
+      <li><b>RGB</b> additive (мониторы, RGB cube; ТВ — YIQ); <b>CMY</b> subtractive (печать; cyan поглощает red); <b>HSV</b>: hue в градусах (R 0, Y 60, G 120), saturation, brightness.</li>
+      <li><b>Synthetic camera</b>: projector → COP, пересечение с image plane. Pinhole: <code>xp = −x/(z/d)</code>.</li>
+      <li><b>Ray tracing</b> даёт global effects, но медленный и нужна вся сцена; <b>radiosity</b> ещё медленнее. Practical: <b>pipeline</b>, объекты по одному, local lighting, всё в железе.</li>
+      <li>Pipeline: <b>vertex processing → clipping &amp; primitive assembly → rasterization → fragment processing</b>.</li>
+      <li>Fragment = potential pixel (location, color, depth). Hidden-surface removal во fragment processing.</li>
+      <li>API: objects (points 0D, lines 1D, polygons 2D, curves/surfaces через vertices), viewer, lights, materials. Камера: <b>6 DOF</b> + lens, film size, film plane.</li>
+    </ul>
+  </div>
+
+  <div class="kblock" id="k1.2">
+    <h3><span class="n">L1.2</span>OpenGL: Background &amp; First Program</h3>
+    <ul class="klist">
+      <li><b>Immediate</b> (шлём каждый раз, большой bandwidth) vs <b>retained</b> (храним на GPU, нужно память).</li>
+      <li>История: GKS (2D) и Core → PHIGS (CAD, retained) → X Window → <b>SGI GL 1982</b> → <b>OpenGL 1992</b> → ARB → <b>Khronos</b>.</li>
+      <li>OpenGL <b>не делает windowing и input</b> — ради platform independence.</li>
+      <li><b>OpenGL 3.1 (2009)</b>: только шейдеры, нужно дать vertex + fragment shader, нет immediate mode, функции 2.5 deprecated. ES 2.0 ≈ 3.1, WebGL = JS ES 2.0, 4.x — geometry/compute shaders, tessellator.</li>
+      <li>Библиотеки: <b>GL</b>, <b>GLU</b> (legacy), <b>GLX/WGL/AGL</b>, <b>GLUT</b> (окна, ввод, меню), <b>freeglut</b>, <b>GLEW</b> (extensions).</li>
+      <li>Функции: <b>primitive generating</b> и <b>state changing</b>; не OOP → <code>glUniform3fv</code> = библиотека + имя + размерность + тип + vector.</li>
+      <li>Программа: <b>main</b> (окно, callbacks, <code>glutMainLoop</code> последним), <b>init</b>, <b>initShader</b>, <b>callbacks</b>. Display callback обязателен.</li>
+      <li>Buffer object: <code>glGenBuffers → glBindBuffer → glBufferData(usage)</code>; usage STATIC/DYNAMIC/STREAM × DRAW/READ/COPY.</li>
+      <li>Камера в начале координат смотрит в <b>−z</b>; view volume — куб (−1…1); default orthographic на z = 0; <code>glViewport(x,y,w,h)</code>.</li>
+    </ul>
+  </div>
+
+  <div class="kblock" id="k2.1">
+    <h3><span class="n">L2.1</span>Math, Shaders, Color &amp; Attributes</h3>
+    <ul class="klist">
+      <li>Dot product: длина, нормализация, угол, ортогональность (u·v = 0), проекция. Cross product: вектор, перпендикулярный двум → нормаль.</li>
+      <li>Matrix multiplication <b>не коммутативна</b>; inverse только для квадратных.</li>
+      <li><b>Vertex shader</b>: трансформации, morphing, wave, particles, per-vertex lighting. <b>Fragment shader</b>: per-fragment lighting, textures, bump/environment mapping.</li>
+      <li>GLSL: vec/mat (mat <b>по столбцам</b>), конструкторы, <b>нет указателей и рекурсии</b>, in/out/inout (value-return), swizzling <code>a.xw = b.yy</code>.</li>
+      <li>Qualifiers: <b>in</b> (раз на вершину), <b>uniform</b> (на primitive, read-only в шейдере), <b>out → in</b> (varying, интерполируется).</li>
+      <li>OpenGL рисует только <b>треугольники</b>: полигон должен быть simple, convex, flat → triangulation; хорошие треугольники — без острых углов, Delaunay.</li>
+      <li>Smooth shading интерполирует цвета вершин; flat — цвет первой вершины. Цвет: uniform или attribute из приложения.</li>
+    </ul>
+  </div>
+
+  <div class="kblock" id="k2.2">
+    <h3><span class="n">L2.2</span>More GLSL &amp; Three Dimensions</h3>
+    <ul class="klist">
+      <li>Shaders: read → <code>glCreateShader</code> → <code>glShaderSource</code> → <code>glCompileShader</code> → <code>glAttachShader</code> → <code>glLinkProgram</code> → <code>glUseProgram</code>.</li>
+      <li>Attributes: <code>glGetAttribLocation</code> + <code>glEnableVertexAttribArray</code> + <code>glVertexAttribPointer</code>. Uniforms: <code>glGetUniformLocation</code> + <code>glUniform*</code>.</li>
+      <li><b>Double buffering</b>: рисуем в back, показываем front, <code>glutSwapBuffers()</code>; <code>GLUT_DOUBLE</code>. Idle callback + <code>glutPostRedisplay</code> для анимации.</li>
+      <li>Позиции и цвета в одном буфере: glBufferData(NULL) + два glBufferSubData; цвет — offset sizeof(points).</li>
+      <li><b>Sierpinski gasket</b>: середины сторон, убрать центр, рекурсия; area → 0, perimeter → ∞ → <b>fractal</b>. 3D — tetrahedron.</li>
+      <li><b>Z-buffer</b>: глубина ближайшей точки на пиксель, пишем только если ближе. <code>GLUT_DEPTH</code>, <code>glEnable(GL_DEPTH_TEST)</code>, <code>glClear(... | GL_DEPTH_BUFFER_BIT)</code>.</li>
+    </ul>
+  </div>
+
+  <div class="kblock" id="k3.1">
+    <h3><span class="n">L3.1</span>Input and Interaction</h3>
+    <ul class="klist">
+      <li><b>Sketchpad</b> (Sutherland, MIT 1963): see → pick → object changes → repeat.</li>
+      <li>Physical vs <b>logical</b> devices. Шесть логических: <b>locator, pick, keyboard, stroke, valuator, choice</b>.</li>
+      <li>Data tablet — absolute; mouse, trackball, joystick — incremental (интегрировать).</li>
+      <li><b>Trigger</b> (сигнал) и <b>measure</b> (данные). <b>Request mode</b> (ждём trigger) vs <b>event mode</b> (event queue).</li>
+      <li>Events: window, mouse, motion, keyboard, idle. Callback на тип события; <code>glutMainLoop</code> разбирает очередь, без callback событие игнорируется.</li>
+      <li>Display вызывается при open, reshape, expose, по запросу. <code>glutPostRedisplay</code> = флаг → одна перерисовка за цикл.</li>
+      <li>Callbacks с фиксированной сигнатурой → <b>globals</b>.</li>
+      <li>Мышь: начало в левом верхнем углу → <code>y = h − y</code>. Motion vs passive motion, entry callback, special keys, modifiers.</li>
+      <li>Reshape: часть мира или весь мир (aspect ratio); <code>glViewport(0,0,w,h)</code>; redisplay ставится сам.</li>
+      <li>Menus: <code>glutCreateMenu → glutAddMenuEntry → glutAttachMenu</code>, submenus. Timer — одноразовый. У каждого окна свой context.</li>
+    </ul>
+  </div>
+
+  <div class="kblock" id="k3.2">
+    <h3><span class="n">L3.2</span>Geometry &amp; Representation</h3>
+    <ul class="klist">
+      <li>Coordinate-free: scalars, <b>vectors</b> (direction + magnitude, <b>без положения</b>), <b>points</b> (положение).</li>
+      <li>P − Q = vector, P + v = point; точки не складываются. <b>Affine space</b> = точки + векторы; 1·P = P, 0·P = 0.</li>
+      <li>Parametric line <code>P(α) = P₀ + αd</code>: ray α ≥ 0, segment 0 ≤ α ≤ 1; устойчивее explicit/implicit, обобщается на кривые и поверхности.</li>
+      <li>Convex; affine sum (Σα = 1); convex hull (+ α ≥ 0, «shrink wrap»).</li>
+      <li>Plane <code>R + αu + βv</code>, normal <code>n = u × v</code>; barycentric coordinates треугольника.</li>
+      <li>Linear independence → dimension → basis → representation (единственная).</li>
+      <li>Coordinate system недостаточна для точек → <b>frame</b> = origin + basis.</li>
+      <li><b>Homogeneous</b>: point w = 1, vector w = 0; все T, R, S — 4×4; perspective division.</li>
+      <li>Change of basis/frame: <code>a = Mᵀb</code>; world → camera через model-view (изначально I).</li>
+    </ul>
+  </div>
+
+  <div class="kblock" id="k4.1">
+    <h3><span class="n">L4.1</span>Transformations</h3>
+    <ul class="klist">
+      <li><b>Affine</b> = line preserving: rotation, translation (rigid body), scaling, shear; трансформируем только вершины.</li>
+      <li>Матрицы T, R<sub>x/y/z</sub>, S, H в homogeneous coordinates; reflection = отрицательный scale.</li>
+      <li>Inverses: T(−d), R(−θ) = <b>Rᵀ</b>, S(1/s).</li>
+      <li><code>p′ = ABCp</code>: <b>правая первой</b>; умножение не коммутативно.</li>
+      <li>Fixed point: <code>T(p_f) R(θ) T(−p_f)</code>. Instance: <b>scale → orient → locate</b> = <code>TRS</code>.</li>
+      <li>Euler angles <code>R = Rz Ry Rx</code>; arbitrary axis — матрица с c, s, t или Rodrigues.</li>
+      <li>CTM: в коде <b>последняя заданная матрица применяется первой</b>. mat.h: Translate, Rotate, Scale, LookAt, Ortho, Perspective.</li>
+      <li>GLSL column-major → <code>glUniformMatrix4fv(loc, 1, GL_TRUE, m)</code>.</li>
+      <li>Euler: сложно интерполировать, <b>gimbal lock</b> → <b>quaternions</b> (<code>p′ = r p r⁻¹</code>) и <b>slerp</b>.</li>
+    </ul>
+  </div>
+
+  <div class="kblock" id="k4.2">
+    <h3><span class="n">L4.2</span>Building Models &amp; Classical Viewing</h3>
+    <ul class="klist">
+      <li>Right-handed: положительный поворот CCW; left-handed: CW, z в экран.</li>
+      <li>Разделять <b>geometry</b> (позиции) и <b>topology</b> (связи). Vertex list: общий массив вершин + индексы. Edge list: общие рёбра один раз, полигонов нет.</li>
+      <li>Порядок вершин CCW снаружи = <b>outward-facing</b> (right-hand rule).</li>
+      <li>Color cube: 8 вершин, <code>quad</code> = 2 треугольника, 6 граней → <b>36 вершин</b>; mouse выбирает ось, idle крутит theta, шейдер вращает.</li>
+      <li>Classical viewing: objects, viewer + projection surface, projectors. Planar projections сохраняют прямые, не углы.</li>
+      <li>Taxonomy: <b>parallel</b> (multiview orthographic, axonometric: iso/di/trimetric, oblique) и <b>perspective</b> (1/2/3-point).</li>
+      <li>Multiview: расстояния и углы → для измерений, но скрытые грани. Axonometric: 3 грани, foreshortening, углы не сохраняются. Oblique: передняя грань без искажений.</li>
+      <li>Perspective: vanishing points, <b>diminution</b> (реализм), <b>nonuniform foreshortening</b>.</li>
+    </ul>
+  </div>
+
+  <div class="kblock" id="k5.1">
+    <h3><span class="n">L5.1</span>Computer Viewing &amp; Projection</h3>
+    <ul class="klist">
+      <li>Три шага: камера = <b>model-view</b>, линза = <b>projection</b>, <b>clipping</b> = view volume.</li>
+      <li>Двигаем мир, а не камеру: <code>Translate(0,0,−d)</code>; код = обратное движение камеры. <code>C = TR</code>.</li>
+      <li><code>LookAt(eye, at, up)</code>, up не параллелен взгляду. Другие API: VRP/VPN/VUP, yaw-pitch-roll, azimuth-elevation-twist.</li>
+      <li>Перспектива: матрица с последней строкой <code>[0 0 1/d 0]</code> + <b>perspective division</b> на w.</li>
+      <li>Ortho (box), Frustum (может быть несимметричной), Perspective(fovy, aspect = w/h, near, far).</li>
+      <li><b>Normalization</b>: любая проекция → ортографическая в default cube. Один pipeline, простое clipping, глубина до конца.</li>
+      <li>Pipeline: model-view → projection → perspective division → clipping → projection.</li>
+      <li>Ortho: <code>P = ST</code>; Oblique = <b>shear + ortho</b>; Frustum: <code>P = NSH</code>.</li>
+      <li>N: <code>z″ = −(α + β/z)</code>, near → −1, far → 1; порядок глубины сохраняется, но точность падает при маленьком near.</li>
+      <li>Шейдер: <code>gl_Position = projection * model_view * vPosition</code>.</li>
+    </ul>
+  </div>
+
+  <div class="kblock" id="k5.2">
+    <h3><span class="n">L5.2</span>Shading</h3>
+    <ul class="klist">
+      <li>Shading зависит от <b>light sources, material, viewer position, surface orientation</b>.</li>
+      <li>Свет поглощается и рассеивается; <b>rendering equation</b> глобальна и в общем не решается; pipeline локальный — «look right».</li>
+      <li>Источники: <b>point</b>, <b>distant</b> (w = 0), <b>spotlight</b> (direction, cutoff, cos<sup>e</sup>), <b>ambient</b>. Затухание <code>1/(a + bd + cd²)</code>.</li>
+      <li>Phong: <b>ambient + diffuse + specular</b>, векторы <b>l, v, n, r</b>; <code>r = 2(l·n)n − l</code>.</li>
+      <li>Diffuse (Lambert) ~ <code>l·n</code>, не зависит от наблюдателя. Specular ~ <code>(v·r)^α</code>: α 100–200 металл, 5–10 пластик.</li>
+      <li>9 коэффициентов источника + 9 материала + shininess. I &gt; 1 → clamp или renormalize.</li>
+      <li><b>Blinn</b>: <code>h = (l+v)/|l+v|</code>, <code>(n·h)^β</code> — дешевле, стандарт OpenGL.</li>
+      <li>Нормали: <code>(p₂−p₀)×(p₁−p₀)</code>; сфера — gradient, n = p; parametric — <code>∂p/∂u × ∂p/∂v</code>; mesh — среднее нормалей граней. Нормализовать после scaling.</li>
+      <li><b>Flat</b> (один цвет), <b>Gouraud</b> (освещение в вершинах, интерполируем цвета), <b>Phong shading</b> (интерполируем нормали, освещение во фрагментах).</li>
+      <li>Lessons A2: idle только при анимации (иначе NULL), glutPostRedisplay в конце callback, геометрию слать один раз, порядок матриц.</li>
+    </ul>
+  </div>
+
+  <div class="kfoot"><button class="btn primary" data-go="open" data-omode="practice">Тренировать open questions →</button></div>
+</div>
+</section>
+
+<!-- ============ OPEN QUESTIONS ============ -->
+<section class="view" id="view-open" hidden>
+<div class="panel">
+  <header>
+    <h2>Open questions</h2>
+    <p class="sub">Сначала ответь сам (вслух, на бумаге или в поле тренировки), потом открой образец и оцени себя: «знаю», «частично», «не знаю». Оценки сохраняются в этом браузере, по ним считается готовность на главной.</p>
+    <div class="oq-sum" id="oq-sum"></div>
+  </header>
+
+  <div class="filters">
+    <div class="f-row"><span class="f-lbl">Режим</span>
+      <div class="seg" role="group" aria-label="Режим">
+        <button type="button" data-omode="list" aria-pressed="true">Список</button>
+        <button type="button" data-omode="practice" aria-pressed="false">Тренировка</button>
+      </div>
+    </div>
+    <div class="f-row"><span class="f-lbl">Лекции</span><span class="f-row" id="oq-lecs"></span></div>
+    <div class="f-row"><span class="f-lbl">Показать</span>
+      <label class="chip"><input type="checkbox" id="oq-star"> только ★ вероятные</label>
+      <div class="seg" role="group" aria-label="Фильтр по оценке" id="oq-rate">
+        <button type="button" data-rf="all" aria-pressed="true">все</button>
+        <button type="button" data-rf="none" aria-pressed="false">без оценки</button>
+        <button type="button" data-rf="weak" aria-pressed="false">слабые</button>
+        <button type="button" data-rf="2" aria-pressed="false">знаю</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- list mode -->
+  <div id="oq-listmode">
+    <div class="f-row" style="justify-content:space-between;margin-bottom:12px">
+      <span class="sub" id="oq-count"></span>
+      <span class="f-row"><button class="linkbtn" type="button" id="oq-expand">Раскрыть все ответы</button>
+      <button class="linkbtn" type="button" id="oq-reset">Сбросить оценки</button></span>
+    </div>
+    <div class="oq-list" id="oq-list"></div>
+  </div>
+
+  <!-- practice mode -->
+  <div id="oq-practice" hidden>
+    <div class="pcard" id="pr-setup">
+      <h3 style="font-size:19px">Тренировка по одному вопросу</h3>
+      <p class="sub">Берутся вопросы по фильтрам выше в случайном порядке. Напиши ответ в поле (черновик сохранится), нажми «Показать образец», сравни по списку «обязательно упомянуть» и оцени себя.</p>
+      <div class="f-row"><span class="f-lbl">Сколько</span>
+        <div class="seg" role="group" aria-label="Количество вопросов" id="pr-n">
+          <button type="button" data-n="5" aria-pressed="false">5</button>
+          <button type="button" data-n="10" aria-pressed="true">10</button>
+          <button type="button" data-n="20" aria-pressed="false">20</button>
+          <button type="button" data-n="0" aria-pressed="false">все</button>
+        </div>
+        <span class="sub" id="pr-pool"></span>
+      </div>
+      <div class="f-row"><button class="btn primary" type="button" id="pr-start">Начать тренировку →</button></div>
+    </div>
+
+    <div class="pcard" id="pr-run" hidden>
+      <div class="ptop"><span id="pr-tag"></span><span id="pr-pos"></span></div>
+      <div class="prog"><i id="pr-bar" style="width:0"></i></div>
+      <p class="pq" id="pr-q"></p>
+      <textarea id="pr-text" placeholder="Твой ответ: определение → как работает → формула / код → пример → сравнение" aria-label="Твой ответ"></textarea>
+      <p class="hint" id="pr-hint">Черновик сохраняется автоматически.</p>
+      <div class="f-row"><button class="btn primary" type="button" id="pr-show">Показать образец</button><button class="btn" type="button" id="pr-skip">Пропустить</button></div>
+      <div id="pr-ans" hidden>
+        <div class="ans" id="pr-ans-body"></div>
+        <div class="rate" style="margin-top:14px"><span class="lbl">Как ответил(а)?</span>
+          <button class="rbtn" type="button" data-pr="2" data-r="2">Знаю</button>
+          <button class="rbtn" type="button" data-pr="1" data-r="1">Частично</button>
+          <button class="rbtn" type="button" data-pr="0" data-r="0">Не знаю</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pcard" id="pr-done" hidden>
+      <h3 style="font-size:19px">Тренировка закончена</h3>
+      <div class="done-score" id="pr-score"></div>
+      <div class="f-row"><button class="btn primary" type="button" id="pr-weak">Повторить слабые из этой сессии</button><button class="btn" type="button" id="pr-again">Новая тренировка</button><button class="btn" type="button" id="pr-tolist">К списку</button></div>
+    </div>
+  </div>
+</div>
+</section>
+
+</main>
+
+<script src="data-oq.js"></script>
+<script>
+const LECS = window.CGF_LECS, OQ = window.CGF_OQ;
+const LEC = Object.fromEntries(LECS.map(l => [l.k, l]));
+{ const seen = {}; OQ.forEach(q => { seen[q.l] = (seen[q.l] || 0) + 1; q.id = q.l + ":" + (seen[q.l] - 1); }); }
+const QBY = Object.fromEntries(OQ.map(q => [q.id, q]));
+
+/* ---------- storage (per-viewer convenience) ---------- */
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem("cgf_"+k); return v==null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem("cgf_"+k, JSON.stringify(v)); }catch(e){} }
+};
+let RATE = store.get("rate", {});
+let DRAFT = store.get("draft", {});
+const setRate = (id, r) => { if(r == null) delete RATE[id]; else RATE[id] = r; store.set("rate", RATE); };
+
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const shuffle = a => { a = a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const plural = (n, one, few, many) => { const a = n%10, b = n%100; return a===1 && b!==11 ? one : a>=2 && a<=4 && (b<12 || b>14) ? few : many; };
+const score = qs => qs.length ? Math.round(100 * qs.reduce((s, q) => s + (RATE[q.id]===2 ? 1 : RATE[q.id]===1 ? .5 : 0), 0) / qs.length) : 0;
+
+/* matrices: data-m="a b;c d" → bracketed grid */
+function renderMx(root){
+  (root || document).querySelectorAll(".mx[data-m]:not([data-done])").forEach(el => {
+    const rows = el.dataset.m.split(";").map(r => r.trim().split(/\s+/));
+    el.style.gridTemplateColumns = `repeat(${rows[0].length}, auto)`;
+    el.innerHTML = rows.flat().map(c => `<span>${esc(c)}</span>`).join("");
+    el.setAttribute("role", "img");
+    el.setAttribute("aria-label", "matrix: " + rows.map(r => r.join(" ")).join("; "));
+    el.dataset.done = "1";
+  });
+}
+
+/* ---------- views ---------- */
+const VIEWS = ["home","notes","keys","open"];
+function showView(v){
+  if(v==="home") renderHome();
+  if(v==="open") renderOpen();
+  VIEWS.forEach(n=>{
+    $("#view-"+n).hidden = n!==v;
+    $("#tab-"+n).setAttribute("aria-selected", n===v ? "true":"false");
+  });
+  store.set("view", v);
+  if(location.hash !== "#"+v){ try{ history.replaceState(null,"","#"+v); }catch(e){} }
+  window.scrollTo(0,0);
+}
+$$(".tab").forEach(b=>b.addEventListener("click",()=>showView(b.dataset.view)));
+$("#brand").addEventListener("click",()=>showView("home"));
+
+/* ---------- notes ---------- */
+$("#lec-index").innerHTML = `<span class="lbl">Лекции</span>` + LECS.map(l =>
+  `<button class="lec-btn" data-lec="${l.k}"><span class="n">${l.s}</span><span class="t">${esc(l.t)}</span></button>`).join("");
+function showLec(k){
+  if(!LEC[k]) k = LECS[0].k;
+  $$("article.lec").forEach(a=>a.hidden = a.dataset.lec!==k);
+  $$(".lec-btn").forEach(b=>b.setAttribute("aria-current", b.dataset.lec===k ? "true":"false"));
+  store.set("lec", k);
+}
+$$(".lec-btn").forEach(b=>b.addEventListener("click",()=>{ showLec(b.dataset.lec); window.scrollTo(0,0); }));
+$$("[data-jump]").forEach(a=>a.addEventListener("click",e=>{
+  e.preventDefault(); const t = document.getElementById(a.dataset.jump); if(t) t.scrollIntoView({behavior:"smooth", block:"start"});
+}));
+
+/* ---------- open questions: filters ---------- */
+const F = Object.assign({ lecs: LECS.map(l=>l.k), star: false, rf: "all", mode: "list", n: 10 }, store.get("filters", {}));
+F.lecs = F.lecs.filter(k => LEC[k]);
+const saveF = () => store.set("filters", F);
+const counts = {}; OQ.forEach(q => counts[q.l] = (counts[q.l]||0) + 1);
+$("#oq-lecs").innerHTML = LECS.map(l =>
+  `<label class="chip" title="${esc(l.t)}"><input type="checkbox" value="${l.k}"> ${l.s} <span class="c">${counts[l.k]||0}</span></label>`).join("")
+  + `<button class="linkbtn" type="button" id="oq-all">все / ни одной</button>`;
+
+function pool(){
+  return OQ.filter(q => F.lecs.includes(q.l) && (!F.star || q.p) && (
+    F.rf==="all" ? true : F.rf==="none" ? RATE[q.id]==null : F.rf==="weak" ? RATE[q.id]===0 || RATE[q.id]===1 : RATE[q.id]===+F.rf));
+}
+function paintFilters(){
+  $$("#oq-lecs input").forEach(i => i.checked = F.lecs.includes(i.value));
+  $("#oq-star").checked = F.star;
+  $$("#oq-rate button").forEach(b => b.setAttribute("aria-pressed", b.dataset.rf===F.rf ? "true":"false"));
+  $$(".seg [data-omode]").forEach(b => b.setAttribute("aria-pressed", b.dataset.omode===F.mode ? "true":"false"));
+  $$("#pr-n button").forEach(b => b.setAttribute("aria-pressed", +b.dataset.n===F.n ? "true":"false"));
+}
+$("#oq-lecs").addEventListener("change", () => { F.lecs = $$("#oq-lecs input:checked").map(i=>i.value); saveF(); renderOpen(); });
+$("#oq-all").addEventListener("click", () => { F.lecs = F.lecs.length===LECS.length ? [] : LECS.map(l=>l.k); saveF(); renderOpen(); });
+$("#oq-star").addEventListener("change", e => { F.star = e.target.checked; saveF(); renderOpen(); });
+$("#oq-rate").addEventListener("click", e => { const b = e.target.closest("[data-rf]"); if(!b) return; F.rf = b.dataset.rf; saveF(); renderOpen(); });
+$$(".seg [data-omode]").forEach(b => b.addEventListener("click", () => { F.mode = b.dataset.omode; saveF(); renderOpen(); }));
+$("#pr-n").addEventListener("click", e => { const b = e.target.closest("[data-n]"); if(!b) return; F.n = +b.dataset.n; saveF(); paintFilters(); paintPool(); });
+
+/* ---------- open questions: rendering ---------- */
+const RLBL = { 2: "знаю", 1: "частично", 0: "не знаю" };
+function ansHTML(q){
+  return `<p class="oq-ru"><b>Суть:</b> ${esc(q.ru)}</p>
+    <div>${q.a}</div>
+    <div class="kw"><span class="lbl">Обязательно упомянуть</span>${q.k.map(k=>`<span class="k">${esc(k)}</span>`).join("")}</div>`;
+}
+function rateHTML(q){
+  return `<div class="rate"><span class="lbl">Моя оценка:</span>${[2,1,0].map(r =>
+    `<button class="rbtn" type="button" data-r="${r}" data-qid="${q.id}" aria-pressed="${RATE[q.id]===r}">${RLBL[r][0].toUpperCase()+RLBL[r].slice(1)}</button>`).join("")}</div>`;
+}
+function renderSum(){
+  const rated = OQ.filter(q => RATE[q.id]!=null);
+  const n2 = rated.filter(q=>RATE[q.id]===2).length, n1 = rated.filter(q=>RATE[q.id]===1).length, n0 = rated.filter(q=>RATE[q.id]===0).length;
+  $("#oq-sum").innerHTML = `<span>Всего <b>${OQ.length}</b></span><span>оценено <b>${rated.length}</b></span>
+    <span style="color:var(--ok)">знаю <b style="color:inherit">${n2}</b></span><span style="color:var(--mid)">частично <b style="color:inherit">${n1}</b></span>
+    <span style="color:var(--bad)">не знаю <b style="color:inherit">${n0}</b></span><span>готовность <b>${score(OQ)}%</b></span>`;
+}
+let expandAll = false;
+function renderList(){
+  const qs = pool();
+  $("#oq-count").textContent = qs.length + " " + plural(qs.length, "вопрос", "вопроса", "вопросов");
+  $("#oq-expand").textContent = expandAll ? "Свернуть все ответы" : "Раскрыть все ответы";
+  $("#oq-list").innerHTML = qs.length ? qs.map(q => `
+    <article class="oq" data-qid="${q.id}" ${RATE[q.id]!=null ? `data-rate="${RATE[q.id]}"` : ""}>
+      <div class="oq-top"><span class="tagl">${LEC[q.l].s}</span><span>${esc(LEC[q.l].t)}</span>${q.p ? `<span class="star" title="Вероятная тема">★ вероятный</span>` : ""}</div>
+      <p class="oq-q">${esc(q.q)}</p>
+      <details ${expandAll ? "open" : ""}><summary>Показать образец ответа</summary><div class="ans">${ansHTML(q)}</div></details>
+      ${rateHTML(q)}
+    </article>`).join("")
+    : `<div class="empty">По этим фильтрам вопросов нет. Выбери другие лекции или сбрось фильтр оценки.</div>`;
+  renderMx($("#oq-list"));
+}
+$("#oq-list").addEventListener("click", e => {
+  const b = e.target.closest(".rbtn[data-qid]"); if(!b) return;
+  const id = b.dataset.qid, r = +b.dataset.r;
+  setRate(id, RATE[id]===r ? null : r);
+  const card = b.closest(".oq");
+  if(RATE[id]==null) card.removeAttribute("data-rate"); else card.dataset.rate = RATE[id];
+  card.querySelectorAll(".rbtn").forEach(x => x.setAttribute("aria-pressed", RATE[id]===+x.dataset.r ? "true":"false"));
+  renderSum();
+});
+$("#oq-expand").addEventListener("click", () => { expandAll = !expandAll; $$("#oq-list details").forEach(d => d.open = expandAll); $("#oq-expand").textContent = expandAll ? "Свернуть все ответы" : "Раскрыть все ответы"; });
+let resetArmed = false;
+$("#oq-reset").addEventListener("click", e => {
+  if(!resetArmed){ resetArmed = true; e.target.textContent = "Точно сбросить все оценки?"; setTimeout(()=>{ resetArmed = false; e.target.textContent = "Сбросить оценки"; }, 3000); return; }
+  RATE = {}; store.set("rate", RATE); resetArmed = false; e.target.textContent = "Сбросить оценки"; renderOpen();
+});
+
+function renderOpen(){
+  paintFilters(); renderSum();
+  const practice = F.mode==="practice";
+  $("#oq-listmode").hidden = practice;
+  $("#oq-practice").hidden = !practice;
+  if(practice){ if(!run) showPr("setup"); paintPool(); }
+  else renderList();
+}
+
+/* ---------- practice ---------- */
+let run = null;
+function paintPool(){ const n = pool().length; $("#pr-pool").textContent = `по фильтрам: ${n} ${plural(n,"вопрос","вопроса","вопросов")}`; $("#pr-start").disabled = !n; }
+function showPr(s){ ["setup","run","done"].forEach(x => $("#pr-"+x).hidden = x!==s); }
+function startPractice(qs){
+  if(!qs.length) return;
+  run = { qs, i: 0, res: {} };
+  F.mode = "practice"; saveF();
+  showPr("run"); renderPr();
+}
+function renderPr(){
+  const q = run.qs[run.i];
+  $("#pr-tag").innerHTML = `${LEC[q.l].s} · ${esc(LEC[q.l].t)}${q.p ? ` · <span class="star">★</span>` : ""}`;
+  $("#pr-pos").textContent = `${run.i+1} / ${run.qs.length}`;
+  $("#pr-bar").style.width = (100*run.i/run.qs.length) + "%";
+  $("#pr-q").textContent = q.q;
+  $("#pr-text").value = DRAFT[q.id] || "";
+  $("#pr-ans").hidden = true;
+  $("#pr-show").hidden = false;
+  $("#pr-ans-body").innerHTML = ansHTML(q);
+  renderMx($("#pr-ans-body"));
+  $$("#pr-ans .rbtn").forEach(b => b.setAttribute("aria-pressed", RATE[q.id]===+b.dataset.pr ? "true":"false"));
+}
+let draftT = null;
+$("#pr-text").addEventListener("input", e => {
+  if(!run) return; const id = run.qs[run.i].id, v = e.target.value;
+  clearTimeout(draftT); draftT = setTimeout(() => { if(v.trim()) DRAFT[id] = v; else delete DRAFT[id]; store.set("draft", DRAFT); }, 300);
+});
+$("#pr-show").addEventListener("click", () => { $("#pr-ans").hidden = false; $("#pr-show").hidden = true; $("#pr-ans").scrollIntoView({behavior:"smooth", block:"nearest"}); });
+function nextPr(){
+  run.i++;
+  if(run.i >= run.qs.length) return finishPr();
+  renderPr(); window.scrollTo(0, $("#view-open").offsetTop);
+}
+$("#pr-skip").addEventListener("click", nextPr);
+$$("#pr-ans [data-pr]").forEach(b => b.addEventListener("click", () => {
+  const q = run.qs[run.i], r = +b.dataset.pr;
+  setRate(q.id, r); run.res[q.id] = r; renderSum(); nextPr();
+}));
+function finishPr(){
+  const v = Object.values(run.res);
+  const c = r => v.filter(x=>x===r).length;
+  $("#pr-score").innerHTML = `<div class="g"><b>${c(2)}</b><span>знаю</span></div><div class="m"><b>${c(1)}</b><span>частично</span></div><div class="x"><b>${c(0)}</b><span>не знаю</span></div><div><b>${run.qs.length - v.length}</b><span>пропущено</span></div>`;
+  $("#pr-weak").disabled = !run.qs.some(q => run.res[q.id]===0 || run.res[q.id]===1);
+  showPr("done"); renderSum();
+}
+$("#pr-start").addEventListener("click", () => { const p = shuffle(pool()); startPractice(F.n ? p.slice(0, F.n) : p); });
+$("#pr-weak").addEventListener("click", () => startPractice(shuffle(run.qs.filter(q => run.res[q.id]===0 || run.res[q.id]===1))));
+$("#pr-again").addEventListener("click", () => { run = null; showPr("setup"); paintPool(); });
+$("#pr-tolist").addEventListener("click", () => { run = null; F.mode = "list"; saveF(); renderOpen(); });
+
+/* ---------- home ---------- */
+function renderHome(){
+  const nStar = OQ.filter(q=>q.p).length;
+  $("#h-q").textContent = $("#h-q1").textContent = OQ.length;
+  $("#h-q2").textContent = OQ.length + " " + plural(OQ.length, "вопрос", "вопроса", "вопросов");
+  $("#h-star").textContent = "★ " + nStar + " вероятных";
+  const any = OQ.some(q => RATE[q.id]!=null);
+  $("#h-ready").textContent = any ? score(OQ) + "%" : "—";
+  $("#h-map").innerHTML = LECS.map(l => {
+    const qs = OQ.filter(q => q.l===l.k), rated = qs.filter(q => RATE[q.id]!=null).length, s = score(qs);
+    return `<button class="h-row" type="button" data-lec-open="${l.k}" title="Open questions ${l.s}">
+      <span class="code">${l.s}</span>
+      <span class="name">${esc(l.t)}<small>${qs.length} вопр. · оценено ${rated}</small></span>
+      <span><span class="h-meter"><i style="width:${s}%"></i></span><span class="pct">${rated ? s + "%" : "—"}</span></span>
+    </button>`;
+  }).join("");
+}
+function openLec(k, mode){ F.lecs = [k]; F.rf = "all"; F.star = false; F.mode = mode || "list"; saveF(); run = null; showView("open"); }
+$("#h-map").addEventListener("click", e => { const r = e.target.closest("[data-lec-open]"); if(r) openLec(r.dataset.lecOpen); });
+$$("[data-oq-lec]").forEach(b => b.addEventListener("click", () => openLec(b.dataset.oqLec)));
+$$("[data-go]").forEach(b => b.addEventListener("click", () => {
+  if(b.dataset.omode){ F.mode = b.dataset.omode; saveF(); if(F.mode==="practice") run = null; }
+  showView(b.dataset.go);
+}));
+$("#h-practice").addEventListener("click", () => {
+  F.lecs = LECS.map(l=>l.k); F.star = false; F.rf = "all"; saveF();
+  startPractice(shuffle(OQ).slice(0, 10)); showView("open");
+});
+
+/* ---------- theme (shared with the hub and other trainers via cfq:v1) ---------- */
+function isDark(){ const t = document.documentElement.getAttribute("data-theme"); return t ? t==="dark" : matchMedia("(prefers-color-scheme: dark)").matches; }
+function paintTheme(){ $("#theme-btn").textContent = isDark() ? "☀ Светлая" : "☾ Тёмная"; }
+$("#theme-btn").addEventListener("click",()=>{
+  const t = isDark() ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", t);
+  try{ const s = JSON.parse(localStorage.getItem("cfq:v1")||"{}"); s.theme = t; localStorage.setItem("cfq:v1", JSON.stringify(s)); }catch(e){}
+  paintTheme();
+});
+paintTheme();
+
+/* ---------- init ---------- */
+renderMx(document);
+showLec(store.get("lec", LECS[0].k));
+const h = (location.hash||"").slice(1);
+showView(VIEWS.includes(h) ? h : "home");
+window.addEventListener("hashchange",()=>{ const v = location.hash.slice(1); if(VIEWS.includes(v)) showView(v); });
+</script>
+</body>
+</html>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Тренажёр к мидтермам</title>
-<meta name="description" content="Подготовка к мидтермам: AWS Academy Cloud Foundations и Research Methods in IT. Тесты с пояснениями, конспекты, карточки.">
+<meta name="description" content="Подготовка к мидтермам: AWS Academy Cloud Foundations, Research Methods in IT и Computer Graphics Fundamentals. Тесты с пояснениями, конспекты, карточки, open questions.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Unbounded:wght@500;700&display=swap">
@@ -18,6 +18,7 @@
   /* each course keeps the accent of its own trainer */
   --aws: #2340C7; --aws-soft: #E3E8FB; --aws-ink: #FFFFFF;
   --rm: #1E5A48; --rm-soft: #E0ECE5; --rm-ink: #FFFFFF;
+  --cg: #6B2FB3; --cg-soft: #EEE6F8; --cg-ink: #FFFFFF;
 
   --f-display: "Unbounded", "Golos Text", system-ui, sans-serif;
   --f-body: "Golos Text", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -31,6 +32,7 @@
     --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
     --aws: #8EA2FF; --aws-soft: #1E2747; --aws-ink: #0D1217;
     --rm: #7FC4A8; --rm-soft: #1D2E27; --rm-ink: #0E1512;
+    --cg: #C3A2F2; --cg-soft: #2A2140; --cg-ink: #140F1C;
     color-scheme: dark;
   }
 }
@@ -40,6 +42,7 @@
   --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
   --aws: #8EA2FF; --aws-soft: #1E2747; --aws-ink: #0D1217;
   --rm: #7FC4A8; --rm-soft: #1D2E27; --rm-ink: #0E1512;
+  --cg: #C3A2F2; --cg-soft: #2A2140; --cg-ink: #140F1C;
   color-scheme: dark;
 }
 
@@ -54,6 +57,7 @@ p { margin: 0; }
 .eyebrow { font: 600 12px/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .aws { --c: var(--aws); --c-soft: var(--aws-soft); --c-ink: var(--aws-ink); }
 .rm  { --c: var(--rm);  --c-soft: var(--rm-soft);  --c-ink: var(--rm-ink); }
+.cg  { --c: var(--cg);  --c-soft: var(--cg-soft);  --c-ink: var(--cg-ink); }
 
 /* Header */
 .top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
@@ -67,7 +71,7 @@ p { margin: 0; }
 .ghost { display: inline-flex; align-items: center; gap: 8px; background: none; border: 1px solid var(--line); border-radius: 999px; padding: 7px 14px; font-size: 14px; cursor: pointer; color: var(--ink); white-space: nowrap; text-decoration: none; }
 .ghost:hover { border-color: var(--muted); }
 .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--c); flex: none; }
-@media (max-width: 640px) { .top nav .hide-sm { display: none; } }
+@media (max-width: 860px) { .top nav .hide-sm { display: none; } }
 
 /* Buttons */
 .btn { display: inline-flex; align-items: center; gap: 10px; border: 0; border-radius: 999px; padding: 12px 20px; font-weight: 600; font-size: 15px; cursor: pointer; background: var(--c, var(--ink)); color: var(--c-ink, var(--bg)); text-decoration: none; }
@@ -80,6 +84,7 @@ p { margin: 0; }
 .hero h1 { font: 700 clamp(30px, 4.6vw, 52px)/1.08 var(--f-display); letter-spacing: -.02em; margin-top: 16px; }
 .hero h1 .a { color: var(--aws); }
 .hero h1 .r { color: var(--rm); }
+.hero h1 .g { color: var(--cg); }
 .lede { margin-top: 18px; color: var(--muted); font-size: 17px; max-width: 34em; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
 .stats { display: flex; flex-wrap: wrap; gap: 20px 32px; margin-top: 34px; padding-top: 22px; border-top: 1px solid var(--line); }
@@ -112,7 +117,7 @@ p { margin: 0; }
 .section { padding-block: 24px 40px; }
 .section > .eyebrow { display: block; margin-bottom: 10px; }
 .section h2.big { font: 700 clamp(22px, 3vw, 30px)/1.15 var(--f-display); letter-spacing: -.01em; margin-bottom: 22px; }
-.courses { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.courses { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
 .course { display: flex; flex-direction: column; gap: 18px; background: var(--surface); border: 1px solid var(--line); border-top: 4px solid var(--c); border-radius: var(--r); padding: 24px; min-width: 0; }
 .course-top { display: flex; gap: 14px; align-items: flex-start; }
 .course-mark { width: 46px; height: 46px; border-radius: 12px; background: var(--c); color: var(--c-ink); display: grid; place-items: center; font: 700 15px/1 var(--f-display); flex: none; }
@@ -146,6 +151,7 @@ p { margin: 0; }
 footer { border-top: 1px solid var(--line); }
 footer .wrap { padding-block: 22px 32px; color: var(--muted); font-size: 13px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
 
+@media (max-width: 1100px) { .courses { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 920px) {
   .hero { grid-template-columns: 1fr; padding-block: 32px 16px; gap: 28px; }
   .courses, .steps { grid-template-columns: 1fr; }
@@ -165,11 +171,12 @@ footer .wrap { padding-block: 22px 32px; color: var(--muted); font-size: 13px; d
   <div class="wrap">
     <a class="brand" href="./" aria-label="Главная">
       <span class="brand-mark">MT</span>
-      <span class="brand-name"><b>Тренажёр к мидтермам</b><span>2 курса · тесты · конспекты</span></span>
+      <span class="brand-name"><b>Тренажёр к мидтермам</b><span>3 курса · тесты · конспекты</span></span>
     </a>
     <nav>
       <a class="ghost hide-sm aws" href="aws/"><span class="dot"></span>Cloud Foundations</a>
       <a class="ghost hide-sm rm" href="research-methods/"><span class="dot"></span>Research Methods</a>
+      <a class="ghost hide-sm cg" href="cgf/"><span class="dot"></span>Computer Graphics</a>
       <button class="ghost" type="button" id="theme-btn" aria-label="Переключить тему">Тема</button>
     </nav>
   </div>
@@ -179,8 +186,8 @@ footer .wrap { padding-block: 22px 32px; color: var(--muted); font-size: 13px; d
   <section class="wrap hero">
     <div>
       <span class="eyebrow">Подготовка к мидтермам</span>
-      <h1><span class="a">AWS</span> и <span class="r">Research Methods</span>. Всё в одном месте.</h1>
-      <p class="lede">Тесты с пояснениями после каждого ответа, конспекты, сжатые до главного, и карточки с терминами. Прогресс и ошибки по обоим курсам собраны на этой странице.</p>
+      <h1><span class="a">AWS</span>, <span class="r">Research Methods</span> и <span class="g">Computer Graphics</span>. Всё в одном месте.</h1>
+      <p class="lede">Тесты с пояснениями после каждого ответа, конспекты, сжатые до главного, карточки с терминами и open questions с образцами ответов. Прогресс по всем курсам собран на этой странице.</p>
       <div class="hero-actions">
         <a class="btn" id="continue" href="aws/">Продолжить <span aria-hidden="true">→</span></a>
         <a class="btn secondary" href="#courses">Выбрать курс</a>
@@ -189,6 +196,7 @@ footer .wrap { padding-block: 22px 32px; color: var(--muted); font-size: 13px; d
         <div class="stat"><b id="st-q">—</b><span>вопросов с пояснениями</span></div>
         <div class="stat"><b id="st-notes">—</b><span>тем в конспектах</span></div>
         <div class="stat"><b id="st-cards">—</b><span>карточек с терминами</span></div>
+        <div class="stat"><b id="st-oq">—</b><span>open questions с ответами</span></div>
       </div>
     </div>
 
@@ -205,7 +213,13 @@ footer .wrap { padding-block: 22px 32px; color: var(--muted); font-size: 13px; d
         <div class="sum-sub"><span id="rm-sub">Ещё не начат</span><span id="rm-mist"></span></div>
         <div class="bars" id="rm-bars"></div>
       </a>
-      <p class="sum-note">Процент считается по всем вопросам курса: непройденные темы идут как 0. Прогресс хранится только в этом браузере.</p>
+      <div class="sum-sep"></div>
+      <a class="sum-course cg" href="cgf/#open" data-course="cg">
+        <div class="sum-row"><span class="dot"></span><span class="nm">Computer Graphics</span><span class="pct" id="cg-pct">—</span></div>
+        <div class="sum-sub"><span id="cg-sub">Ещё не начат</span><span id="cg-mist"></span></div>
+        <div class="bars" id="cg-bars"></div>
+      </a>
+      <p class="sum-note">Процент считается по всем вопросам курса: непройденные темы идут как 0. Для Computer Graphics это самооценка по open questions («знаю» = 1, «частично» = ½). Прогресс хранится только в этом браузере.</p>
     </aside>
   </section>
 
@@ -246,6 +260,21 @@ footer .wrap { padding-block: 22px 32px; color: var(--muted); font-size: 13px; d
         </ul>
         <div class="course-foot"><a class="btn" href="research-methods/" data-course="rm">Открыть Research Methods <span aria-hidden="true">→</span></a></div>
       </article>
+
+      <article class="course cg">
+        <div class="course-top">
+          <span class="course-mark">CG</span>
+          <div><span class="eyebrow">OKG 2214 · КГФ</span><h3>Computer Graphics Fundamentals</h3></div>
+        </div>
+        <p>Лекции L1.1–L5.2: image formation, OpenGL и GLSL, input, геометрия, трансформации, проекции и shading. Мидтерм в формате open questions: пишешь ответ, сверяешь с образцом и оцениваешь себя.</p>
+        <div class="chips"><span class="chip hot">мидтерм: open questions</span><span class="chip" id="cg-chip-q">— вопросов</span><span class="chip">10 лекций</span></div>
+        <ul class="links">
+          <li><a href="cgf/#open" data-course="cg"><span class="code">OPEN Q</span><span class="t">Open questions<small>список, фильтры, тренировка с самооценкой</small></span><span class="n" id="cg-n-oq"></span><span class="ar">→</span></a></li>
+          <li><a href="cgf/#keys" data-course="cg"><span class="code">KEY</span><span class="t">Ключевое и формулы<small>что путают, матрицы, Phong</small></span><span class="n">10 лекц.</span><span class="ar">→</span></a></li>
+          <li><a href="cgf/#notes" data-course="cg"><span class="code">NOTES</span><span class="t">Подробные конспекты<small>код OpenGL/GLSL и матрицы</small></span><span class="n">10 лекц.</span><span class="ar">→</span></a></li>
+        </ul>
+        <div class="course-foot"><a class="btn" href="cgf/" data-course="cg">Открыть Computer Graphics <span aria-hidden="true">→</span></a></div>
+      </article>
     </div>
   </section>
 
@@ -257,13 +286,13 @@ footer .wrap { padding-block: 22px 32px; color: var(--muted); font-size: 13px; d
         <span class="num">01</span>
         <h3>Прочитать главное</h3>
         <p>Сжатые выжимки вместо полных слайдов: определения, цифры и то, что встречается в тестах.</p>
-        <div class="go"><a class="aws" href="aws/#modules" data-course="aws"><span class="dot"></span>Слайды M01–M10</a><a class="rm" href="research-methods/#keys" data-course="rm"><span class="dot"></span>Ключевое L1–L4.2</a></div>
+        <div class="go"><a class="aws" href="aws/#modules" data-course="aws"><span class="dot"></span>Слайды M01–M10</a><a class="rm" href="research-methods/#keys" data-course="rm"><span class="dot"></span>Ключевое L1–L4.2</a><a class="cg" href="cgf/#keys" data-course="cg"><span class="dot"></span>Ключевое КГФ</a></div>
       </div>
       <div class="step">
         <span class="num">02</span>
         <h3>Пройти тест</h3>
         <p>После каждого ответа видно, почему верен именно он. Цель: стабильно выше 70%.</p>
-        <div class="go"><a class="aws" href="aws/#mid" data-course="aws"><span class="dot"></span>Мидтерм AWS</a><a class="rm" href="research-methods/#quiz" data-course="rm"><span class="dot"></span>Тест RM</a></div>
+        <div class="go"><a class="aws" href="aws/#mid" data-course="aws"><span class="dot"></span>Мидтерм AWS</a><a class="rm" href="research-methods/#quiz" data-course="rm"><span class="dot"></span>Тест RM</a><a class="cg" href="cgf/#open" data-course="cg"><span class="dot"></span>Open questions КГФ</a></div>
       </div>
       <div class="step">
         <span class="num">03</span>
@@ -284,6 +313,7 @@ footer .wrap { padding-block: 22px 32px; color: var(--muted); font-size: 13px; d
 
 <script src="aws/data-kc.js"></script>
 <script src="aws/data-labs.js"></script>
+<script src="cgf/data-oq.js"></script>
 <script>
 (function () {
   "use strict";
@@ -318,6 +348,11 @@ footer .wrap { padding-block: 22px 32px; color: var(--muted); font-size: 13px; d
   $("st-q").textContent = awsQ + RM_Q;
   $("st-notes").textContent = KC.length + LABS.length + RM_LECS.length;
   $("st-cards").textContent = RM_CARDS;
+  const CG_LECS = window.CGF_LECS || [], CG_OQ = window.CGF_OQ || [];
+  $("st-oq").textContent = CG_OQ.length;
+  $("st-notes").textContent = KC.length + LABS.length + RM_LECS.length + CG_LECS.length;
+  $("cg-chip-q").textContent = CG_OQ.length + " open questions";
+  $("cg-n-oq").textContent = CG_OQ.length;
   $("aws-chip-q").textContent = awsQ + " вопросов";
   $("aws-n-mid").textContent = sum(AWS_SETS.filter(s => AWS_MID.includes(s.id)), qn);
   $("aws-n-kc").textContent = sum(KC, qn);
@@ -359,11 +394,28 @@ footer .wrap { padding-block: 22px 32px; color: var(--muted); font-size: 13px; d
   }
   paint("aws", awsUnits, awsDone, awsMist);
   paint("rm", rmUnits, rmDone, rmMist, rmLast ? ` · последняя попытка ${Math.round(100 * rmLast.c / rmLast.n)}%` : "");
+
+  // Computer Graphics: self-rated open questions (cgf_rate: id → 2 know / 1 partly / 0 don't know); ids = lecture + ":" + index
+  const cgRate = read("cgf_rate", {}) || {};
+  { const seen = {}; CG_OQ.forEach(q => { seen[q.l] = (seen[q.l] || 0) + 1; q.id = q.l + ":" + (seen[q.l] - 1); }); }
+  const cgUnits = CG_LECS.map(l => {
+    const qs = CG_OQ.filter(q => q.l === l.k), rated = qs.filter(q => cgRate[q.id] != null);
+    const pts = qs.reduce((n, q) => n + (cgRate[q.id] === 2 ? 1 : cgRate[q.id] === 1 ? .5 : 0), 0);
+    return { lb: l.k, title: l.s + " " + l.t, n: qs.length, best: rated.length ? Math.round(100 * pts / qs.length) : null };
+  });
+  const cgDone = cgUnits.filter(u => u.best != null).length;
+  const cgWeak = CG_OQ.filter(q => cgRate[q.id] === 0 || cgRate[q.id] === 1).length;
+  $("cg-bars").innerHTML = bars(cgUnits);
+  $("cg-pct").textContent = cgDone ? mastery(cgUnits) + "%" : "—";
+  $("cg-pct").classList.toggle("none", !cgDone);
+  $("cg-sub").textContent = cgDone ? `оценено ${CG_OQ.filter(q => cgRate[q.id] != null).length} из ${CG_OQ.length}` : "Ещё не начат";
+  $("cg-mist").textContent = cgWeak ? cgWeak + " слабых к повтору" : "";
+  $("cg-mist").className = cgWeak ? "mist" : "";
   if (!awsMist) $("step-aws-mist").href = "aws/#mid";
 
   // ---------- "continue" points at the course opened last from here ----------
-  const COURSES = { aws: { href: "aws/", name: "Cloud Foundations" }, rm: { href: "research-methods/", name: "Research Methods" } };
-  const last = read("hub:last", null) || (awsDone || awsMist ? "aws" : rmDone || rmMist ? "rm" : null);
+  const COURSES = { aws: { href: "aws/", name: "Cloud Foundations" }, rm: { href: "research-methods/", name: "Research Methods" }, cg: { href: "cgf/", name: "Computer Graphics" } };
+  const last = read("hub:last", null) || (awsDone || awsMist ? "aws" : rmDone || rmMist ? "rm" : cgDone ? "cg" : null);
   const cont = $("continue");
   if (COURSES[last]) {
     cont.href = COURSES[last].href;
