@@ -1,0 +1,2078 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Computer Vision · Тренажёр</title>
+<meta name="description" content="Computer Vision: конспекты лекций 1–4, OpenCV, ключевое с формулами, open questions, разбор образца мидтерма и генератор расчётных задач.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&family=Unbounded:wght@500;700&display=swap">
+<script>try{var t=(JSON.parse(localStorage.getItem("cfq:v1")||"{}")).theme;if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}</script>
+<style>
+/* Layout: same binder as Computer Graphics. Sticky tab bar; notes = lecture index + reading column;
+   open questions = filter bar + answer cards; midterm = variant picker + graded sub-questions;
+   drills = one generated calculation at a time with a worked solution. */
+:root{
+  --paper:#F4F2EF; --card:#FFFFFF; --ink:#1F1A16; --muted:#62594F; --line:#DED7CF;
+  --accent:#A8460F; --accent-ink:#FFFFFF; --accent-soft:#FAE9DD;
+  --mark:#F7E58A; --mark-ink:#1A1622;
+  --ok:#1F7A4A; --ok-soft:#E1F1E6; --mid:#9A6200; --mid-soft:#FBEFD6; --bad:#B03F36; --bad-soft:#F8E3E0;
+  --f-display:"Unbounded", "IBM Plex Sans", system-ui, sans-serif;
+  --f-body:"IBM Plex Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#13110F; --card:#1D1A17; --ink:#EEE8E2; --muted:#A99F95; --line:#322C27;
+    --accent:#F0A06C; --accent-ink:#1B0F07; --accent-soft:#3A2416;
+    --mark:#5C5220; --mark-ink:#F4EDC8;
+    --ok:#6CC28E; --ok-soft:#183026; --mid:#E2B356; --mid-soft:#3A2E14; --bad:#E7847A; --bad-soft:#3A1E1B;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#13110F; --card:#1D1A17; --ink:#EEE8E2; --muted:#A99F95; --line:#322C27;
+  --accent:#F0A06C; --accent-ink:#1B0F07; --accent-soft:#3A2416;
+  --mark:#5C5220; --mark-ink:#F4EDC8;
+  --ok:#6CC28E; --ok-soft:#183026; --mid:#E2B356; --mid-soft:#3A2E14; --bad:#E7847A; --bad-soft:#3A1E1B;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16.5px;line-height:1.6;padding-inline:16px;padding-block:0 64px}
+h1,h2,h3,h4{line-height:1.2;text-wrap:balance;margin:0}
+h1,h2{font-family:var(--f-display);font-weight:700;letter-spacing:-.01em}
+h3,h4{font-family:var(--f-body);font-weight:700}
+p{margin:0}
+a{color:var(--accent)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+mark{background:var(--mark);color:var(--mark-ink);padding:0 .15em;border-radius:2px}
+code,.mono{font-family:var(--f-mono);font-size:.86em}
+pre{margin:0;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px;overflow-x:auto;font-size:14px;line-height:1.5}
+pre code{font-size:13px}
+.wrap{max-width:1120px;margin-inline:auto}
+[hidden]{display:none!important}
+
+/* top bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--paper);border-bottom:1px solid var(--line);margin-inline:-16px;padding:10px 16px}
+.bar .wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.brand-btn{display:flex;align-items:center;gap:10px;background:none;border:0;padding:0;cursor:pointer;text-align:left;margin-right:auto}
+.brand-mark{width:34px;height:34px;border-radius:9px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font:700 13px/1 var(--f-mono);flex:none}
+.brand{display:flex;flex-direction:column;line-height:1.15}
+.brand b{font-family:var(--f-display);font-size:17px;font-weight:700}
+.brand span{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.back{font-size:14px;font-weight:600;text-decoration:none;color:var(--muted)}
+.back:hover{color:var(--accent)}
+.theme-btn{border:1px solid var(--line);background:none;border-radius:999px;padding:6px 14px;font-size:14px;cursor:pointer;white-space:nowrap}
+.theme-btn:hover{border-color:var(--muted)}
+.tabs{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px}
+.tab{border:0;background:none;padding:6px 16px;border-radius:999px;cursor:pointer;font-weight:600;font-size:15px;color:var(--muted);white-space:nowrap}
+.tab[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+.view{padding-top:28px}
+
+/* shared bits */
+.eyebrow,.h-eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.btn{border:1px solid var(--line);background:var(--card);padding:9px 18px;border-radius:8px;cursor:pointer;font-weight:600;font-size:15px}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.sub{color:var(--muted)}
+
+/* matrices: <span class="mx" data-m="a b;c d"> is expanded by script into a bracketed grid */
+.mx-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;overflow-x:auto;padding:2px 0}
+.mx{display:inline-grid;gap:2px 14px;padding:6px 10px;border-left:2px solid var(--ink);border-right:2px solid var(--ink);border-radius:6px;font-family:var(--f-mono);font-size:13.5px;line-height:1.35;text-align:center;background:var(--card)}
+.mx-eq{font-family:var(--f-mono);font-size:13.5px;color:var(--ink)}
+
+/* ---------- HOME ---------- */
+.h-hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:40px;padding-block:20px 32px;align-items:start}
+.h-hero h1{font-size:clamp(28px,4.4vw,48px);line-height:1.1;margin-top:16px}
+.h-hero h1 em{font-style:normal;color:var(--accent)}
+.h-lede{margin-top:18px;color:var(--muted);font-size:17.5px;max-width:34em}
+.h-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.h-btn{display:inline-flex;align-items:center;gap:10px;border:0;border-radius:999px;padding:12px 22px;font-weight:700;font-size:16px;cursor:pointer;background:var(--accent);color:var(--accent-ink)}
+.h-btn:hover{filter:brightness(1.08)}
+.h-btn.sec{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.h-btn.sec:hover{border-color:var(--muted);filter:none}
+.h-stats{display:flex;flex-wrap:wrap;gap:28px;margin-top:34px;padding-top:22px;border-top:1px solid var(--line)}
+.h-stat b{display:block;font-family:var(--f-display);font-size:30px;line-height:1;font-weight:700;font-variant-numeric:tabular-nums}
+.h-stat span{display:block;margin-top:6px;font-size:14px;color:var(--muted)}
+.h-map{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;min-width:0;box-shadow:0 1px 2px rgba(0,0,0,.05),0 8px 24px rgba(0,0,0,.05)}
+.h-map-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:2px 4px 12px}
+.h-map-head h2{font-family:var(--f-body);font-size:17px;font-weight:700;letter-spacing:0}
+.h-row{display:grid;grid-template-columns:52px minmax(0,1fr) 70px;gap:12px;align-items:center;padding:8px 6px;border-radius:8px;background:none;border:0;text-align:left;cursor:pointer;width:100%}
+.h-row:hover{background:var(--accent-soft)}
+.h-row .code{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--muted)}
+.h-row .name{font-size:14.5px;line-height:1.3;min-width:0}
+.h-row .name small{display:block;font-family:var(--f-mono);font-size:11px;color:var(--muted);margin-top:2px}
+.h-meter{display:block;height:6px;border-radius:99px;background:var(--paper);border:1px solid var(--line);overflow:hidden;position:relative}
+.h-meter i{position:absolute;inset:0 auto 0 0;background:var(--ok);border-radius:99px}
+.h-row .pct{display:block;font-family:var(--f-mono);font-size:11px;color:var(--muted);text-align:right;margin-top:4px;font-variant-numeric:tabular-nums}
+.h-section{padding-block:12px 24px}
+.h-section>.h-eyebrow{display:block;margin-bottom:10px}
+.h-section h2.big{font-size:clamp(22px,2.8vw,28px);margin-bottom:22px}
+.h-modes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.h-mode{display:flex;flex-direction:column;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;text-align:left;cursor:pointer;min-width:0;transition:border-color .15s,transform .15s}
+.h-mode:hover{border-color:var(--accent);transform:translateY(-2px)}
+.h-mode.featured{border-color:var(--accent);background:var(--accent-soft)}
+.h-mode.featured .h-chip{background:var(--card)}
+.h-mode .tag{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--accent);letter-spacing:.04em}
+.h-mode h3{font-size:20px}
+.h-mode p{color:var(--muted);font-size:15px;line-height:1.5}
+.h-facts{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+.h-chip{font-family:var(--f-mono);font-size:12px;line-height:1;padding:6px 9px;border-radius:99px;background:var(--paper);border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.h-mode .go{display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px solid var(--line);font-weight:700;font-size:15px}
+.h-info{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.h-box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.h-box h3{font-size:18px}
+.h-box ol,.h-box ul{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+.h-box .tbl{background:var(--paper)}
+@media (max-width:1080px){.h-modes{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:880px){.h-hero,.h-info{grid-template-columns:minmax(0,1fr);gap:28px}.h-hero{padding-block:8px 16px}}
+
+/* ---------- NOTES ---------- */
+.notes{display:grid;grid-template-columns:260px minmax(0,1fr);gap:40px;align-items:start}
+.lec-index{position:sticky;top:calc(env(safe-area-inset-top,0px) + 84px);display:flex;flex-direction:column;gap:2px}
+.lec-index .lbl{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:0 12px 8px}
+.lec-btn{display:grid;grid-template-columns:44px 1fr;gap:8px;align-items:baseline;text-align:left;border:0;background:none;padding:9px 12px;border-radius:8px;cursor:pointer;color:var(--ink)}
+.lec-btn .n{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.lec-btn .t{font-size:14.5px;line-height:1.3}
+.lec-btn:hover{background:var(--accent-soft)}
+.lec-btn[aria-current="true"]{background:var(--card);box-shadow:inset 3px 0 0 var(--accent)}
+.lec-btn[aria-current="true"] .n{color:var(--accent);font-weight:600}
+article.lec{max-width:780px;display:flex;flex-direction:column;gap:20px}
+.lec-head{display:flex;flex-direction:column;gap:10px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+.lec-head .eyebrow{color:var(--accent)}
+.lec-head h2{font-size:clamp(24px,3.4vw,32px)}
+.lede{color:var(--muted);font-size:17px}
+article.lec h3{font-size:21px;margin-top:12px;scroll-margin-top:90px}
+article.lec h4{font-size:17px}
+article.lec ul,article.lec ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+dl.defs{margin:0;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--r);background:var(--card);overflow:hidden}
+dl.defs>div{display:grid;grid-template-columns:190px minmax(0,1fr);gap:16px;padding:11px 16px;border-top:1px solid var(--line)}
+dl.defs>div:first-child{border-top:0}
+dl.defs dt{font-weight:700}
+dl.defs dt small{display:block;font-weight:400;color:var(--muted);font-size:13px}
+dl.defs dd{margin:0}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{text-align:left;vertical-align:top;padding:9px 14px;border-top:1px solid var(--line)}
+thead th{border-top:0;font-family:var(--f-mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--paper)}
+td:first-child{font-weight:600}
+.flow{list-style:none;padding:0!important;display:flex!important;flex-direction:row!important;flex-wrap:wrap;gap:8px!important;counter-reset:f}
+.flow li{counter-increment:f;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:14.5px;line-height:1.3;flex:1 1 130px;min-width:0}
+.flow li::before{content:counter(f);display:block;font-family:var(--f-mono);font-size:11px;color:var(--accent);font-weight:600}
+.flow li b{display:block}
+.remember{border-left:4px solid var(--mark);background:var(--card);padding:12px 16px;border-radius:0 var(--r) var(--r) 0}
+.remember .k{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:4px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.two>div{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.two h4{font-size:16.5px}
+.lec-foot{display:flex;gap:12px;flex-wrap:wrap;align-items:center;padding-top:18px;border-top:1px solid var(--line)}
+
+/* ---------- KEYS ---------- */
+.keys-wrap{max-width:840px;margin-inline:auto;display:flex;flex-direction:column;gap:24px}
+.keys-wrap>header{display:flex;flex-direction:column;gap:8px}
+.keys-wrap>header h2,.panel>header h2{font-size:clamp(24px,3vw,30px)}
+.keys-jump{display:flex;flex-wrap:wrap;gap:8px}
+.keys-jump a{font-family:var(--f-mono);font-size:13px;font-weight:600;text-decoration:none;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 14px;color:var(--ink)}
+.keys-jump a:hover{border-color:var(--accent);color:var(--accent)}
+.kblock{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;display:flex;flex-direction:column;gap:14px;scroll-margin-top:90px;min-width:0}
+.kblock h3{font-size:20px;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.kblock h3 .n{font-family:var(--f-mono);font-size:13px;color:var(--accent);font-weight:600}
+ul.klist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+ul.klist li{padding:9px 0 9px 22px;border-top:1px solid var(--line);position:relative;line-height:1.5}
+ul.klist li:first-child{border-top:0}
+ul.klist li::before{content:"";position:absolute;left:4px;top:18px;width:7px;height:7px;border-radius:2px;background:var(--accent)}
+.kblock .tbl,.kblock .mx{background:var(--paper)}
+.fgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.fcell{border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;background:var(--paper);min-width:0}
+.fcell b{font-size:14.5px}
+.fcell code{font-size:13px}
+.fcell .mx{background:var(--card)}
+
+/* ---------- OPEN QUESTIONS ---------- */
+.panel{max-width:860px;margin-inline:auto;display:flex;flex-direction:column;gap:18px}
+.panel>header{display:flex;flex-direction:column;gap:8px}
+.filters{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:14px}
+.f-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.f-lbl{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;min-width:72px}
+.chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:6px 12px;cursor:pointer;font-size:14px;user-select:none;white-space:nowrap}
+.chip input{accent-color:var(--accent);margin:0}
+.chip:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.chip .c{font-family:var(--f-mono);font-size:11.5px;color:var(--muted)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--paper)}
+.seg button{border:0;background:none;border-radius:999px;padding:6px 14px;font-weight:600;font-size:14px;cursor:pointer;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.linkbtn{background:none;border:0;padding:0;color:var(--accent);cursor:pointer;font-size:14px;font-weight:600}
+.oq-sum{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted)}
+.oq-sum b{color:var(--ink);font-variant-numeric:tabular-nums}
+.oq-list{display:flex;flex-direction:column;gap:12px}
+.oq{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.oq[data-rate="2"]{border-left:4px solid var(--ok)}
+.oq[data-rate="1"]{border-left:4px solid var(--mid)}
+.oq[data-rate="0"]{border-left:4px solid var(--bad)}
+.oq-top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.tagl{font-weight:600;color:var(--accent)}
+.star{color:var(--mid);font-weight:700}
+.oq-q{font-size:18px;font-weight:700;line-height:1.4}
+.oq-ru{color:var(--muted);font-size:15px}
+.oq details>summary{cursor:pointer;font-weight:600;color:var(--accent);list-style:none;display:inline-flex;align-items:center;gap:8px}
+.oq details>summary::-webkit-details-marker{display:none}
+.oq details>summary::before{content:"▸";font-size:12px;transition:transform .15s}
+.oq details[open]>summary::before{transform:rotate(90deg)}
+.ans{margin-top:12px;display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line);padding-top:12px}
+.ans ul,.ans ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:4px}
+.ans>div{display:flex;flex-direction:column;gap:8px}
+.ans pre{background:var(--paper)}
+.ans .mx{background:var(--paper)}
+.kw{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.kw .lbl{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-right:4px}
+.kw span.k{font-size:13px;padding:4px 9px;border-radius:99px;background:var(--accent-soft);color:var(--ink)}
+.rate{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.rate .lbl{font-size:13.5px;color:var(--muted);margin-right:4px}
+.rbtn{border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:5px 13px;font-size:14px;font-weight:600;cursor:pointer}
+.rbtn[data-r="2"]:hover,.rbtn[data-r="2"][aria-pressed="true"]{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.rbtn[data-r="1"]:hover,.rbtn[data-r="1"][aria-pressed="true"]{border-color:var(--mid);background:var(--mid-soft);color:var(--mid)}
+.rbtn[data-r="0"]:hover,.rbtn[data-r="0"][aria-pressed="true"]{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}
+.empty{background:var(--card);border:1px dashed var(--line);border-radius:14px;padding:28px;text-align:center;color:var(--muted)}
+.pcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:16px}
+.ptop{display:flex;justify-content:space-between;gap:12px;font-family:var(--f-mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+.prog{height:4px;background:var(--line);border-radius:4px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--accent);transition:width .25s}
+.pq{font-size:21px;font-weight:700;line-height:1.35}
+textarea{width:100%;min-height:150px;resize:vertical;border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--paper);color:var(--ink);font:inherit;font-size:15.5px;line-height:1.5}
+textarea:focus{outline:none;border-color:var(--accent)}
+.hint{font-size:13px;color:var(--muted)}
+.howto ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+.done-score{display:flex;gap:18px;flex-wrap:wrap}
+.done-score div{display:flex;flex-direction:column;gap:4px}
+.done-score b{font-family:var(--f-display);font-size:34px;line-height:1}
+.done-score .g b{color:var(--ok)} .done-score .m b{color:var(--mid)} .done-score .x b{color:var(--bad)}
+@media (prefers-reduced-motion: reduce){.prog i,.h-mode{transition:none}}
+
+/* ---------- MIDTERM ---------- */
+.ex-wrap{max-width:880px;margin-inline:auto;display:flex;flex-direction:column;gap:18px}
+.ex-wrap>header{display:flex;flex-direction:column;gap:10px}
+.ex-wrap>header h2{font-size:clamp(24px,3vw,30px)}
+.ex-bar{position:sticky;top:calc(var(--bar-h,62px) + 8px);z-index:5;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;box-shadow:0 6px 18px rgba(0,0,0,.06)}
+.ex-bar .tot{font-family:var(--f-display);font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+.ex-bar .tot small{font-family:var(--f-body);font-size:13px;font-weight:500;color:var(--muted);margin-left:4px}
+.ex-bar .timer{font-family:var(--f-mono);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
+.ex-bar .timer.over{color:var(--bad)}
+.ex-bar .sp{flex:1}
+.ex-meta{display:flex;flex-wrap:wrap;gap:6px}
+.exq{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.exq>h3{font-size:20px;display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
+.exq>h3 .qp{font-family:var(--f-mono);font-size:13px;color:var(--accent);font-weight:600;white-space:nowrap}
+.exq .ctx{display:flex;flex-direction:column;gap:10px}
+.exq .ctx .tbl,.exq .ctx pre{background:var(--paper)}
+.sq{border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:10px}
+.sq-q{display:flex;gap:10px;align-items:baseline}
+.sq-q .lt{font-family:var(--f-mono);font-weight:700;color:var(--accent);flex:none}
+.sq-q .pts{font-family:var(--f-mono);font-size:12px;color:var(--muted);white-space:nowrap;flex:none;border:1px solid var(--line);border-radius:99px;padding:2px 8px}
+.sq-q p{flex:1;min-width:0;font-weight:600}
+.sq details>summary{cursor:pointer;font-weight:600;color:var(--accent);list-style:none;display:inline-flex;align-items:center;gap:8px;font-size:15px}
+.sq details>summary::-webkit-details-marker{display:none}
+.sq details>summary::before{content:"▸";font-size:12px;transition:transform .15s}
+.sq details[open]>summary::before{transform:rotate(90deg)}
+.sol{margin-top:10px;display:flex;flex-direction:column;gap:10px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px;min-width:0}
+.sol ul,.sol ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:4px}
+.sol pre,.sol .tbl{background:var(--card)}
+.sol .why{font-size:14.5px;color:var(--muted);border-top:1px dashed var(--line);padding-top:8px}
+.sol .why b{color:var(--ink)}
+.grade{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.grade .lbl{font-size:13px;color:var(--muted);margin-right:2px}
+.gbtn{border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:4px 12px;font-size:13.5px;font-weight:600;cursor:pointer;font-variant-numeric:tabular-nums}
+.gbtn:hover{border-color:var(--accent)}
+.gbtn[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.sq[data-g="full"] .sq-q .pts{border-color:var(--ok);color:var(--ok);background:var(--ok-soft)}
+.sq[data-g="part"] .sq-q .pts{border-color:var(--mid);color:var(--mid);background:var(--mid-soft)}
+.sq[data-g="zero"] .sq-q .pts{border-color:var(--bad);color:var(--bad);background:var(--bad-soft)}
+.ex-res{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.ex-res div{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.ex-res b{font-family:var(--f-display);font-size:18px;font-variant-numeric:tabular-nums}
+.ex-res span{font-size:12px;color:var(--muted);line-height:1.3}
+
+/* ---------- DRILLS ---------- */
+.dr-wrap{max-width:860px;margin-inline:auto;display:flex;flex-direction:column;gap:18px}
+.dr-wrap>header{display:flex;flex-direction:column;gap:8px}
+.dr-wrap>header h2{font-size:clamp(24px,3vw,30px)}
+.dr-types{display:flex;flex-wrap:wrap;gap:8px}
+.dr-types button{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 13px;font-size:14px;cursor:pointer;font-weight:500;display:inline-flex;gap:8px;align-items:center}
+.dr-types button .c{font-family:var(--f-mono);font-size:11.5px;color:var(--muted)}
+.dr-types button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--ink);font-weight:600}
+.dr-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.dr-card .dtop{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-family:var(--f-mono);font-size:12.5px;color:var(--muted)}
+.dr-task{display:flex;flex-direction:column;gap:12px;font-size:16.5px}
+.dr-task .tbl,.dr-task pre,.dr-task .mx{background:var(--paper)}
+.dr-in{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:flex-end}
+.dr-in label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted);font-weight:600}
+.dr-in input,.dr-in select{font:inherit;font-family:var(--f-mono);font-size:15px;width:118px;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
+.dr-in select{width:auto;min-width:118px}
+.dr-in input.wide{width:200px}
+.dr-in input:focus,.dr-in select:focus{outline:none;border-color:var(--accent)}
+.dr-in input.ok,.dr-in select.ok{border-color:var(--ok);background:var(--ok-soft)}
+.dr-in input.bad,.dr-in select.bad{border-color:var(--bad);background:var(--bad-soft)}
+.dr-fb{font-weight:600}
+.dr-fb.ok{color:var(--ok)} .dr-fb.bad{color:var(--bad)}
+.dr-sol{display:flex;flex-direction:column;gap:8px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px;min-width:0}
+.dr-sol ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:5px}
+.dr-sol code{font-size:13.5px}
+.dr-stats{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14px;color:var(--muted)}
+.dr-stats b{color:var(--ink);font-variant-numeric:tabular-nums}
+.cv-modes{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:1080px){.cv-modes{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:900px){
+  .notes{grid-template-columns:minmax(0,1fr);gap:20px}
+  .lec-index{position:static;flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:6px}
+  .lec-index .lbl{display:none}
+  .lec-btn{grid-template-columns:auto;flex:0 0 auto;max-width:220px;background:var(--card);border:1px solid var(--line)}
+  .lec-btn .t{font-size:13px}
+  .lec-btn[aria-current="true"]{box-shadow:none;border-color:var(--accent);background:var(--accent-soft)}
+}
+@media (max-width:620px){
+  body{font-size:16px}
+  .h-modes,.fgrid,.two{grid-template-columns:minmax(0,1fr)}
+  .brand-btn{flex:1 1 100%}
+  .theme-btn{margin-left:auto}
+  .h-row{grid-template-columns:44px minmax(0,1fr) 56px}
+  dl.defs>div{grid-template-columns:minmax(0,1fr);gap:4px}
+  .tabs{max-width:100%;overflow-x:auto}
+  .tab{padding:6px 11px;font-size:14px}
+  .kblock,.oq,.pcard{padding:16px}
+  .pq{font-size:18px}
+  .f-lbl{min-width:0;width:100%}
+}@media (max-width:620px){
+  .exq,.dr-card{padding:16px}
+  .ex-res{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ex-bar{top:auto;position:static}
+  .dr-in input{width:100px}
+  .cv-modes{grid-template-columns:minmax(0,1fr)}
+}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <button class="brand-btn" type="button" id="brand" aria-label="Главная Computer Vision">
+      <span class="brand-mark">CV</span>
+      <span class="brand"><b>Computer Vision</b><span>мидтерм · лекции 1–4 · OpenCV</span></span>
+    </button>
+    <a class="back" href="../">← Все курсы</a>
+    <button class="theme-btn" type="button" id="theme-btn" aria-label="Переключить тему">Тема</button>
+    <nav class="tabs" role="tablist" aria-label="Разделы">
+      <button class="tab" role="tab" id="tab-home" data-view="home" aria-selected="true">Главная</button>
+      <button class="tab" role="tab" id="tab-notes" data-view="notes" aria-selected="false">Конспекты</button>
+      <button class="tab" role="tab" id="tab-keys" data-view="keys" aria-selected="false">Ключевое</button>
+      <button class="tab" role="tab" id="tab-exam" data-view="exam" aria-selected="false">Мидтерм</button>
+      <button class="tab" role="tab" id="tab-drill" data-view="drill" aria-selected="false">Задачи</button>
+      <button class="tab" role="tab" id="tab-open" data-view="open" aria-selected="false">Open questions</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ============ HOME ============ -->
+<section class="view" id="view-home">
+  <div class="h-hero">
+    <div>
+      <span class="h-eyebrow">Computer Vision · Midterm</span>
+      <h1>100 баллов за 120 минут. <em>Считай руками, объясняй словами.</em></h1>
+      <p class="h-lede">Мидтерм письменный: OpenCV-код с ошибками, таблица scores, <code>s = Wx + b</code>, pipeline и дизайн своей CV-системы. Здесь разобран образец Variant 1, есть ещё два варианта в том же формате, генератор расчётных задач и open questions по лекциям 1–4.</p>
+      <div class="h-actions">
+        <button class="h-btn" type="button" data-go="exam">Разбор мидтерма <span aria-hidden="true">→</span></button>
+        <button class="h-btn sec" type="button" data-go="drill">Задачи на расчёт</button>
+      </div>
+      <div class="h-stats">
+        <div class="h-stat"><b id="h-var">—</b><span>варианта мидтерма с решениями</span></div>
+        <div class="h-stat"><b id="h-q">—</b><span>open questions с образцами</span></div>
+        <div class="h-stat"><b id="h-ex">—</b><span>лучший результат мидтерма</span></div>
+      </div>
+    </div>
+    <aside class="h-map" aria-label="Карта курса">
+      <div class="h-map-head"><h2>Карта курса</h2><span class="h-eyebrow">готовность</span></div>
+      <div id="h-map"></div>
+    </aside>
+  </div>
+
+  <div class="h-section">
+    <span class="h-eyebrow">Режимы</span>
+    <h2 class="big">Как готовиться</h2>
+    <div class="h-modes cv-modes">
+      <button class="h-mode featured" type="button" data-go="exam">
+        <span class="tag">MIDTERM</span>
+        <h3>Мидтерм по вариантам</h3>
+        <p>Образец Variant 1 и ещё два в том же формате. Решаешь на бумаге, открываешь решение под каждым пунктом и ставишь себе баллы.</p>
+        <span class="h-facts"><span class="h-chip">5 вопросов</span><span class="h-chip">100 баллов</span><span class="h-chip">таймер</span></span>
+        <span class="go">Открыть <span aria-hidden="true">→</span></span>
+      </button>
+      <button class="h-mode" type="button" data-go="drill">
+        <span class="tag">DRILLS</span>
+        <h3>Задачи на расчёт</h3>
+        <p>Бесконечные задачи со случайными числами: Wx + b, accuracy, softmax, SVM loss, precision/recall, shape после OpenCV, backprop.</p>
+        <span class="h-facts"><span class="h-chip" id="h-dr">— типов</span><span class="h-chip">автопроверка</span></span>
+        <span class="go">Решать <span aria-hidden="true">→</span></span>
+      </button>
+      <button class="h-mode" type="button" data-go="open" data-omode="practice">
+        <span class="tag">PRACTICE</span>
+        <h3>Тренировка open questions</h3>
+        <p>По одному вопросу: пишешь ответ, открываешь образец, честно оцениваешь себя. Черновики сохраняются.</p>
+        <span class="h-facts"><span class="h-chip">свой ответ</span><span class="h-chip">самооценка</span></span>
+        <span class="go">Начать <span aria-hidden="true">→</span></span>
+      </button>
+      <button class="h-mode" type="button" data-go="open" data-omode="list">
+        <span class="tag">OPEN QUESTIONS</span>
+        <h3>Все вопросы</h3>
+        <p>Список с фильтром по лекциям, ★ вероятным темам и оценке. Ответ раскрывается по клику.</p>
+        <span class="h-facts"><span class="h-chip" id="h-q2">— вопросов</span><span class="h-chip" id="h-star">★ —</span></span>
+        <span class="go">Открыть <span aria-hidden="true">→</span></span>
+      </button>
+      <button class="h-mode" type="button" data-go="keys">
+        <span class="tag">KEY POINTS</span>
+        <h3>Ключевое и формулы</h3>
+        <p>Что путают, все формулы на одном экране и шпаргалка по OpenCV: BGR, (w, h), нечётное ядро.</p>
+        <span class="h-facts"><span class="h-chip">формулы</span><span class="h-chip">OpenCV</span></span>
+        <span class="go">Читать <span aria-hidden="true">→</span></span>
+      </button>
+      <button class="h-mode" type="button" data-go="notes">
+        <span class="tag">NOTES</span>
+        <h3>Конспекты</h3>
+        <p>Лекции 1–4 по слайдам и два практических раздела, которых нет в слайдах, но они есть в мидтерме.</p>
+        <span class="h-facts"><span class="h-chip">L1–L4.2</span><span class="h-chip">+ OpenCV, дизайн</span></span>
+        <span class="go">Читать <span aria-hidden="true">→</span></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="h-section">
+    <span class="h-eyebrow">Формат</span>
+    <h2 class="big">Что будет на мидтерме</h2>
+    <div class="h-info">
+      <div class="h-box">
+        <h3>Структура (по образцу Variant 1)</h3>
+        <div class="tbl"><table>
+          <thead><tr><th>Вопрос</th><th>Тема</th><th>Баллы</th></tr></thead>
+          <tbody>
+            <tr><td>Q1</td><td>Image Processing &amp; OpenCV: preprocessing, grayscale, баги в коде</td><td>20</td></tr>
+            <tr><td>Q2</td><td>Image Classification: таблица scores → predictions, accuracy, overfitting</td><td>20</td></tr>
+            <tr><td>Q3</td><td>Linear Classifier: посчитать <code>s = Wx + b</code>, смысл W и b, XOR</td><td>25</td></tr>
+            <tr><td>Q4</td><td>CV Pipeline: resize → gray → blur → Canny, shapes и каналы</td><td>20</td></tr>
+            <tr><td>Q5</td><td>Design your own CV system: датасет, split, метрика, domain shift</td><td>15</td></tr>
+          </tbody>
+        </table></div>
+        <p class="sub">120 минут, от руки, closed book. Телефоны, ноутбуки, заметки и AI запрещены.</p>
+      </div>
+      <div class="h-box howto">
+        <h3>Как писать ответ</h3>
+        <ol>
+          <li><b>Show every step.</b> В расчётах пиши каждую строку: <code>s₀ = 1·2 + 2·(−1) + 0 = 0</code>. Ответ без шагов получает частичный балл.</li>
+          <li><b>Name it, then explain why.</b> «Problem: BGR, not RGB. cv2.imread loads images in BGR order».</li>
+          <li><b>Corrected code.</b> Если просят исправить, перепиши строки целиком.</li>
+          <li><b>One concrete example.</b> В «agree / disagree» и «explain» вопросах приводи пример из задачи: листья, мусор, кошка.</li>
+          <li><b>Numbers with units.</b> 2000 · 0.8 = 1600 train, 400 test; 224 × 224 × 3.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NOTES ============ -->
+<section class="view" id="view-notes" hidden>
+<div class="notes">
+  <nav class="lec-index" aria-label="Лекции" id="lec-index"></nav>
+  <div>
+
+<!-- L1 -->
+<article class="lec" data-lec="1">
+  <div class="lec-head">
+    <span class="eyebrow">Lecture 1</span>
+    <h2>Introduction to Computer Vision</h2>
+    <p class="lede">Что такое CV и где он в AI, история от Hubel &amp; Wiesel до AlexNet, почему deep learning «взорвался» в 2012 и как устроен курс.</p>
+  </div>
+
+  <h3>Что такое Computer Vision</h3>
+  <div class="remember"><span class="k">Определение</span><b>Computer Vision</b> = building artificial systems that <mark>process, perceive, and reason about visual data</mark> (изображения, видео).</div>
+  <p><b>Deep Learning</b> = hierarchical learning algorithms with many «layers», (very) loosely inspired by the brain. Это часть <b>Machine Learning</b> (systems that learn from data and experience), а ML часть <b>Artificial Intelligence</b>. CV пересекается с ML/DL; рядом NLP, Speech Recognition, Robotics. Этот курс = пересечение CV и Deep Learning.</p>
+
+  <h3>История: таймлайн</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Год</th><th>Что</th><th>Почему важно</th></tr></thead>
+    <tbody>
+      <tr><td>1958</td><td>Perceptron (Frank Rosenblatt)</td><td>Один из первых алгоритмов, обучающихся на данных. Железо: веса в потенциометрах, камера 20×20 = 400 пикселей, распознавал буквы. Сегодня это <b>linear classifier</b>.</td></tr>
+      <tr><td>1959</td><td>Hubel &amp; Wiesel</td><td>Нейроны зрительной коры кошки: <b>simple cells</b> (ориентация света), <b>complex cells</b> (ориентация + движение), <b>hypercomplex</b> (движение с конечной точкой). Иерархия от простого к сложному.</td></tr>
+      <tr><td>1963</td><td>Larry Roberts</td><td>Block world: original picture → differentiated picture (края) → feature points.</td></tr>
+      <tr><td>1969</td><td>Minsky &amp; Papert</td><td>Perceptron не может выучить <b>XOR</b> → разочарование в нейросетях.</td></tr>
+      <tr><td>1970s</td><td>David Marr</td><td>Stages of visual representation: input image → <b>primal sketch</b> (edges, blobs, bars) → <b>2½-D sketch</b> (surface orientation, depth) → <b>3-D model</b>.</td></tr>
+      <tr><td>1970s</td><td>Recognition via parts</td><td>Generalized Cylinders (Brooks &amp; Binford, 1979), Pictorial Structures (Fischler &amp; Elschlager, 1973).</td></tr>
+      <tr><td>1980</td><td>Neocognitron (Fukushima)</td><td>Модель по Hubel &amp; Wiesel: чередование simple cells (≈ <b>convolution</b>) и complex cells (≈ <b>pooling</b>). Похожа на AlexNet, но <b>не было алгоритма обучения</b>.</td></tr>
+      <tr><td>1986</td><td>Backprop (Rumelhart, Hinton, Williams)</td><td>Вычисление градиентов в нейросетях; впервые обучили многослойные перцептроны.</td></tr>
+      <tr><td>1986</td><td>Canny edge detector</td><td>Recognition via edge detection (1980s). Тот самый <code>cv2.Canny</code>.</td></tr>
+      <tr><td>1997</td><td>Normalized Cuts (Shi &amp; Malik)</td><td>Recognition via grouping (1990s), сегментация.</td></tr>
+      <tr><td>1998</td><td>LeNet (LeCun et al.)</td><td>Backprop + архитектура как у Neocognitron → распознавание рукописных цифр, использовалось NEC для чеков. Очень похоже на современные ConvNets.</td></tr>
+      <tr><td>1999</td><td>SIFT (David Lowe)</td><td>Recognition via matching (2000s): ключевые точки, устойчивые к масштабу и повороту.</td></tr>
+      <tr><td>2001</td><td>Viola &amp; Jones</td><td>Face detection, одно из первых успешных применений ML к зрению.</td></tr>
+      <tr><td>2000s</td><td>PASCAL VOC</td><td>Challenge: airplane, train, person…</td></tr>
+      <tr><td>2006</td><td>«Deep Learning»</td><td>Hinton &amp; Salakhutdinov и др. пробуют обучать всё более глубокие сети; ещё не мейнстрим.</td></tr>
+      <tr><td>2009</td><td>ImageNet (Deng et al.)</td><td>1000 классов, 1 431 167 изображений; Image Classification Challenge.</td></tr>
+      <tr><td>2012</td><td>AlexNet (Krizhevsky, Sutskever, Hinton)</td><td>Deep learning goes mainstream: резкое падение ошибки на ImageNet.</td></tr>
+      <tr><td>2018</td><td>Turing Award</td><td>Yoshua Bengio, Geoffrey Hinton, Yann LeCun.</td></tr>
+    </tbody>
+  </table></div>
+  <p>Между 1980-ми и 2000-ми был <b>AI Winter</b>.</p>
+
+  <h3>Почему deep learning взлетел в 2012</h3>
+  <div class="remember"><span class="k">Три причины</span><b>Data</b> (ImageNet, миллионы размеченных изображений) + <b>Computation</b> (GPU: GigaFLOPs per dollar у GPU растут намного быстрее, чем у CPU; AlexNet обучен на GeForce GTX 580) + <b>Algorithms</b> (backprop, ConvNets, ReLU).</div>
+
+  <h3>2012 – сейчас: ConvNets везде</h3>
+  <ul>
+    <li><b>Image classification</b> и <b>image retrieval</b> (AlexNet).</li>
+    <li><b>Object detection</b> (Faster R-CNN, Ren et al. 2015) и <b>image segmentation</b>.</li>
+    <li><b>Video classification</b>, <b>activity recognition</b>, <b>pose recognition</b>, игры Atari.</li>
+    <li><b>Image captioning</b> («A cat sitting on a suitcase on the floor»), DeepDream, <b>style transfer</b> (Gatys et al. 2016).</li>
+  </ul>
+  <p>Но CV ещё далёк от человека: сети не понимают контекст и юмор картинки (пример Karpathy с весами). При этом CV улучшает жизнь: медицина, автопилоты, помощь незрячим.</p>
+
+  <h3>Курс</h3>
+  <ul>
+    <li><b>Philosophy:</b> thorough and detailed (писать с нуля, отлаживать, обучать сети), practical (PyTorch, TensorFlow), state of the art.</li>
+    <li><b>First half: Fundamentals</b> — fully-connected, convolutional, recurrent networks; как обучать и отлаживать.</li>
+    <li><b>Second half: Applications</b> — detection, segmentation, 3D vision, video, attention / Transformers, vision &amp; language, generative models (GANs, VAEs).</li>
+    <li>Optional textbook: <i>Deep Learning</i> by Goodfellow, Bengio, Courville (free online).</li>
+  </ul>
+  <div class="lec-foot"><button class="btn" type="button" data-oq-lec="1">Open questions по L1 →</button></div>
+</article>
+
+<!-- L2 -->
+<article class="lec" data-lec="2" hidden>
+  <div class="lec-head">
+    <span class="eyebrow">Lecture 2</span>
+    <h2>Image Classification</h2>
+    <p class="lede">Задача классификации, semantic gap и его причины, data-driven approach, датасеты, Nearest Neighbor и kNN, distance metrics, hyperparameters, train/val/test и cross-validation, curse of dimensionality.</p>
+  </div>
+
+  <h3>Задача</h3>
+  <p><b>Image classification:</b> input = image, output = одна метка из <b>фиксированного набора категорий</b> (cat, bird, deer, dog, truck). Core task компьютерного зрения.</p>
+  <div class="remember"><span class="k">Semantic gap</span>Человек видит кошку, а компьютер видит <b>большую сетку чисел от 0 до 255</b>, например <code>800 × 600 × 3</code> (3 канала RGB). Между пикселями и смыслом «кошка» огромный разрыв.</div>
+
+  <h3>Challenges (почему это трудно)</h3>
+  <dl class="defs">
+    <div><dt>Viewpoint variation</dt><dd>Камера сдвинулась → <b>все пиксели</b> изменились, а объект тот же.</dd></div>
+    <div><dt>Intraclass variation</dt><dd>Кошки бывают очень разными внутри одного класса.</dd></div>
+    <div><dt>Fine-grained categories</dt><dd>Maine Coon vs Ragdoll vs American Shorthair: классы очень похожи.</dd></div>
+    <div><dt>Background clutter</dt><dd>Объект сливается с фоном.</dd></div>
+    <div><dt>Illumination changes</dt><dd>Свет, тени, ночь меняют пиксели.</dd></div>
+    <div><dt>Deformation</dt><dd>Кошка принимает любые позы.</dd></div>
+    <div><dt>Occlusion</dt><dd>Объект частично закрыт.</dd></div>
+  </dl>
+  <p>Классификатор должен быть <b>invariant</b> ко всему этому. Применения: medical imaging, galaxy classification, whale recognition. Классификация = <b>building block</b> для других задач: object detection (классифицировать регионы: background / horse / person), image captioning (классифицировать следующее слово), игра в Go (классифицировать ход).</p>
+
+  <h3>Data-driven approach</h3>
+  <p>В отличие от сортировки, алгоритм «кошка» нельзя запрограммировать вручную (искать края и углы не работает). Поэтому:</p>
+  <ol class="flow">
+    <li><b>Collect</b>датасет изображений и меток</li>
+    <li><b>Train</b>классификатор с помощью ML: <code>train(images, labels) → model</code></li>
+    <li><b>Evaluate</b>на новых изображениях: <code>predict(model, test_images) → labels</code></li>
+  </ol>
+
+  <h3>Датасеты</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Датасет</th><th>Классы</th><th>Размер</th><th>Изображения</th></tr></thead>
+    <tbody>
+      <tr><td>MNIST</td><td>10 (цифры 0–9)</td><td>50k train, 10k test</td><td>28×28 grayscale. «Drosophila of CV»: результаты часто не переносятся на сложные данные.</td></tr>
+      <tr><td>CIFAR-10</td><td>10</td><td>50k train (5k/класс), 10k test (1k/класс)</td><td>32×32 RGB → 32·32·3 = <b>3072</b> чисел. Используется в домашках.</td></tr>
+      <tr><td>CIFAR-100</td><td>100 (20 superclasses × 5)</td><td>50k train (500/класс), 10k test (100/класс)</td><td>32×32 RGB</td></tr>
+      <tr><td>ImageNet</td><td>1000</td><td>~1.3M train, 50k val, 100k test (метки test секретны)</td><td>Разного размера, обычно resize до 256×256. Метрика: <b>top-5 accuracy</b> (одна из 5 предсказанных меток верна).</td></tr>
+      <tr><td>MIT Places</td><td>365 сцен</td><td>~8M train, 18.25k val, 328.5k test</td><td>resize до 256×256</td></tr>
+      <tr><td>Omniglot</td><td>1623 символа из 50 алфавитов</td><td>20 изображений на класс</td><td>для <b>few-shot learning</b></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Nearest Neighbor</h3>
+  <p><b>Train:</b> просто запомнить все данные и метки. <b>Predict:</b> найти самое похожее обучающее изображение и вернуть его метку.</p>
+  <div class="two">
+    <div><h4>L1 (Manhattan) distance</h4><p><code>d₁(I₁, I₂) = Σₚ |I₁ᵖ − I₂ᵖ|</code></p><p class="sub">Сумма модулей разностей пикселей. Зависит от выбора осей координат.</p></div>
+    <div><h4>L2 (Euclidean) distance</h4><p><code>d₂(I₁, I₂) = √(Σₚ (I₁ᵖ − I₂ᵖ)²)</code></p><p class="sub">Не зависит от поворота осей.</p></div>
+  </div>
+  <div class="remember"><span class="k">Сложность</span>Train: <b>O(1)</b>. Predict: <b>O(N)</b>. Это плохо: медленное обучение терпимо, а <mark>предсказание должно быть быстрым</mark>. Есть быстрые приближённые методы (например, FAISS).</div>
+  <p><b>Decision boundary</b> = граница между областями классов. У 1-NN она шумная и зависит от outliers.</p>
+
+  <h3>k-Nearest Neighbors</h3>
+  <p>Вместо метки одного ближайшего соседа берём <b>majority vote из K ближайших</b>. Больше K → глаже границы, меньше влияние outliers. При K &gt; 1 возможны <b>ничьи</b>, их надо как-то разрешать. С подходящей метрикой kNN работает с любыми данными (например, сравнение статей по tf-idf).</p>
+
+  <h3>Hyperparameters</h3>
+  <p>K и distance metric — <b>hyperparameters</b>: выбираются <b>до обучения</b> и не выучиваются из данных. Зависят от задачи, надо пробовать.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Идея</th><th>Вердикт</th></tr></thead>
+    <tbody>
+      <tr><td>#1 Выбрать то, что лучше всего на всех данных</td><td>BAD: K = 1 всегда идеален на train.</td></tr>
+      <tr><td>#2 Split train / test, выбрать лучшее на test</td><td>BAD: не знаем, как модель поведёт себя на новых данных (test «подсмотрен»).</td></tr>
+      <tr><td>#3 Split <b>train / validation / test</b>: выбираем на val, оцениваем на test</td><td><b>Better!</b></td></tr>
+      <tr><td>#4 <b>Cross-validation</b>: делим на folds, каждый fold по очереди validation, усредняем</td><td>Полезно для маленьких датасетов, в deep learning используется редко (дорого).</td></tr>
+    </tbody>
+  </table></div>
+  <div class="remember"><span class="k">Главное правило</span>Hyperparameters выбирать на <b>validation set</b>; запускать на <b>test set только один раз в самом конце</b>.</div>
+  <p>Пример 5-fold cross-validation для k: каждая точка = один fold, линия через среднее, бары = std; лучший k ≈ 7.</p>
+
+  <h3>Universal approximation и curse of dimensionality</h3>
+  <p>При N → ∞ nearest neighbor может представить любую(*) функцию. Но <b>curse of dimensionality</b>: для равномерного покрытия пространства нужно экспоненциально много точек: 4 точки в 1D, 4² в 2D, 4³ в 3D. Число бинарных изображений 32×32: <code>2^(32·32) ≈ 10³⁰⁸</code>, а элементарных частиц во Вселенной ≈ 10⁹⁷.</p>
+
+  <h3>Почему kNN на пикселях почти не используют</h3>
+  <ul>
+    <li>Очень медленно на test time.</li>
+    <li>Distance metrics на пикселях неинформативны: boxed, shifted и tinted версии одной картинки имеют <b>одинаковое L2</b> до оригинала.</li>
+    <li>Зато kNN на <b>ConvNet features</b> работает хорошо (например, image captioning через ближайших соседей).</li>
+  </ul>
+  <div class="lec-foot"><button class="btn" type="button" data-oq-lec="2">Open questions по L2 →</button></div>
+</article>
+
+<!-- L3 -->
+<article class="lec" data-lec="3" hidden>
+  <div class="lec-head">
+    <span class="eyebrow">Lecture 3</span>
+    <h2>Linear Classifiers</h2>
+    <p class="lede">Score и sign, геометрия w и b, perceptron, logistic regression, SVM, LDA, multiclass (one-vs-rest, softmax), loss functions (SVM, cross-entropy, MSE/MAE/Huber), регуляризация, метрики и feature maps.</p>
+  </div>
+  <div class="remember"><span class="k">Одна идея на всю лекцию</span>Every model computes <code>w·x + b</code> — <mark>only the loss changes</mark>.</div>
+
+  <h3>Score, sign, hyperplane</h3>
+  <p>Input: feature vector <b>x</b>. Output: метка y из фиксированного набора. Linear classifier принимает решение <b>одной взвешенной суммой</b> признаков.</p>
+  <div class="remember"><span class="k">Binary</span><code>f(x) = w·x + b = w₁x₁ + w₂x₂ + … + b</code>, <code>ŷ = sign(f(x)) ∈ {−1, +1}</code>. Граница = множество, где <code>f(x) = 0</code>.</div>
+  <dl class="defs">
+    <div><dt>w — weights</dt><dd>Насколько важен каждый признак и в какую сторону он тянет решение. <b>w перпендикулярен границе</b> и указывает в сторону класса +1.</dd></div>
+    <div><dt>b — bias</dt><dd>Сдвигает границу от начала координат (порог). Без b граница всегда проходит через 0.</dd></div>
+    <div><dt>f(x) — score</dt><dd>Знак даёт класс, модуль намекает на уверенность.</dd></div>
+    <div><dt>Distance</dt><dd>От x до границы: <code>|w·x + b| / ‖w‖</code>. Умножение w и b на одну константу границу не двигает.</dd></div>
+  </dl>
+  <p>В 2D граница = прямая, в 3D = плоскость, в d измерениях = <b>hyperplane</b>. Learning = выбор, где провести линию.</p>
+  <h4>Пример: сдаст ли студент</h4>
+  <p>x₁ = часы учёбы в день, x₂ = пропуски в неделю, <code>w = (0.8, −0.5)</code>, <code>b = −1</code>, <code>‖w‖ = √0.89 ≈ 0.943</code>.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Студент</th><th>x</th><th>w·x + b</th><th>Класс</th><th>Distance</th></tr></thead>
+    <tbody>
+      <tr><td>Aigerim</td><td>(3, 2)</td><td>0.8·3 − 0.5·2 − 1 = 0.4</td><td>+1 pass</td><td>0.4 / 0.943 = 0.42</td></tr>
+      <tr><td>Daniyar</td><td>(1, 2)</td><td>0.8·1 − 0.5·2 − 1 = −1.2</td><td>−1 fail</td><td>1.27</td></tr>
+    </tbody>
+  </table></div>
+  <p><b>Linearly separable</b>: существует линия, которая правильно делит все точки. Если граница на самом деле круг или XOR, любая прямая ошибается.</p>
+
+  <h3>Multiclass: s = Wx + b</h3>
+  <p>Для K классов: <b>W</b> имеет размер <code>K × D</code> (по строке на класс), <b>b</b> = K чисел, <b>s</b> = K scores. Predicted class = <code>argmax(s)</code>. Для CIFAR-10: x = 3072, W = 10 × 3072, b = 10.</p>
+  <div class="mx-row"><span class="mx-eq">s =</span><span class="mx" data-m="w₀₀ w₀₁;w₁₀ w₁₁;w₂₀ w₂₁"></span><span class="mx-eq">·</span><span class="mx" data-m="x₀;x₁"></span><span class="mx-eq">+</span><span class="mx" data-m="b₀;b₁;b₂"></span><span class="mx-eq">→ sᵢ = wᵢ₀x₀ + wᵢ₁x₁ + bᵢ</span></div>
+  <ul>
+    <li><b>Algebraic view:</b> каждая строка W = веса одного класса; score класса = скалярное произведение строки на x плюс bias.</li>
+    <li><b>Visual view (templates):</b> каждая строка W, развёрнутая в картинку 32×32×3, = <b>template</b> класса; score = насколько x похож на шаблон. Один шаблон на класс → «двухголовая лошадь».</li>
+    <li><b>Geometric view:</b> каждый класс отделён гиперплоскостью; граница между i и j: <code>(wᵢ − wⱼ)·x + (bᵢ − bⱼ) = 0</code>.</li>
+  </ul>
+  <p><b>One-vs-rest:</b> K бинарных классификаторов «класс k против остальных», <code>ŷ = argmaxₖ(wₖ·x + bₖ)</code>. <b>Softmax regression:</b> одна модель, K векторов весов, обучение через cross-entropy, вероятности суммируются в 1.</p>
+
+  <h3>Perceptron (Rosenblatt, 1958)</h3>
+  <ol>
+    <li>Начать с <code>w = 0, b = 0</code>, метки y ∈ {−1, +1}.</li>
+    <li>Для каждого примера посчитать <code>yᵢ(w·xᵢ + b)</code>.</li>
+    <li>Если ≤ 0 (ошибка): <code>w ← w + η yᵢ xᵢ</code>, <code>b ← b + η yᵢ</code>.</li>
+    <li>Повторять проходы, пока проход без ошибок.</li>
+  </ol>
+  <p>Пропущенный positive тянет w к xᵢ, пропущенный negative отталкивает. η = learning rate (часто 1).</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Точка</th><th>y</th><th>Score</th><th>Ошибка?</th><th>w после</th><th>b после</th></tr></thead>
+    <tbody>
+      <tr><td>A (2, 3)</td><td>+1</td><td>0</td><td>да (0 ≤ 0)</td><td>(2, 3)</td><td>1</td></tr>
+      <tr><td>B (1, 1)</td><td>−1</td><td>2+3+1 = 6</td><td>да</td><td>(1, 2)</td><td>0</td></tr>
+      <tr><td>C (4, 5)</td><td>+1</td><td>4+10+0 = 14</td><td>нет</td><td>(1, 2)</td><td>0</td></tr>
+      <tr><td>D (3, 1)</td><td>−1</td><td>3+2+0 = 5</td><td>да</td><td>(−2, 1)</td><td>−1</td></tr>
+    </tbody>
+  </table></div>
+  <p>После 10 обновлений 6-й проход без ошибок: <code>w = (−3, 4), b = −4</code>.</p>
+  <ul>
+    <li><b>Convergence theorem (Novikoff, 1962):</b> если данные separable с margin γ и ‖x‖ ≤ R, ошибок не больше (R/γ)².</li>
+    <li><b>Limits:</b> не separable → никогда не сойдётся; останавливается на любом разделителе, не лучшем; нет вероятностей; <b>XOR</b> одной линией не разделить (Minsky &amp; Papert, 1969).</li>
+  </ul>
+
+  <h3>Logistic regression</h3>
+  <p><code>σ(z) = 1 / (1 + e⁻ᶻ)</code>, <code>P(y = 1 | x) = σ(w·x + b)</code>. Score 0 → probability 0.5: та же гиперплоскость, но читается как вероятность. Метки y ∈ {0, 1}.</p>
+  <div class="remember"><span class="k">Binary cross-entropy</span><code>L = −(1/n) Σ [yᵢ log pᵢ + (1 − yᵢ) log(1 − pᵢ)]</code>. Для y = 1: p = 0.9 → 0.105, p = 0.5 → 0.693, p = 0.1 → 2.303. Уверенные ошибки стоят дороже всего; функция <b>convex</b> (один глобальный минимум).</div>
+  <p><b>Gradient:</b> <code>∇w L = (1/n) Xᵀ(p − y)</code>, <code>∂L/∂b = mean(p − y)</code>. Update: <code>w ← w − η∇w L</code>. «Error × input»: каждый пример добавляет <code>(pᵢ − yᵢ)·xᵢ</code>. В отличие от perceptron, учитываются <b>все</b> примеры, взвешенные по ошибке.</p>
+  <p><b>Шаг для Aigerim</b> (y = 1, η = 0.1): z = 0.4, p = σ(0.4) = 0.599, loss = 0.513 → p − y = −0.401 → ∇w = (−1.204, −0.803), ∇b = −0.401 → w = (0.920, −0.420), b = −0.960 → new p = 0.723, loss 0.324.</p>
+  <p>Breast cancer: 569 опухолей, 30 признаков, StandardScaler + LogisticRegression → 98.2% test accuracy. <code>predict_proba</code> даёт столбцы P(0), P(1). Коэффициенты: <code>e^w</code> = во сколько раз меняются odds при +1 std признака; отрицательный вес толкает к malignant (0); коррелирующие признаки делят вес.</p>
+
+  <h3>Linear SVM</h3>
+  <p>Из многих разделяющих прямых SVM выбирает ту, у которой <b>самый широкий margin</b> (ширина «улицы» = <code>2/‖w‖</code>). Hard margin: <code>min ½‖w‖²</code> при <code>yᵢ(w·xᵢ + b) ≥ 1</code>. Границу определяют только <b>support vectors</b>.</p>
+  <p><b>Soft margin:</b> <code>min ½‖w‖² + C Σ max(0, 1 − yᵢ(w·xᵢ + b))</code> (hinge loss). Вне margin (y·f ≥ 1) → 0; внутри margin → маленький штраф, даже если верно; не та сторона → растёт линейно.</p>
+  <div class="two">
+    <div><h4>Large C</h4><p>Мало нарушений, узкий margin → риск <b>overfitting</b>.</p></div>
+    <div><h4>Small C</h4><p>Широкий margin, больше нарушений → более гладкая модель.</p></div>
+  </div>
+  <p><code>decision_function</code> даёт сырые scores w·x + b, не вероятности. C = 100 сильнее подгоняется под train и падает на test (0.947 vs 0.974).</p>
+
+  <h3>LDA и сравнение</h3>
+  <p><b>LDA:</b> каждый класс Gaussian со своим средним μₖ и общей covariance Σ → по Bayes граница линейна, <code>w = Σ⁻¹(μ₁ − μ₀)</code>. <b>Generative</b> (моделирует распределение x в каждом классе, closed form) vs <b>discriminative</b> (logistic regression и SVM моделируют границу напрямую). На breast cancer (5-fold CV): logistic 0.981, SVM 0.967, perceptron 0.963, LDA 0.960, ridge 0.958 — все рисуют гиперплоскость, разница ≈ 2 пункта.</p>
+
+  <h3>Loss functions</h3>
+  <div class="remember"><span class="k">Definition</span>Loss говорит, насколько хорош классификатор: low loss = good. <code>L(W) = (1/N) Σ Lᵢ(f(xᵢ, W), yᵢ) + λR(W)</code> = <b>data loss</b> + <b>regularization</b>. Training = поиск W, минимизирующего L(W).</div>
+  <p>Пример (три комментария студентов; scores, жирный = верный класс):</p>
+  <div class="tbl"><table>
+    <thead><tr><th></th><th>A «Great labs»</th><th>B «It was okay»</th><th>C «Too fast»</th></tr></thead>
+    <tbody>
+      <tr><td>positive</td><td><b>2.8</b></td><td>2.1</td><td>0.6</td></tr>
+      <tr><td>neutral</td><td>1.2</td><td><b>1.7</b></td><td>1.9</td></tr>
+      <tr><td>negative</td><td>−0.9</td><td>0.4</td><td><b>1.1</b></td></tr>
+    </tbody>
+  </table></div>
+  <h4>Multiclass SVM loss (hinge)</h4>
+  <p><code>Lᵢ = Σ_{j≠yᵢ} max(0, sⱼ − s_{yᵢ} + Δ)</code>, обычно Δ = 1. «Верный класс должен быть выше каждого другого хотя бы на margin».</p>
+  <ul>
+    <li>A: max(0, 1.2 − 2.8 + 1) + max(0, −0.9 − 2.8 + 1) = 0 + 0 = <b>0</b></li>
+    <li>B: max(0, 2.1 − 1.7 + 1) + max(0, 0.4 − 1.7 + 1) = 1.4 + 0 = <b>1.4</b></li>
+    <li>C: max(0, 0.6 − 1.1 + 1) + max(0, 1.9 − 1.1 + 1) = 0.5 + 1.8 = <b>2.3</b></li>
+    <li>L = (0 + 1.4 + 2.3) / 3 = <b>1.23</b></li>
+  </ul>
+  <p>Вопросы: min/max = 0 и ∞; все scores ≈ 0 → L ≈ C − 1 (проверка на баги); сумма по всем классам → +Δ, тот же минимум; mean вместо sum → масштаб, тот же минимум; квадраты → другая функция (squared hinge); W с L = 0 не уникален (2W тоже даёт 0, регуляризация выбирает).</p>
+  <h4>Softmax и cross-entropy</h4>
+  <p><code>P(Y = k | X = xᵢ) = e^{sₖ} / Σⱼ e^{sⱼ}</code>. Scores (logits) → exp (положительные) → normalize (сумма 1). A: e^2.8 = 16.445, e^1.2 = 3.320, e^−0.9 = 0.407, сумма 20.171 → <b>0.815, 0.165, 0.020</b>.</p>
+  <p><code>Lᵢ = −log P(Y = yᵢ | X = xᵢ)</code>: A 0.204, B 1.017, C 1.343, mean 0.855. Min 0, max ∞. При scores ≈ 0: P = 1/C, <b>L = log C</b> (3 класса → 1.099, 10 → 2.303) — sanity check перед обучением.</p>
+  <div class="two">
+    <div><h4>SVM loss</h4><p>Доволен, как только margin выполнен; [5, 2, 1], [5, 3.9, 3.9] и [5, −5, −5] все дают 0.</p></div>
+    <div><h4>Cross-entropy</h4><p>Никогда не удовлетворён полностью: 0.066, 0.510, 0.000; всегда хочет увеличить отрыв верного класса.</p></div>
+  </div>
+  <p><b>Numerical stability:</b> e¹⁰⁰⁰ = ∞ → nan. Вычесть max: <code>softmax(s) = softmax(s − max s)</code>; для loss log-sum-exp. <b>Градиент по scores:</b> CE: <code>∂L/∂sⱼ = pⱼ − 1[j = yᵢ]</code>; SVM: +1 каждому неверному классу с положительным членом, верному −(их число). Дальше <code>∂L/∂W = (∂L/∂s) xᵀ</code>.</p>
+  <p><b>Почему не squared error для классификации:</b> через sigmoid при p = 0.01 и y = 1 градиент MSE ≈ 0.020, у CE = 0.990 (в 50 раз сильнее); MSE через sigmoid не convex.</p>
+  <h4>Regression и imbalanced</h4>
+  <p>MSE r² (большие ошибки доминируют), MAE |r| (robust), Huber (квадратичный около 0, линейный дальше). Residuals (0.5, −1, 0.2, 8): MSE 16.32 (98% от outlier), MAE 2.43, Huber 2.04. Для дисбаланса: <b>weighted CE</b> (<code>w_c = n / (K·n_c)</code>, <code>class_weight="balanced"</code>) и <b>focal loss</b> <code>−(1 − p)^γ log p</code>.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Ситуация</th><th>Loss</th></tr></thead>
+    <tbody>
+      <tr><td>Binary, нужны вероятности</td><td>Log-loss (BCE), LogisticRegression</td></tr>
+      <tr><td>Binary, max margin</td><td>Hinge / squared hinge, LinearSVC</td></tr>
+      <tr><td>Multiclass</td><td>Softmax cross-entropy</td></tr>
+      <tr><td>Imbalanced</td><td>Weighted CE / focal</td></tr>
+      <tr><td>Regression / с outliers</td><td>MSE / Huber, MAE</td></tr>
+    </tbody>
+  </table></div>
+  <p>Default для классификации: <b>cross-entropy</b>.</p>
+
+  <h3>In practice</h3>
+  <ul>
+    <li><b>Scale features:</b> без StandardScaler 0.947 и ConvergenceWarning, со scaler 0.982. Scaler fit <b>только на train</b> (pipeline делает это сам).</li>
+    <li><b>Regularization:</b> L2 <code>Σw²</code> уменьшает веса; L1 <code>Σ|w|</code> даёт точные нули (feature selection). В sklearn <code>C = 1/λ</code>: меньше C → сильнее штраф. L1 при C = 0.1 оставляет 7 из 30 признаков.</li>
+    <li><b>Tuning:</b> GridSearchCV с cross-validation; test set трогать один раз в конце.</li>
+  </ul>
+
+  <h3>Evaluation: accuracy is not enough</h3>
+  <div class="tbl"><table>
+    <thead><tr><th></th><th>Pred malignant</th><th>Pred benign</th></tr></thead>
+    <tbody>
+      <tr><td>True malignant</td><td>40 (TP)</td><td>2 (FN, пропущен рак)</td></tr>
+      <tr><td>True benign</td><td>0 (FP)</td><td>72 (TN)</td></tr>
+    </tbody>
+  </table></div>
+  <div class="remember"><span class="k">Метрики</span><code>accuracy = (TP + TN) / total</code> · <code>precision = TP / (TP + FP)</code> · <code>recall = TP / (TP + FN)</code> · <code>F1 = 2PR / (P + R)</code>. Recall (malignant) = 40/42 = 0.952. 98.2% accuracy прячет 2 самые важные ошибки.</div>
+  <p><b>ROC AUC</b> использует вероятности и оценивает ранжирование при всех порогах (0.996). <b>Threshold</b> — бизнес-решение: при t = 0.95 ни один рак не пропущен, но accuracy 0.912.</p>
+
+  <h3>Beyond linear</h3>
+  <p><b>Feature transforms:</b> <code>φ(x) = (x₁, x₂, x₁², x₁x₂, x₂²)</code>. Круг <code>x₁² + x₂² = r²</code> становится гиперплоскостью в φ-пространстве. XOR и circles: plain features 0.50, degree-2 features 1.00 (решает произведение <code>x₀·x₁</code>). <b>Text:</b> TF-IDF → линейная модель: много признаков, быстро, интерпретируемо.</p>
+  <div class="two">
+    <div><h4>Strengths</h4><ul><li>Быстро обучать и предсказывать</li><li>Веса легко объяснить</li><li>Сильный baseline в high dimensions</li><li>Вероятности (logistic)</li><li>Мало hyperparameters (C)</li></ul></div>
+    <div><h4>Limits</h4><ul><li>Только прямые границы в данных признаках</li><li>Кривые нужно feature engineering</li><li>Чувствительны к масштабу</li><li>Коррелирующие признаки → нестабильные веса</li><li>Perceptron и SVM без вероятностей</li></ul></div>
+  </div>
+  <div class="lec-foot"><button class="btn" type="button" data-oq-lec="3">Open questions по L3 →</button><button class="btn" type="button" data-drill="linear">Задачи на Wx + b →</button></div>
+</article>
+
+<!-- L4.1 -->
+<article class="lec" data-lec="4.1" hidden>
+  <div class="lec-head">
+    <span class="eyebrow">Lecture 4.1</span>
+    <h2>Introduction to Artificial Neural Networks</h2>
+    <p class="lede">Где останавливается линейный классификатор, нейрон биологический и искусственный, слои, двухслойная сеть на CIFAR-10, зачем нужна нелинейность, activation functions, forward pass на spam-примере, training loop и типы сетей.</p>
+  </div>
+
+  <h3>Где останавливаются линейные классификаторы</h3>
+  <div class="two">
+    <div><h4>One template per class</h4><p>Лошадь влево и лошадь вправо делят один шаблон → размытая «двухголовая» лошадь.</p></div>
+    <div><h4>Only straight boundaries</h4><p>Каждый класс отделён гиперплоскостью. XOR и концентрические кольца не разделить.</p></div>
+  </div>
+
+  <h3>Biological vs artificial neuron</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Biological</th><th>Artificial</th></tr></thead>
+    <tbody>
+      <tr><td>Dendrites receive signals</td><td>Inputs x₁ … xₙ</td></tr>
+      <tr><td>Synapse strength</td><td>Weights wᵢ (меняются при обучении)</td></tr>
+      <tr><td>Cell body integrates</td><td>Weighted sum Σwᵢxᵢ + b</td></tr>
+      <tr><td>Fires if threshold reached</td><td>Activation g(·)</td></tr>
+      <tr><td>Axon sends the spike</td><td>Output a → следующий слой</td></tr>
+    </tbody>
+  </table></div>
+  <p><b>ANN vs BNN:</b> слои vs дендриты/тело/аксон; алгоритм меняет веса vs опыт меняет синапсы; нужно много размеченных примеров vs справляется с шумными неразмеченными; цифровая, быстрая, на GPU vs электрохимическая, массово параллельная; в основном фиксирована после обучения vs учится постоянно; огромные энергозатраты vs ≈ 20 W. Мозг ≈ 86 млрд нейронов. <mark>Neural networks are inspired by the brain. They are not a model of it.</mark></p>
+
+  <h3>Пять компонентов сети</h3>
+  <dl class="defs">
+    <div><dt>Neurons</dt><dd>Суммируют входы и применяют activation function.</dd></div>
+    <div><dt>Connections</dt><dd>Передают выход нейрона следующему слою.</dd></div>
+    <div><dt>Weights &amp; biases</dt><dd>Обучаемые числа: сила каждой связи.</dd></div>
+    <div><dt>Propagation</dt><dd>Как значения идут вперёд слой за слоем до выхода.</dd></div>
+    <div><dt>Learning rule</dt><dd>Как веса меняются, чтобы уменьшить ошибку: gradient descent.</dd></div>
+  </dl>
+  <div class="remember"><span class="k">Parameters vs hyperparameters</span>Учатся <b>только weights и biases</b>. Архитектура, activation, learning rate — design choices (hyperparameters).</div>
+
+  <h3>Один нейрон и слои</h3>
+  <p><code>z = Σ wᵢxᵢ + b</code>, <code>a = g(z)</code>. Без g нейрон = линейный классификатор. <b>Input layer</b> (по юниту на признак, например 3072 пикселя) → <b>hidden layers</b> (превращают входы в полезные признаки) → <b>output layer</b> (scores классов или значение регрессии). Каждый узел связан с каждым узлом следующего слоя = <b>fully connected (dense)</b>. Слои считают по весам, без input: это <b>2-layer network</b>.</p>
+
+  <h3>Двухслойная сеть на CIFAR-10</h3>
+  <div class="remember"><span class="k">Формула</span><code>f(x) = W₂ · max(0, W₁x + b₁) + b₂</code>: 3072 входа → 100 hidden (= 100 шаблонов) → 10 scores.</div>
+  <p>Параметры: <code>3072·100 + 100 + 100·10 + 10 = 308 310</code>. Второй слой смешивает шаблоны: horse = 0.7 · left-facing + 0.6 · right-facing, поэтому у класса может быть несколько «мод».</p>
+
+  <h3>Почему нелинейность обязательна</h3>
+  <div class="remember"><span class="k">Collapse</span><code>W₂(W₁x) = (W₂W₁)x = W′x</code>. Любой стек линейных слоёв схлопывается в <b>один линейный слой</b>. Глубина даёт силу, только если между слоями есть activation.</div>
+
+  <h3>Activation functions</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Function</th><th>Formula</th><th>Range</th><th>Pros / cons</th></tr></thead>
+    <tbody>
+      <tr><td>Sigmoid</td><td>1 / (1 + e⁻ᶻ)</td><td>(0, 1)</td><td>Saturates, not zero-centred</td></tr>
+      <tr><td>tanh</td><td>tanh(z)</td><td>(−1, 1)</td><td>Zero-centred, still saturates</td></tr>
+      <tr><td>ReLU</td><td>max(0, z)</td><td>[0, ∞)</td><td><b>Default.</b> Дёшево; юниты могут «умереть»</td></tr>
+      <tr><td>Leaky ReLU</td><td>max(0.01z, z)</td><td>ℝ</td><td>Исправляет dead units</td></tr>
+      <tr><td>GELU</td><td>z · Φ(z)</td><td>≈ (−0.17, ∞)</td><td>Стандарт в Transformers</td></tr>
+    </tbody>
+  </table></div>
+  <p><b>Saturation:</b> на плоских концах градиент почти 0 → обучение останавливается. ReLU имеет наклон ровно 1 при z &gt; 0. Правило курса: ReLU в hidden, sigmoid только на выходе для binary.</p>
+
+  <h3>Worked example: spam</h3>
+  <p>«Get free gift cards now!» → free = 1, win = 0, offer = 1 → <code>x = [1, 0, 1]</code>. Biases = 0.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Unit</th><th>Weighted sum</th><th>Activation</th><th>Output</th></tr></thead>
+    <tbody>
+      <tr><td>H1</td><td>1·0.5 + 0·(−0.2) + 1·0.3 = 0.8</td><td>ReLU</td><td>0.8</td></tr>
+      <tr><td>H2</td><td>1·0.4 + 0·0.1 + 1·(−0.5) = −0.1</td><td>ReLU</td><td>0</td></tr>
+      <tr><td>Out</td><td>0.8·0.7 + 0·0.2 = 0.56</td><td>Sigmoid</td><td>0.636</td></tr>
+    </tbody>
+  </table></div>
+  <p>0.636 &gt; 0.5 → <b>spam</b>. H2 = 0, потому что ReLU обрезает отрицательные.</p>
+
+  <h3>Training loop</h3>
+  <ol class="flow">
+    <li><b>Forward</b>входы → предсказание</li>
+    <li><b>Loss</b>MSE или cross-entropy</li>
+    <li><b>Backward</b>chain rule → ∂L/∂w</li>
+    <li><b>Update</b>w ← w − η·∂L/∂w</li>
+    <li><b>Repeat</b>много эпох</li>
+  </ol>
+  <p><b>Learning paradigms:</b> supervised (пары (x, y); большая часть CV: классификация, детекция), unsupervised (без меток: кластеры, autoencoders, self-supervised), reinforcement (агент, награды; роботы, игры).</p>
+
+  <h3>Типы сетей</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Architecture</th><th>Для чего</th><th>Где в курсе</th></tr></thead>
+    <tbody>
+      <tr><td>Feedforward / MLP</td><td>Векторы фиксированного размера, данные идут в одну сторону</td><td>Lecture 4</td></tr>
+      <tr><td>CNN</td><td>Изображения, видео: фильтры скользят по картинке</td><td>Следующие лекции</td></tr>
+      <tr><td>RNN · LSTM · GRU</td><td>Последовательности, hidden state = память</td><td>Recurrent networks</td></tr>
+      <tr><td>Transformer</td><td>Токены, патчи; attention связывает все со всеми (ViT, DETR, SAM)</td><td>Transformers</td></tr>
+      <tr><td>Autoencoder · GAN</td><td>Сжатие в code и восстановление; generator vs discriminator</td><td>Generative models</td></tr>
+      <tr><td>Siamese</td><td>Сравнение двух входов</td><td>Face verification</td></tr>
+    </tbody>
+  </table></div>
+  <p>Редко сейчас: RBFN, SOM, DBN (эпоха pre-training 2006–2012), CapsNet, SNN (spiking, ближе всего к биологии).</p>
+  <div class="two">
+    <div><h4>Strengths</h4><ul><li>Нелинейные паттерны</li><li>Сами извлекают признаки</li><li>Параллельно на GPU</li><li>Обобщают на новые данные</li></ul></div>
+    <div><h4>Limitations</h4><ul><li>Дорого обучать</li><li>«Black box»</li><li>Могут переобучиться</li><li>Нужны большие размеченные датасеты</li></ul></div>
+  </div>
+  <div class="remember"><span class="k">Tip</span>Не уменьшай сеть, чтобы бороться с overfitting. Бери <b>большую сеть + сильную регуляризацию</b> (weight decay, dropout).</div>
+  <pre><code>model = nn.Sequential(
+    nn.Flatten(),
+    nn.Linear(3*32*32, 100),  # W1, b1
+    nn.ReLU(),
+    nn.Linear(100, 10))       # W2, b2
+loss_fn = nn.CrossEntropyLoss()
+opt = torch.optim.SGD(model.parameters(), lr=1e-2)
+for x, y in train_loader:
+    loss = loss_fn(model(x), y)  # forward
+    opt.zero_grad()
+    loss.backward()              # backprop
+    opt.step()                   # update</code></pre>
+  <div class="lec-foot"><button class="btn" type="button" data-oq-lec="4.1">Open questions по L4.1 →</button></div>
+</article>
+
+<!-- L4.2 -->
+<article class="lec" data-lec="4.2" hidden>
+  <div class="lec-head">
+    <span class="eyebrow">Lecture 4.2</span>
+    <h2>Backpropagation</h2>
+    <p class="lede">Зачем backprop, computational graph и chain rule, пример f = (x + y)·z, gate patterns, backward pass для spam-сети, матричные градиенты и правило shapes, модульные слои, gradient check и типичные ошибки.</p>
+  </div>
+
+  <h3>Проблема: 308 310 весов, один loss</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Способ</th><th>Стоимость</th></tr></thead>
+    <tbody>
+      <tr><td>By hand</td><td>Страницы алгебры, заново для каждой архитектуры. Infeasible.</td></tr>
+      <tr><td>Numerically</td><td>2 forward pass на вес ≈ 616 000 на шаг. Far too slow.</td></tr>
+      <tr><td><b>Backpropagation</b></td><td>Один forward и один backward для всех весов ≈ 2–3× forward pass.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Computational graph + chain rule</h3>
+  <div class="remember"><span class="k">Всё правило</span><mark>downstream = local × upstream</mark>: <code>∂L/∂x = (∂z/∂x) · ∂L/∂z</code>. Узлу не нужно знать остальную сеть, только свою локальную производную. Градиенты идут справа налево, от loss к входам.</div>
+
+  <h3>Пример: f = (x + y) · z</h3>
+  <p>x = −2, y = 5, z = −4 → q = x + y = 3 → f = q·z = −12.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Var</th><th>Forward</th><th>Local</th><th>Upstream</th><th>∂f/∂·</th></tr></thead>
+    <tbody>
+      <tr><td>f</td><td>−12</td><td>—</td><td>—</td><td>1</td></tr>
+      <tr><td>z</td><td>−4</td><td>∂f/∂z = q = 3</td><td>1</td><td><b>3</b></td></tr>
+      <tr><td>q</td><td>3</td><td>∂f/∂q = z = −4</td><td>1</td><td>−4</td></tr>
+      <tr><td>x</td><td>−2</td><td>∂q/∂x = 1</td><td>−4</td><td><b>−4</b></td></tr>
+      <tr><td>y</td><td>5</td><td>∂q/∂y = 1</td><td>−4</td><td><b>−4</b></td></tr>
+    </tbody>
+  </table></div>
+  <p>Проверка: x + 0.01 → q = 3.01 → f = −12.04; изменение −0.04 = −4 × 0.01 ✔</p>
+
+  <h3>Gate patterns</h3>
+  <dl class="defs">
+    <div><dt>add → distributor</dt><dd>Передаёт upstream gradient <b>без изменений</b> каждому входу.</dd></div>
+    <div><dt>multiply → swapper</dt><dd>Градиент одному входу = upstream × <b>другой вход</b>.</dd></div>
+    <div><dt>max → router</dt><dd>Весь градиент большему входу, остальным 0. Так работает <b>ReLU</b>.</dd></div>
+    <div><dt>copy → adder</dt><dd>Если значение идёт в несколько веток, их градиенты <b>суммируются</b>.</dd></div>
+  </dl>
+  <p>Sigmoid можно считать одним узлом: <code>σ′(z) = σ(z)(1 − σ(z))</code>. При σ = 0.99 локальный градиент ≈ 0.01: это и есть <b>saturation</b>.</p>
+
+  <h3>Backward pass для spam-сети (y = 1)</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Шаг</th><th>Вычисление</th><th>Результат</th></tr></thead>
+    <tbody>
+      <tr><td>Loss (BCE)</td><td>L = −ln(0.636)</td><td>0.452</td></tr>
+      <tr><td>Output grad</td><td>∂L/∂z = p − y</td><td>−0.364</td></tr>
+      <tr><td>Output weights</td><td>−0.364 × [0.8, 0]</td><td>[−0.291, 0]</td></tr>
+      <tr><td>Hidden outputs</td><td>−0.364 × [0.7, 0.2]</td><td>[−0.255, −0.073]</td></tr>
+      <tr><td>Through ReLU</td><td>вход H2 был −0.1 → градиент блокирован</td><td>[−0.255, 0]</td></tr>
+      <tr><td>W₁, row H1</td><td>−0.255 × [1, 0, 1]</td><td>[−0.255, 0, −0.255]</td></tr>
+      <tr><td>Update, η = 0.1</td><td>0.7 − 0.1 × (−0.291)</td><td>0.729</td></tr>
+    </tbody>
+  </table></div>
+  <p>Сразу три паттерна: multiply подставляет другой вход, ReLU направляет в 0, вес для «win = 0» не обновляется. Sigmoid + BCE дают простой градиент <b>p − y</b>.</p>
+
+  <h3>Векторы и матрицы: y = Wx</h3>
+  <div class="remember"><span class="k">Формулы</span><code>∂L/∂W = (∂L/∂y) · xᵀ</code>, <code>∂L/∂x = Wᵀ · (∂L/∂y)</code>. <b>Shape rule:</b> градиент имеет ту же форму, что и переменная.</div>
+  <p>W: 10×3072, x: 3072×1, ∂L/∂y: 10×1 → (10×1)·(1×3072) = 10×3072 ✔ совпадает с W. Полный Jacobian огромный и почти весь из нулей, его не строят. Забыл формулу — расставь транспонирования, пока shapes не сойдутся.</p>
+
+  <h3>Модульные слои</h3>
+  <pre><code>class Multiply:
+    def forward(self, x, y):
+        self.x, self.y = x, y   # cache
+        return x * y
+    def backward(self, dout):
+        dx = dout * self.y      # swap
+        dy = dout * self.x
+        return dx, dy</code></pre>
+  <p><b>forward()</b> считает выход и кэширует нужное для backward. <b>backward(dout)</b> берёт upstream и возвращает local × upstream. <b>Autograd</b> в PyTorch хранит граф и вызывает backward в обратном порядке.</p>
+
+  <h3>Gradient check</h3>
+  <p><code>∂f/∂w ≈ [f(w + h) − f(w − h)] / 2h</code> (centred difference, h ≈ 1e-5). Numerical: медленно, но надёжно (эталон). Analytic: быстро и точно, но легко сломать. Relative error <code>|a − n| / max(|a|, |n|)</code> &lt; 1e-7 → backward верен; ≈ 1e-4 допустимо с ReLU; 1e-2 → баг.</p>
+
+  <h3>Четыре частые ошибки</h3>
+  <ul>
+    <li><b>Overwriting at branches:</b> градиенты веток надо складывать (<code>+=</code>, не <code>=</code>).</li>
+    <li><b>Forgetting the cache:</b> backward нужны входы из forward.</li>
+    <li><b>Wrong ReLU mask:</b> пропускать градиент там, где вход был положительным.</li>
+    <li><b>No zero_grad():</b> PyTorch накапливает градиенты между шагами (это правило copy → adder).</li>
+  </ul>
+  <div class="remember"><span class="k">Summary</span>Non-linearity makes depth useful; the chain rule makes training possible. Next: CNN.</div>
+  <div class="lec-foot"><button class="btn" type="button" data-oq-lec="4.2">Open questions по L4.2 →</button><button class="btn" type="button" data-drill="backprop">Задачи на backprop →</button></div>
+</article>
+
+<!-- OpenCV -->
+<article class="lec" data-lec="ocv" hidden>
+  <div class="lec-head">
+    <span class="eyebrow">Практика · по образцу мидтерма</span>
+    <h2>Image Processing &amp; OpenCV</h2>
+    <p class="lede">Этого нет в слайдах лекций 1–4, но Q1 и Q4 образца (40 баллов) целиком про OpenCV: изображение как массив, BGR, resize, grayscale, фильтры, Canny, threshold, нормализация и preprocessing для классификации.</p>
+  </div>
+
+  <h3>Изображение = NumPy array</h3>
+  <dl class="defs">
+    <div><dt>Color image</dt><dd><code>img.shape = (H, W, 3)</code> — высота, ширина, каналы. <code>dtype = uint8</code>, значения 0–255.</dd></div>
+    <div><dt>Grayscale</dt><dd><code>(H, W)</code> — <b>2D</b>, третьего измерения нет (1 канал).</dd></div>
+    <div><dt>Пиксель</dt><dd><code>img[y, x]</code> — сначала строка (y), потом столбец (x). Цветной пиксель = 3 числа <code>[B, G, R]</code>.</dd></div>
+    <div><dt>Crop</dt><dd><code>img[y1:y2, x1:x2]</code></dd></div>
+    <div><dt>Размер в числах</dt><dd>H·W·C: 224×224×3 = 150 528 значений; 32×32×3 = 3072.</dd></div>
+  </dl>
+
+  <h3>Главные функции</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Функция</th><th>Что делает</th><th>Ловушка</th></tr></thead>
+    <tbody>
+      <tr><td><code>cv2.imread(path)</code></td><td>Читает изображение в <b>BGR</b></td><td>Не RGB! Если файла нет, возвращает <b>None</b> без ошибки. Флаг <code>cv2.IMREAD_GRAYSCALE</code> читает сразу в серый.</td></tr>
+      <tr><td><code>cv2.cvtColor(img, code)</code></td><td>Смена цветового пространства</td><td>Для imread нужен <code>COLOR_BGR2GRAY</code>, <code>COLOR_BGR2RGB</code>, <code>COLOR_BGR2HSV</code>. <code>COLOR_RGB2GRAY</code> на BGR-картинке перепутает веса R и B.</td></tr>
+      <tr><td><code>cv2.resize(img, (w, h))</code></td><td>Меняет размер</td><td>dsize = <b>(width, height)</b>, а shape = (height, width, C). Не сохраняет aspect ratio → искажение. Интерполяция: <code>INTER_AREA</code> для уменьшения, <code>INTER_LINEAR/CUBIC</code> для увеличения.</td></tr>
+      <tr><td><code>cv2.GaussianBlur(img, (k, k), σ)</code></td><td>Сглаживание взвешенным средним (Gaussian kernel)</td><td>k <b>положительное и нечётное</b>: (3,3), (5,5). (4,4) → ошибка. σ = 0 → вычисляется из k.</td></tr>
+      <tr><td><code>cv2.blur(img, (k, k))</code></td><td>Mean filter</td><td>Размывает края сильнее Gaussian.</td></tr>
+      <tr><td><code>cv2.medianBlur(img, k)</code></td><td>Медиана окна</td><td>Лучший против <b>salt-and-pepper</b> шума; k нечётное, одно число.</td></tr>
+      <tr><td><code>cv2.bilateralFilter(img, d, σc, σs)</code></td><td>Сглаживает, <b>сохраняя края</b></td><td>Медленнее.</td></tr>
+      <tr><td><code>cv2.Canny(gray, low, high)</code></td><td>Edge detector (John Canny, 1986) → бинарная карта краёв 0/255</td><td>Выход 1 канал, тот же H×W. Чувствителен к шуму → сначала blur.</td></tr>
+      <tr><td><code>cv2.threshold(gray, t, 255, cv2.THRESH_BINARY)</code></td><td>Бинаризация</td><td>Возвращает <b>кортеж</b> <code>(ret, img)</code>. <code>THRESH_OTSU</code> подбирает t сам; <code>adaptiveThreshold</code> для неравномерного света.</td></tr>
+      <tr><td><code>cv2.equalizeHist(gray)</code></td><td>Histogram equalization: растягивает контраст</td><td>Только для 1 канала. CLAHE (<code>createCLAHE</code>) — локальная версия, меньше усиливает шум.</td></tr>
+      <tr><td><code>cv2.flip(img, 1)</code></td><td>Горизонтальное отражение (augmentation)</td><td>0 = вертикально, −1 = оба.</td></tr>
+      <tr><td><code>cv2.imshow</code> / <code>plt.imshow</code></td><td>Показ</td><td>matplotlib ждёт RGB → BGR-картинка выглядит синей. Сначала <code>BGR2RGB</code>.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Canny: что внутри</h3>
+  <ol class="flow">
+    <li><b>Gaussian smoothing</b>убрать шум</li>
+    <li><b>Gradient</b>магнитуда и направление (Sobel)</li>
+    <li><b>Non-max suppression</b>тонкие края в 1 пиксель</li>
+    <li><b>Double threshold</b>low / high: strong и weak edges</li>
+    <li><b>Hysteresis</b>weak оставить, только если связан со strong</li>
+  </ol>
+  <div class="remember"><span class="k">Почему blur перед Canny</span>Canny основан на <b>градиентах</b> (производных яркости). Шум = резкие локальные перепады → большие градиенты → <b>ложные края</b>. Gaussian blur подавляет высокочастотный шум, и остаются настоящие границы объектов. Своё сглаживание у Canny есть, но дополнительный blur даёт больше контроля.</div>
+
+  <h3>Grayscale: плюсы и минусы</h3>
+  <div class="two">
+    <div><h4>Advantages</h4><ul><li>3 канала → 1: в 3 раза меньше данных, быстрее, меньше параметров модели</li><li>Меньше чувствительность к оттенку освещения</li><li>Нужен для Canny, threshold, equalizeHist</li></ul></div>
+    <div><h4>Disadvantages</h4><ul><li><b>Теряется цвет</b>: пятна болезни (жёлтые/коричневые на зелёном), цвет мусора, спелость фрукта</li><li>Разные цвета с одинаковой яркостью становятся одинаковыми</li></ul></div>
+  </div>
+
+  <h3>Preprocessing для классификации</h3>
+  <dl class="defs">
+    <div><dt>Resize to fixed size</dt><dd>Разные разрешения → модели нужен <b>фиксированный input</b> (например 224×224 или 32×32), батчи одного размера.</dd></div>
+    <div><dt>Normalization</dt><dd><code>img / 255.0</code> → [0, 1], или standardization <code>(x − mean) / std</code> по train. Одинаковый масштаб признаков, стабильнее и быстрее обучение (как StandardScaler в L3).</dd></div>
+    <div><dt>Denoising</dt><dd>Gaussian / median blur против шума сенсора; median для salt-and-pepper.</dd></div>
+    <div><dt>Lighting correction</dt><dd>Histogram equalization / CLAHE или нормализация яркости при разном освещении.</dd></div>
+    <div><dt>Color conversion</dt><dd>BGR → RGB для модели и показа; HSV для сегментации по цвету (<code>cv2.inRange</code>).</dd></div>
+    <div><dt>Cropping / segmentation</dt><dd>Вырезать объект, убрать фон (background clutter).</dd></div>
+    <div><dt>Data augmentation</dt><dd>Flip, rotation, crop, brightness/contrast — <b>только для train</b>; делает модель устойчивой к viewpoint и illumination.</dd></div>
+  </dl>
+
+  <h3>«More preprocessing always improves accuracy?» — нет</h3>
+  <ul>
+    <li><b>Удаляет полезную информацию:</b> grayscale убирает цвет пятен болезни; сильный blur стирает мелкие пятна и текстуру; resize до 32×32 теряет детали.</li>
+    <li><b>Усиливает шум:</b> histogram equalization на тёмном шумном фото.</li>
+    <li><b>Нереалистичная augmentation:</b> вертикальный flip цифры 6 → 9 меняет класс.</li>
+    <li><b>Mismatch:</b> если preprocessing на test отличается от train, качество падает.</li>
+  </ul>
+  <p>Каждый шаг надо обосновывать задачей и проверять на <b>validation set</b>.</p>
+
+  <h3>Типичные баги в коде (ищут в Q1c)</h3>
+  <pre><code># BAD
+img = cv2.imread("leaf.jpg")
+gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)   # imread даёт BGR
+blur = cv2.GaussianBlur(gray, (4, 4), 0)       # ядро должно быть нечётным
+
+# GOOD
+img = cv2.imread("leaf.jpg")
+if img is None:
+    raise FileNotFoundError("leaf.jpg")
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+blur = cv2.GaussianBlur(gray, (5, 5), 0)</code></pre>
+  <ul>
+    <li><code>cv2.resize(img, (h, w))</code> вместо <code>(w, h)</code> для неквадратного размера.</li>
+    <li><code>cv2.Canny</code> на цветном вместо grayscale (работает, но обычно подают серый).</li>
+    <li><code>thresh = cv2.threshold(...)</code> без распаковки <code>_, thresh</code>.</li>
+    <li><code>cv2.equalizeHist</code> на 3-канальном изображении → ошибка.</li>
+    <li><code>img + 100</code> в uint8 переполняется по модулю 256; <code>cv2.add</code> насыщает до 255.</li>
+    <li><code>cv2.medianBlur(img, (5, 5))</code> — нужен int <code>5</code>.</li>
+  </ul>
+
+  <h3>Pipeline из Q4: shapes по шагам</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Строка</th><th>Shape</th></tr></thead>
+    <tbody>
+      <tr><td><code>img = cv2.imread("cat.jpg")</code></td><td>(H, W, 3), BGR, uint8</td></tr>
+      <tr><td><code>img = cv2.resize(img, (224, 224))</code></td><td>(224, 224, 3)</td></tr>
+      <tr><td><code>gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)</code></td><td>(224, 224) — 3 канала → 1</td></tr>
+      <tr><td><code>blur = cv2.GaussianBlur(gray, (5, 5), 0)</code></td><td>(224, 224) — размер не меняется</td></tr>
+      <tr><td><code>edges = cv2.Canny(blur, 100, 200)</code></td><td>(224, 224), значения 0 или 255</td></tr>
+    </tbody>
+  </table></div>
+  <p>Если задача зависит от <b>цвета</b>, подавать только edges нельзя: edges хранят форму и границы, но цвет потерян ещё на шаге grayscale. Лучше подать цветное изображение (RGB, нормализованное) или цвет + edges.</p>
+  <div class="lec-foot"><button class="btn" type="button" data-oq-lec="ocv">Open questions по OpenCV →</button><button class="btn" type="button" data-drill="shape">Задачи на shapes →</button></div>
+</article>
+
+<!-- System design -->
+<article class="lec" data-lec="sys" hidden>
+  <div class="lec-head">
+    <span class="eyebrow">Практика · по образцу мидтерма</span>
+    <h2>Designing a CV System &amp; Evaluation</h2>
+    <p class="lede">Q5 образца и части Q2: как организовать датасет, разделить train/val/test, выбрать preprocessing и метрику, распознать overfitting и domain shift. Собрано из L2–L4 и практики.</p>
+  </div>
+
+  <h3>Порядок проектирования</h3>
+  <ol class="flow">
+    <li><b>Define</b>классы и что считается «верно»</li>
+    <li><b>Collect &amp; label</b>разнообразные данные</li>
+    <li><b>Split</b>train / val / test, stratified</li>
+    <li><b>Preprocess</b>resize, normalize, augment</li>
+    <li><b>Train</b>baseline → лучше модель</li>
+    <li><b>Evaluate</b>метрика, confusion matrix</li>
+  </ol>
+
+  <h3>Организация датасета</h3>
+  <pre><code>waste_dataset/
+  train/  plastic/  paper/  glass/  other/
+  val/    plastic/  paper/  glass/  other/
+  test/   plastic/  paper/  glass/  other/</code></pre>
+  <ul>
+    <li>Одна папка на класс (или CSV: filename, label) — метки однозначны и проверены.</li>
+    <li>Проверить <b>баланс классов</b> (сколько изображений в каждом).</li>
+    <li>Убрать дубликаты и битые файлы; одинаковые/почти одинаковые фото не должны попасть в train и test одновременно (<b>data leakage</b>).</li>
+    <li>Разнообразие: разные фоны, освещение, ракурсы, камеры.</li>
+  </ul>
+
+  <h3>Train / validation / test split</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Split</th><th>Из 2000</th><th>Зачем</th></tr></thead>
+    <tbody>
+      <tr><td>80 / 20</td><td>1600 train · 400 test</td><td>Самый простой ответ на «train/test split»</td></tr>
+      <tr><td>70 / 15 / 15</td><td>1400 train · 300 val · 300 test</td><td>Val для hyperparameters, test один раз в конце</td></tr>
+      <tr><td>80 / 10 / 10</td><td>1600 · 200 · 200</td><td>Больше данных для обучения</td></tr>
+    </tbody>
+  </table></div>
+  <p><b>Stratified</b> split: в каждой части те же пропорции классов (при 4 сбалансированных классах: 1600 / 4 = 400 на класс в train, 100 на класс в test). Для маленьких датасетов можно k-fold cross-validation (L2).</p>
+
+  <h3>Метрики</h3>
+  <dl class="defs">
+    <div><dt>Accuracy</dt><dd><code>correct / total</code>. Хороша, когда классы <b>сбалансированы</b> и ошибки одинаково «дорогие».</dd></div>
+    <div><dt>Precision</dt><dd><code>TP / (TP + FP)</code>: из предсказанных как класс, сколько правда этот класс.</dd></div>
+    <div><dt>Recall</dt><dd><code>TP / (TP + FN)</code>: из настоящих объектов класса, сколько нашли.</dd></div>
+    <div><dt>F1 / macro-F1</dt><dd><code>2PR / (P + R)</code>; macro = среднее F1 по классам. Для <b>imbalanced</b> классов.</dd></div>
+    <div><dt>Confusion matrix</dt><dd>Какие классы путаются (plastic ↔ glass).</dd></div>
+    <div><dt>Top-5 accuracy</dt><dd>Верный класс среди 5 лучших (ImageNet).</dd></div>
+  </dl>
+  <p>Пример: 95 «other» и 5 «glass» → модель «всегда other» имеет 95% accuracy, но recall(glass) = 0. Поэтому при дисбалансе смотрим per-class recall / macro-F1.</p>
+
+  <h3>Score vs probability</h3>
+  <div class="two">
+    <div><h4>Class score</h4><p>Сырое число из <code>Wx + b</code> (logit), любое вещественное, может быть отрицательным; суммы нет смысла сравнивать между примерами. Решение = argmax.</p></div>
+    <div><h4>Class probability</h4><p>Softmax(scores): каждое в [0, 1], сумма = 1, читается как уверенность. Argmax тот же, что у scores.</p></div>
+  </div>
+
+  <h3>Overfitting и underfitting</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Симптом</th><th>Диагноз</th><th>Что делать</th></tr></thead>
+    <tbody>
+      <tr><td>Train высокий, test низкий (95% vs 62%)</td><td><b>Overfitting</b>: модель запомнила train, не обобщает</td><td>Больше данных, <b>data augmentation</b>, регуляризация (L2 / weight decay, dropout), early stopping, выбор hyperparameters на val. Совет L4: большая сеть + сильная регуляризация.</td></tr>
+      <tr><td>Train и test оба низкие</td><td><b>Underfitting</b>: модель слишком простая (линейная для нелинейных данных)</td><td>Более сложная модель (NN вместо линейной), лучше признаки, дольше учить.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Domain shift</h3>
+  <p>Модель отлично работает на своём датасете, но плохо на фото с телефона другого студента. Причины: другая <b>камера</b> (разрешение, цветопередача, шум, обработка), другое <b>освещение</b>, <b>фон</b>, ракурс, расстояние. Train и test были из одного распределения, а реальные данные из другого: <b>distribution / domain shift</b>, слабое обобщение. Решение: собирать разнообразные данные (разные телефоны, условия), augmentation (яркость, цвет, blur, crop), нормализация, fine-tuning на новых данных.</p>
+
+  <h3>Выбор модели</h3>
+  <ul>
+    <li><b>kNN</b> на пикселях: простой baseline, но медленный и плохие distance metrics (L2).</li>
+    <li><b>Linear classifier</b>: быстрый, один шаблон на класс, только прямые границы (L3).</li>
+    <li><b>Neural network / CNN</b>: нелинейные признаки, лучшее качество на изображениях (L4 и дальше).</li>
+  </ul>
+  <div class="lec-foot"><button class="btn" type="button" data-oq-lec="sys">Open questions по дизайну →</button><button class="btn" type="button" data-drill="metrics">Задачи на метрики →</button></div>
+</article>
+
+  </div>
+</div>
+</section>
+
+<!-- ============ KEY POINTS ============ -->
+<section class="view" id="view-keys" hidden>
+<div class="keys-wrap">
+  <header>
+    <h2>Ключевое и формулы</h2>
+    <p class="sub">Самое важное без лишнего. Подробности во вкладке «Конспекты», расчёты тренируются во вкладке «Задачи».</p>
+    <nav class="keys-jump" aria-label="Разделы">
+      <a href="#" data-jump="k-pairs">Путают</a><a href="#" data-jump="k-f">Формулы</a><a href="#" data-jump="k-ocv">OpenCV</a><a href="#" data-jump="k1">L1</a><a href="#" data-jump="k2">L2</a><a href="#" data-jump="k3">L3</a><a href="#" data-jump="k4.1">L4.1</a><a href="#" data-jump="k4.2">L4.2</a><a href="#" data-jump="k-sys">Дизайн</a>
+    </nav>
+  </header>
+
+  <div class="kblock" id="k-pairs">
+    <h3>Что чаще всего путают</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>Пара</th><th>Разница</th></tr></thead>
+      <tbody>
+        <tr><td>BGR / RGB</td><td><code>cv2.imread</code> даёт BGR; matplotlib и большинство моделей ждут RGB</td></tr>
+        <tr><td>dsize (w, h) / shape (h, w, c)</td><td><code>cv2.resize(img, (width, height))</code>, а <code>img.shape</code> = (height, width, channels)</td></tr>
+        <tr><td>Score / probability</td><td>сырое Wx + b, любое число / softmax: [0, 1], сумма 1</td></tr>
+        <tr><td>Parameters / hyperparameters</td><td>W, b учатся из данных / K, metric, C, learning rate, архитектура выбираются до обучения</td></tr>
+        <tr><td>Validation / test</td><td>подбор hyperparameters / одна финальная оценка в самом конце</td></tr>
+        <tr><td>Overfitting / underfitting</td><td>train ≫ test / оба низкие</td></tr>
+        <tr><td>L1 / L2 distance</td><td>Σ|d| (зависит от осей) / √Σd² (не зависит от поворота)</td></tr>
+        <tr><td>NN train / predict</td><td>O(1) / O(N) — наоборот от того, что нужно</td></tr>
+        <tr><td>Perceptron / logistic / SVM</td><td>учится только на ошибках / все примеры, вероятности / max margin, support vectors</td></tr>
+        <tr><td>SVM loss / cross-entropy</td><td>0, как только margin выполнен / никогда не 0, всегда тянет верный класс выше</td></tr>
+        <tr><td>Large C / small C (SVM)</td><td>узкий margin, мало нарушений, overfit / широкий margin, глаже</td></tr>
+        <tr><td>L1 / L2 regularization</td><td>точные нули (feature selection) / маленькие веса</td></tr>
+        <tr><td>Precision / recall</td><td>TP / (TP + FP) — сколько предсказанных верны / TP / (TP + FN) — сколько настоящих нашли</td></tr>
+        <tr><td>Generative / discriminative</td><td>LDA моделирует p(x | класс) / logistic, SVM моделируют границу</td></tr>
+        <tr><td>Sigmoid / ReLU</td><td>(0, 1), saturates / max(0, z), default в hidden, может «умереть»</td></tr>
+        <tr><td>add / multiply / max / copy gate</td><td>distributor / swapper / router / adder</td></tr>
+        <tr><td>Gaussian / median blur</td><td>общий шум, ядро (k, k) нечётное / salt-and-pepper, k одно нечётное число</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="kblock" id="k-f">
+    <h3>Формулы</h3>
+    <div class="fgrid">
+      <div class="fcell"><b>Linear classifier</b><code>s = Wx + b</code><span class="sub">W: K×D, x: D, b: K → s: K. Класс = argmax(s)</span></div>
+      <div class="fcell"><b>Binary</b><code>ŷ = sign(w·x + b)</code><span class="sub">distance = |w·x + b| / ‖w‖, margin = 2/‖w‖</span></div>
+      <div class="fcell"><b>Accuracy</b><code>correct / total</code><span class="sub">3 из 4 = 0.75 = 75%</span></div>
+      <div class="fcell"><b>Precision, recall, F1</b><code>P = TP/(TP+FP)  R = TP/(TP+FN)</code><code>F1 = 2PR/(P+R)</code></div>
+      <div class="fcell"><b>L1 / L2 distance</b><code>d₁ = Σ|aᵢ − bᵢ|</code><code>d₂ = √Σ(aᵢ − bᵢ)²</code></div>
+      <div class="fcell"><b>Sigmoid</b><code>σ(z) = 1 / (1 + e⁻ᶻ)</code><span class="sub">σ(0) = 0.5, σ′ = σ(1 − σ)</span></div>
+      <div class="fcell"><b>Softmax</b><code>pₖ = e^{sₖ} / Σⱼ e^{sⱼ}</code><span class="sub">стабильно: вычесть max s</span></div>
+      <div class="fcell"><b>Cross-entropy</b><code>Lᵢ = −log p_{yᵢ}</code><span class="sub">init: L ≈ log C (3 → 1.099, 10 → 2.303)</span></div>
+      <div class="fcell"><b>Multiclass SVM loss</b><code>Lᵢ = Σ_{j≠y} max(0, sⱼ − s_y + 1)</code><span class="sub">init: L ≈ C − 1</span></div>
+      <div class="fcell"><b>BCE</b><code>−[y log p + (1−y) log(1−p)]</code><span class="sub">σ + BCE → ∂L/∂z = p − y</span></div>
+      <div class="fcell"><b>Perceptron update</b><code>if y(w·x + b) ≤ 0:</code><code>w += η y x;  b += η y</code></div>
+      <div class="fcell"><b>Gradient descent</b><code>w ← w − η ∂L/∂w</code><span class="sub">logistic: ∇w = Xᵀ(p − y)/n</span></div>
+      <div class="fcell"><b>Full loss</b><code>L = (1/N) Σ Lᵢ + λR(W)</code><span class="sub">L2: Σw², L1: Σ|w|; sklearn C = 1/λ</span></div>
+      <div class="fcell"><b>2-layer net</b><code>f = W₂ max(0, W₁x + b₁) + b₂</code><span class="sub">без ReLU: W₂W₁x = W′x</span></div>
+      <div class="fcell"><b>Chain rule</b><code>downstream = local × upstream</code><span class="sub">∂L/∂W = (∂L/∂y) xᵀ, ∂L/∂x = Wᵀ(∂L/∂y)</span></div>
+      <div class="fcell"><b>Gradient check</b><code>[f(w+h) − f(w−h)] / 2h</code><span class="sub">h ≈ 1e-5, rel. error &lt; 1e-7</span></div>
+      <div class="fcell"><b>Parameters FC layer</b><code>in·out + out</code><span class="sub">3072·100 + 100 + 100·10 + 10 = 308 310</span></div>
+      <div class="fcell"><b>Image size</b><code>H × W × C</code><span class="sub">32×32×3 = 3072; 224×224×3 = 150 528</span></div>
+    </div>
+  </div>
+
+  <div class="kblock" id="k-ocv">
+    <h3>OpenCV: шпаргалка <span class="n">Q1 + Q4 = 40 баллов</span></h3>
+    <ul class="klist">
+      <li><code>cv2.imread(p)</code> → BGR, (H, W, 3), uint8 0–255; файла нет → <b>None</b>.</li>
+      <li><code>cvtColor(img, cv2.COLOR_BGR2GRAY)</code> → (H, W): 3 канала → 1. Не <code>RGB2GRAY</code> после imread.</li>
+      <li><code>resize(img, (w, h))</code> → shape (h, w, 3). (224, 224) → (224, 224, 3).</li>
+      <li><code>GaussianBlur(img, (5, 5), 0)</code>: ядро <b>нечётное и положительное</b>; размер изображения не меняется.</li>
+      <li><code>medianBlur(img, 5)</code> → salt-and-pepper. <code>bilateralFilter</code> сохраняет края.</li>
+      <li><code>Canny(gray, low, high)</code> → бинарная карта краёв (H, W), 0/255. Blur до Canny = меньше ложных краёв от шума.</li>
+      <li><code>_, th = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)</code> — возвращает кортеж.</li>
+      <li><code>equalizeHist(gray)</code> / CLAHE — разное освещение; только 1 канал.</li>
+      <li>Нормализация: <code>img.astype("float32") / 255.0</code>.</li>
+      <li>Grayscale: + в 3 раза меньше данных, быстрее; − теряется цвет (пятна болезни, цвет пластика).</li>
+      <li>Edges теряют цвет → если задача про цвет, edges одни подавать нельзя.</li>
+    </ul>
+  </div>
+
+  <div class="kblock" id="k1">
+    <h3><span class="n">L1</span>Introduction</h3>
+    <ul class="klist">
+      <li>CV = systems that <b>process, perceive, and reason about visual data</b>. Deep learning ⊂ ML ⊂ AI; курс = CV ∩ DL.</li>
+      <li>1959 Hubel &amp; Wiesel: simple → complex → hypercomplex cells (иерархия). 1963 Roberts: края блоков.</li>
+      <li>1970s Marr: primal sketch → 2½-D sketch → 3-D model. 1986 Canny edges. 1999 SIFT. 2001 Viola–Jones (лица, ML).</li>
+      <li>1958 Perceptron (linear classifier) → 1969 Minsky &amp; Papert: <b>XOR</b> невозможен → 1980 Neocognitron (conv + pool, без обучения) → 1986 Backprop → 1998 LeNet.</li>
+      <li>2009 ImageNet (1000 классов, 1.4M) → 2012 <b>AlexNet</b> → 2018 Turing Award (Bengio, Hinton, LeCun).</li>
+      <li>Взрыв DL = <b>data + computation (GPU) + algorithms</b>.</li>
+    </ul>
+  </div>
+
+  <div class="kblock" id="k2">
+    <h3><span class="n">L2</span>Image Classification</h3>
+    <ul class="klist">
+      <li><b>Semantic gap</b>: картинка = сетка чисел 0–255, например 800×600×3.</li>
+      <li>Challenges: viewpoint, intraclass variation, fine-grained, background clutter, illumination, deformation, occlusion.</li>
+      <li>Data-driven: collect → train → evaluate. Нельзя запрограммировать «кошку» вручную.</li>
+      <li>MNIST 28×28 gray; CIFAR-10 32×32×3, 50k/10k; ImageNet 1000 классов, top-5.</li>
+      <li>NN: train O(1), predict O(N). kNN: majority vote, больше K → глаже граница.</li>
+      <li>K и metric = hyperparameters → выбирать на <b>validation</b>, test один раз в конце; cross-validation для малых данных.</li>
+      <li>Curse of dimensionality; kNN на пикселях не используют (медленно, L2 неинформативна).</li>
+    </ul>
+  </div>
+
+  <div class="kblock" id="k3">
+    <h3><span class="n">L3</span>Linear Classifiers</h3>
+    <ul class="klist">
+      <li>Все модели считают <code>w·x + b</code>, отличается только <b>loss</b>.</li>
+      <li><b>W</b> = веса (строка = шаблон класса), <b>b</b> = сдвиг/порог (prior класса). w ⊥ границе.</li>
+      <li>Perceptron: update только при ошибке; не сходится на non-separable; XOR невозможен.</li>
+      <li>Logistic: σ(w·x + b), BCE convex, градиент (p − y)x.</li>
+      <li>SVM: max margin 2/‖w‖, hinge loss, support vectors, C.</li>
+      <li>Multiclass SVM loss и softmax CE: считать по шагам; init sanity: C − 1 и log C.</li>
+      <li>Scale features (fit на train), регуляризация, accuracy ≠ всё: precision/recall/F1, threshold.</li>
+      <li>Нелинейные данные → feature maps (x₁², x₁x₂) или нейросети.</li>
+    </ul>
+  </div>
+
+  <div class="kblock" id="k4.1">
+    <h3><span class="n">L4.1</span>Neural Networks</h3>
+    <ul class="klist">
+      <li>Нейрон = <code>g(w·x + b)</code>. Учатся только W и b.</li>
+      <li>Слои: input → hidden → output; fully connected; считаем слои с весами.</li>
+      <li>2-layer CIFAR: 3072 → 100 → 10, 308 310 параметров; много шаблонов, второй слой их смешивает.</li>
+      <li><b>Без activation сеть = линейный классификатор</b> (W₂W₁ = W′).</li>
+      <li>ReLU default; sigmoid/tanh saturate; Leaky ReLU, GELU.</li>
+      <li>Spam: H1 = 0.8, H2 = 0, out σ(0.56) = 0.636 → spam.</li>
+      <li>Training loop: forward → loss → backward → update → repeat.</li>
+    </ul>
+  </div>
+
+  <div class="kblock" id="k4.2">
+    <h3><span class="n">L4.2</span>Backpropagation</h3>
+    <ul class="klist">
+      <li>Один forward + один backward ≈ 2–3 forward pass на все веса (численно 616 000 на шаг).</li>
+      <li><b>downstream = local × upstream</b>.</li>
+      <li>(x + y)·z при −2, 5, −4: f = −12, ∂x = ∂y = −4, ∂z = 3.</li>
+      <li>add distributes, multiply swaps, max routes, copy adds.</li>
+      <li>Градиент имеет форму переменной: ∂L/∂W = (∂L/∂y)xᵀ.</li>
+      <li>Gradient check центральной разностью; ошибки: <code>=</code> вместо <code>+=</code>, нет cache, неверная маска ReLU, нет zero_grad.</li>
+    </ul>
+  </div>
+
+  <div class="kblock" id="k-sys">
+    <h3>Дизайн CV-системы <span class="n">Q5 = 15 баллов</span></h3>
+    <ul class="klist">
+      <li>Датасет: папка на класс, проверенные метки, баланс, без дубликатов между train и test.</li>
+      <li>Split 80/20 → 2000: 1600 / 400; или 70/15/15 → 1400 / 300 / 300; stratified.</li>
+      <li>Preprocessing: resize к одному размеру, нормализация /255, augmentation (flip, rotation, brightness) только на train.</li>
+      <li>Метрика: accuracy при балансе; иначе macro-F1 / per-class recall + confusion matrix.</li>
+      <li>95% train / 62% test → overfitting → augmentation, больше данных, регуляризация, early stopping.</li>
+      <li>Хорошо на своих фото, плохо на чужом телефоне → <b>domain shift</b> (камера, свет, фон) → разнообразные данные, augmentation.</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<!-- ============ OPEN QUESTIONS ============ -->
+<section class="view" id="view-open" hidden>
+<div class="panel">
+  <header>
+    <h2>Open questions</h2>
+    <p class="sub">Сначала ответь сам (вслух, на бумаге или в поле тренировки), потом открой образец и оцени себя: «знаю», «частично», «не знаю». Оценки сохраняются в этом браузере, по ним считается готовность на главной.</p>
+    <div class="oq-sum" id="oq-sum"></div>
+  </header>
+
+  <div class="filters">
+    <div class="f-row"><span class="f-lbl">Режим</span>
+      <div class="seg" role="group" aria-label="Режим">
+        <button type="button" data-omode="list" aria-pressed="true">Список</button>
+        <button type="button" data-omode="practice" aria-pressed="false">Тренировка</button>
+      </div>
+    </div>
+    <div class="f-row"><span class="f-lbl">Лекции</span><span class="f-row" id="oq-lecs"></span></div>
+    <div class="f-row"><span class="f-lbl">Показать</span>
+      <label class="chip"><input type="checkbox" id="oq-star"> только ★ вероятные</label>
+      <div class="seg" role="group" aria-label="Фильтр по оценке" id="oq-rate">
+        <button type="button" data-rf="all" aria-pressed="true">все</button>
+        <button type="button" data-rf="none" aria-pressed="false">без оценки</button>
+        <button type="button" data-rf="weak" aria-pressed="false">слабые</button>
+        <button type="button" data-rf="2" aria-pressed="false">знаю</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- list mode -->
+  <div id="oq-listmode">
+    <div class="f-row" style="justify-content:space-between;margin-bottom:12px">
+      <span class="sub" id="oq-count"></span>
+      <span class="f-row"><button class="linkbtn" type="button" id="oq-expand">Раскрыть все ответы</button>
+      <button class="linkbtn" type="button" id="oq-reset">Сбросить оценки</button></span>
+    </div>
+    <div class="oq-list" id="oq-list"></div>
+  </div>
+
+  <!-- practice mode -->
+  <div id="oq-practice" hidden>
+    <div class="pcard" id="pr-setup">
+      <h3 style="font-size:19px">Тренировка по одному вопросу</h3>
+      <p class="sub">Берутся вопросы по фильтрам выше в случайном порядке. Напиши ответ в поле (черновик сохранится), нажми «Показать образец», сравни по списку «обязательно упомянуть» и оцени себя.</p>
+      <div class="f-row"><span class="f-lbl">Сколько</span>
+        <div class="seg" role="group" aria-label="Количество вопросов" id="pr-n">
+          <button type="button" data-n="5" aria-pressed="false">5</button>
+          <button type="button" data-n="10" aria-pressed="true">10</button>
+          <button type="button" data-n="20" aria-pressed="false">20</button>
+          <button type="button" data-n="0" aria-pressed="false">все</button>
+        </div>
+        <span class="sub" id="pr-pool"></span>
+      </div>
+      <div class="f-row"><button class="btn primary" type="button" id="pr-start">Начать тренировку →</button></div>
+    </div>
+
+    <div class="pcard" id="pr-run" hidden>
+      <div class="ptop"><span id="pr-tag"></span><span id="pr-pos"></span></div>
+      <div class="prog"><i id="pr-bar" style="width:0"></i></div>
+      <p class="pq" id="pr-q"></p>
+      <textarea id="pr-text" placeholder="Твой ответ: определение → как работает → формула / код → пример" aria-label="Твой ответ"></textarea>
+      <p class="hint" id="pr-hint">Черновик сохраняется автоматически.</p>
+      <div class="f-row"><button class="btn primary" type="button" id="pr-show">Показать образец</button><button class="btn" type="button" id="pr-skip">Пропустить</button></div>
+      <div id="pr-ans" hidden>
+        <div class="ans" id="pr-ans-body"></div>
+        <div class="rate" style="margin-top:14px"><span class="lbl">Как ответил(а)?</span>
+          <button class="rbtn" type="button" data-pr="2" data-r="2">Знаю</button>
+          <button class="rbtn" type="button" data-pr="1" data-r="1">Частично</button>
+          <button class="rbtn" type="button" data-pr="0" data-r="0">Не знаю</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pcard" id="pr-done" hidden>
+      <h3 style="font-size:19px">Тренировка закончена</h3>
+      <div class="done-score" id="pr-score"></div>
+      <div class="f-row"><button class="btn primary" type="button" id="pr-weak">Повторить слабые из этой сессии</button><button class="btn" type="button" id="pr-again">Новая тренировка</button><button class="btn" type="button" id="pr-tolist">К списку</button></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ============ MIDTERM ============ -->
+<section class="view" id="view-exam" hidden>
+<div class="ex-wrap">
+  <header>
+    <h2>Мидтерм по вариантам</h2>
+    <p class="sub">Реши вариант на бумаге (120 минут, как на экзамене), потом открой решение под каждым пунктом и поставь себе баллы. Под решением написано, за что дают баллы. Оценки сохраняются в этом браузере.</p>
+    <div class="f-row"><span class="f-lbl">Вариант</span><div class="seg" role="group" aria-label="Вариант" id="ex-vars"></div><span class="sub" id="ex-src"></span></div>
+  </header>
+  <div class="ex-bar" aria-live="polite">
+    <span class="tot"><span id="ex-tot">0</span><small>/ 100 баллов</small></span>
+    <span class="sub" id="ex-graded"></span>
+    <span class="sp"></span>
+    <span class="timer" id="ex-timer" title="Таймер экзамена">120:00</span>
+    <button class="btn" type="button" id="ex-tbtn">Старт</button>
+    <button class="linkbtn" type="button" id="ex-treset">Сбросить таймер</button>
+  </div>
+  <div class="f-row" style="justify-content:space-between">
+    <button class="linkbtn" type="button" id="ex-expand">Раскрыть все решения</button>
+    <button class="linkbtn" type="button" id="ex-reset">Сбросить оценки варианта</button>
+  </div>
+  <div id="ex-body" style="display:flex;flex-direction:column;gap:18px"></div>
+  <div class="pcard" id="ex-summary">
+    <h3 style="font-size:19px">Итог по вопросам</h3>
+    <div class="ex-res" id="ex-res"></div>
+    <p class="sub" id="ex-note"></p>
+  </div>
+</div>
+</section>
+
+<!-- ============ DRILLS ============ -->
+<section class="view" id="view-drill" hidden>
+<div class="dr-wrap">
+  <header>
+    <h2>Задачи на расчёт</h2>
+    <p class="sub">Числа каждый раз новые. Посчитай на бумаге, впиши ответ и нажми «Проверить». Дроби можно писать через точку или запятую, проценты как <code>75</code> или <code>0.75</code>. Решение показывает все шаги, как их надо писать на экзамене.</p>
+    <div class="dr-types" id="dr-types" role="group" aria-label="Тип задачи"></div>
+    <div class="dr-stats" id="dr-stats"></div>
+  </header>
+  <div class="dr-card">
+    <div class="dtop"><span id="dr-tag"></span><span id="dr-src"></span></div>
+    <div class="dr-task" id="dr-task"></div>
+    <div class="dr-in" id="dr-in"></div>
+    <div class="f-row"><button class="btn primary" type="button" id="dr-check">Проверить</button><button class="btn" type="button" id="dr-show">Показать решение</button><button class="btn" type="button" id="dr-next">Следующая →</button></div>
+    <p class="dr-fb" id="dr-fb" aria-live="polite"></p>
+    <div class="dr-sol" id="dr-sol" hidden></div>
+  </div>
+</div>
+</section>
+
+</main>
+
+<script src="data-oq.js"></script>
+<script src="data-exam.js"></script>
+<script>
+const LECS = window.CV_LECS, OQ = window.CV_OQ, EXAMS = window.CV_EXAMS;
+const LEC = Object.fromEntries(LECS.map(l => [l.k, l]));
+{ const seen = {}; OQ.forEach(q => { seen[q.l] = (seen[q.l] || 0) + 1; q.id = q.l + ":" + (seen[q.l] - 1); }); }
+
+/* ---------- storage (per-viewer convenience) ---------- */
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem("cv_"+k); return v==null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem("cv_"+k, JSON.stringify(v)); }catch(e){} }
+};
+let RATE = store.get("rate", {});
+let DRAFT = store.get("draft", {});
+const setRate = (id, r) => { if(r == null) delete RATE[id]; else RATE[id] = r; store.set("rate", RATE); };
+
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const shuffle = a => { a = a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const plural = (n, one, few, many) => { const a = n%10, b = n%100; return a===1 && b!==11 ? one : a>=2 && a<=4 && (b<12 || b>14) ? few : many; };
+const score = qs => qs.length ? Math.round(100 * qs.reduce((s, q) => s + (RATE[q.id]===2 ? 1 : RATE[q.id]===1 ? .5 : 0), 0) / qs.length) : 0;
+
+/* matrices: data-m="a b;c d" → bracketed grid */
+function renderMx(root){
+  (root || document).querySelectorAll(".mx[data-m]:not([data-done])").forEach(el => {
+    const rows = el.dataset.m.split(";").map(r => r.trim().split(/\s+/));
+    el.style.gridTemplateColumns = `repeat(${rows[0].length}, auto)`;
+    el.innerHTML = rows.flat().map(c => `<span>${esc(c)}</span>`).join("");
+    el.setAttribute("role", "img");
+    el.setAttribute("aria-label", "matrix: " + rows.map(r => r.join(" ")).join("; "));
+    el.dataset.done = "1";
+  });
+}
+
+/* sticky offsets follow the real height of the top bar (it wraps on narrow screens) */
+const setBarH = () => document.documentElement.style.setProperty("--bar-h", $(".bar").getBoundingClientRect().bottom + "px");
+window.addEventListener("resize", setBarH); setBarH();
+
+/* ---------- views ---------- */
+const VIEWS = ["home","notes","keys","exam","drill","open"];
+function showView(v){
+  if(v==="home") renderHome();
+  if(v==="open") renderOpen();
+  if(v==="exam") renderExam();
+  if(v==="drill" && !cur) newTask();
+  VIEWS.forEach(n=>{
+    $("#view-"+n).hidden = n!==v;
+    $("#tab-"+n).setAttribute("aria-selected", n===v ? "true":"false");
+  });
+  store.set("view", v);
+  if(location.hash !== "#"+v){ try{ history.replaceState(null,"","#"+v); }catch(e){} }
+  window.scrollTo(0,0);
+}
+$$(".tab").forEach(b=>b.addEventListener("click",()=>showView(b.dataset.view)));
+$("#brand").addEventListener("click",()=>showView("home"));
+
+/* ---------- notes ---------- */
+$("#lec-index").innerHTML = `<span class="lbl">Лекции и практика</span>` + LECS.map(l =>
+  `<button class="lec-btn" data-lec="${l.k}"><span class="n">${l.s}</span><span class="t">${esc(l.t)}</span></button>`).join("");
+function showLec(k){
+  if(!LEC[k]) k = LECS[0].k;
+  $$("article.lec").forEach(a=>a.hidden = a.dataset.lec!==k);
+  $$(".lec-btn").forEach(b=>b.setAttribute("aria-current", b.dataset.lec===k ? "true":"false"));
+  store.set("lec", k);
+}
+$$(".lec-btn").forEach(b=>b.addEventListener("click",()=>{ showLec(b.dataset.lec); window.scrollTo(0,0); }));
+$$("[data-jump]").forEach(a=>a.addEventListener("click",e=>{
+  e.preventDefault(); const t = document.getElementById(a.dataset.jump); if(t) t.scrollIntoView({behavior:"smooth", block:"start"});
+}));
+
+/* ---------- open questions: filters ---------- */
+const F = Object.assign({ lecs: LECS.map(l=>l.k), star: false, rf: "all", mode: "list", n: 10 }, store.get("filters", {}));
+F.lecs = F.lecs.filter(k => LEC[k]);
+const saveF = () => store.set("filters", F);
+const counts = {}; OQ.forEach(q => counts[q.l] = (counts[q.l]||0) + 1);
+$("#oq-lecs").innerHTML = LECS.map(l =>
+  `<label class="chip" title="${esc(l.t)}"><input type="checkbox" value="${l.k}"> ${l.s} <span class="c">${counts[l.k]||0}</span></label>`).join("")
+  + `<button class="linkbtn" type="button" id="oq-all">все / ни одной</button>`;
+
+function pool(){
+  return OQ.filter(q => F.lecs.includes(q.l) && (!F.star || q.p) && (
+    F.rf==="all" ? true : F.rf==="none" ? RATE[q.id]==null : F.rf==="weak" ? RATE[q.id]===0 || RATE[q.id]===1 : RATE[q.id]===+F.rf));
+}
+function paintFilters(){
+  $$("#oq-lecs input").forEach(i => i.checked = F.lecs.includes(i.value));
+  $("#oq-star").checked = F.star;
+  $$("#oq-rate button").forEach(b => b.setAttribute("aria-pressed", b.dataset.rf===F.rf ? "true":"false"));
+  $$(".seg [data-omode]").forEach(b => b.setAttribute("aria-pressed", b.dataset.omode===F.mode ? "true":"false"));
+  $$("#pr-n button").forEach(b => b.setAttribute("aria-pressed", +b.dataset.n===F.n ? "true":"false"));
+}
+$("#oq-lecs").addEventListener("change", () => { F.lecs = $$("#oq-lecs input:checked").map(i=>i.value); saveF(); renderOpen(); });
+$("#oq-all").addEventListener("click", () => { F.lecs = F.lecs.length===LECS.length ? [] : LECS.map(l=>l.k); saveF(); renderOpen(); });
+$("#oq-star").addEventListener("change", e => { F.star = e.target.checked; saveF(); renderOpen(); });
+$("#oq-rate").addEventListener("click", e => { const b = e.target.closest("[data-rf]"); if(!b) return; F.rf = b.dataset.rf; saveF(); renderOpen(); });
+$$(".seg [data-omode]").forEach(b => b.addEventListener("click", () => { F.mode = b.dataset.omode; saveF(); renderOpen(); }));
+$("#pr-n").addEventListener("click", e => { const b = e.target.closest("[data-n]"); if(!b) return; F.n = +b.dataset.n; saveF(); paintFilters(); paintPool(); });
+
+/* ---------- open questions: rendering ---------- */
+const RLBL = { 2: "знаю", 1: "частично", 0: "не знаю" };
+function ansHTML(q){
+  return `<p class="oq-ru"><b>Суть:</b> ${esc(q.ru)}</p>
+    <div>${q.a}</div>
+    <div class="kw"><span class="lbl">Обязательно упомянуть</span>${q.k.map(k=>`<span class="k">${esc(k)}</span>`).join("")}</div>`;
+}
+function rateHTML(q){
+  return `<div class="rate"><span class="lbl">Моя оценка:</span>${[2,1,0].map(r =>
+    `<button class="rbtn" type="button" data-r="${r}" data-qid="${q.id}" aria-pressed="${RATE[q.id]===r}">${RLBL[r][0].toUpperCase()+RLBL[r].slice(1)}</button>`).join("")}</div>`;
+}
+function renderSum(){
+  const rated = OQ.filter(q => RATE[q.id]!=null);
+  const n2 = rated.filter(q=>RATE[q.id]===2).length, n1 = rated.filter(q=>RATE[q.id]===1).length, n0 = rated.filter(q=>RATE[q.id]===0).length;
+  $("#oq-sum").innerHTML = `<span>Всего <b>${OQ.length}</b></span><span>оценено <b>${rated.length}</b></span>
+    <span style="color:var(--ok)">знаю <b style="color:inherit">${n2}</b></span><span style="color:var(--mid)">частично <b style="color:inherit">${n1}</b></span>
+    <span style="color:var(--bad)">не знаю <b style="color:inherit">${n0}</b></span><span>готовность <b>${score(OQ)}%</b></span>`;
+}
+let expandAll = false;
+function renderList(){
+  const qs = pool();
+  $("#oq-count").textContent = qs.length + " " + plural(qs.length, "вопрос", "вопроса", "вопросов");
+  $("#oq-expand").textContent = expandAll ? "Свернуть все ответы" : "Раскрыть все ответы";
+  $("#oq-list").innerHTML = qs.length ? qs.map(q => `
+    <article class="oq" data-qid="${q.id}" ${RATE[q.id]!=null ? `data-rate="${RATE[q.id]}"` : ""}>
+      <div class="oq-top"><span class="tagl">${LEC[q.l].s}</span><span>${esc(LEC[q.l].t)}</span>${q.p ? `<span class="star" title="Вероятная тема">★ вероятный</span>` : ""}</div>
+      <p class="oq-q">${esc(q.q)}</p>
+      <details ${expandAll ? "open" : ""}><summary>Показать образец ответа</summary><div class="ans">${ansHTML(q)}</div></details>
+      ${rateHTML(q)}
+    </article>`).join("")
+    : `<div class="empty">По этим фильтрам вопросов нет. Выбери другие темы или сбрось фильтр оценки.</div>`;
+  renderMx($("#oq-list"));
+}
+$("#oq-list").addEventListener("click", e => {
+  const b = e.target.closest(".rbtn[data-qid]"); if(!b) return;
+  const id = b.dataset.qid, r = +b.dataset.r;
+  setRate(id, RATE[id]===r ? null : r);
+  const card = b.closest(".oq");
+  if(RATE[id]==null) card.removeAttribute("data-rate"); else card.dataset.rate = RATE[id];
+  card.querySelectorAll(".rbtn").forEach(x => x.setAttribute("aria-pressed", RATE[id]===+x.dataset.r ? "true":"false"));
+  renderSum();
+});
+$("#oq-expand").addEventListener("click", () => { expandAll = !expandAll; $$("#oq-list details").forEach(d => d.open = expandAll); $("#oq-expand").textContent = expandAll ? "Свернуть все ответы" : "Раскрыть все ответы"; });
+function armedReset(btn, label, action){
+  let armed = false;
+  btn.addEventListener("click", () => {
+    if(!armed){ armed = true; btn.textContent = "Точно? Нажми ещё раз"; setTimeout(()=>{ armed = false; btn.textContent = label; }, 3000); return; }
+    armed = false; btn.textContent = label; action();
+  });
+}
+armedReset($("#oq-reset"), "Сбросить оценки", () => { RATE = {}; store.set("rate", RATE); renderOpen(); });
+
+function renderOpen(){
+  paintFilters(); renderSum();
+  const practice = F.mode==="practice";
+  $("#oq-listmode").hidden = practice;
+  $("#oq-practice").hidden = !practice;
+  if(practice){ if(!run) showPr("setup"); paintPool(); }
+  else renderList();
+}
+
+/* ---------- open questions: practice ---------- */
+let run = null;
+function paintPool(){ const n = pool().length; $("#pr-pool").textContent = `по фильтрам: ${n} ${plural(n,"вопрос","вопроса","вопросов")}`; $("#pr-start").disabled = !n; }
+function showPr(s){ ["setup","run","done"].forEach(x => $("#pr-"+x).hidden = x!==s); }
+function startPractice(qs){
+  if(!qs.length) return;
+  run = { qs, i: 0, res: {} };
+  F.mode = "practice"; saveF();
+  showPr("run"); renderPr();
+}
+function renderPr(){
+  const q = run.qs[run.i];
+  $("#pr-tag").innerHTML = `${LEC[q.l].s} · ${esc(LEC[q.l].t)}${q.p ? ` · <span class="star">★</span>` : ""}`;
+  $("#pr-pos").textContent = `${run.i+1} / ${run.qs.length}`;
+  $("#pr-bar").style.width = (100*run.i/run.qs.length) + "%";
+  $("#pr-q").textContent = q.q;
+  $("#pr-text").value = DRAFT[q.id] || "";
+  $("#pr-ans").hidden = true;
+  $("#pr-show").hidden = false;
+  $("#pr-ans-body").innerHTML = ansHTML(q);
+  renderMx($("#pr-ans-body"));
+  $$("#pr-ans .rbtn").forEach(b => b.setAttribute("aria-pressed", RATE[q.id]===+b.dataset.pr ? "true":"false"));
+}
+let draftT = null;
+$("#pr-text").addEventListener("input", e => {
+  if(!run) return; const id = run.qs[run.i].id, v = e.target.value;
+  clearTimeout(draftT); draftT = setTimeout(() => { if(v.trim()) DRAFT[id] = v; else delete DRAFT[id]; store.set("draft", DRAFT); }, 300);
+});
+$("#pr-show").addEventListener("click", () => { $("#pr-ans").hidden = false; $("#pr-show").hidden = true; $("#pr-ans").scrollIntoView({behavior:"smooth", block:"nearest"}); });
+function nextPr(){
+  run.i++;
+  if(run.i >= run.qs.length) return finishPr();
+  renderPr(); window.scrollTo(0, $("#view-open").offsetTop);
+}
+$("#pr-skip").addEventListener("click", nextPr);
+$$("#pr-ans [data-pr]").forEach(b => b.addEventListener("click", () => {
+  const q = run.qs[run.i], r = +b.dataset.pr;
+  setRate(q.id, r); run.res[q.id] = r; renderSum(); nextPr();
+}));
+function finishPr(){
+  const v = Object.values(run.res);
+  const c = r => v.filter(x=>x===r).length;
+  $("#pr-score").innerHTML = `<div class="g"><b>${c(2)}</b><span>знаю</span></div><div class="m"><b>${c(1)}</b><span>частично</span></div><div class="x"><b>${c(0)}</b><span>не знаю</span></div><div><b>${run.qs.length - v.length}</b><span>пропущено</span></div>`;
+  $("#pr-weak").disabled = !run.qs.some(q => run.res[q.id]===0 || run.res[q.id]===1);
+  showPr("done"); renderSum();
+}
+$("#pr-start").addEventListener("click", () => { const p = shuffle(pool()); startPractice(F.n ? p.slice(0, F.n) : p); });
+$("#pr-weak").addEventListener("click", () => startPractice(shuffle(run.qs.filter(q => run.res[q.id]===0 || run.res[q.id]===1))));
+$("#pr-again").addEventListener("click", () => { run = null; showPr("setup"); paintPool(); });
+$("#pr-tolist").addEventListener("click", () => { run = null; F.mode = "list"; saveF(); renderOpen(); });
+
+/* ---------- midterm ---------- */
+// GRADE: "v1.1a" → points the viewer gave themselves for that sub-question
+let GRADE = store.get("exam", {});
+let exVar = store.get("exvar", EXAMS[0].id);
+if(!EXAMS.some(e => e.id===exVar)) exVar = EXAMS[0].id;
+const EX = id => EXAMS.find(e => e.id===id);
+const exParts = ex => ex.qs.flatMap(q => q.parts.map(p => ({ key: ex.id+"."+q.n+p.l, p: p.p, q: q.n })));
+function gradeSteps(p){ return p >= 8 ? [0, p/4, p/2, 3*p/4, p] : [0, p/2, p]; }
+const fmtPts = x => String(Math.round(x*100)/100).replace(".", ",");
+function exTotals(ex){
+  const parts = exParts(ex), graded = parts.filter(x => GRADE[x.key]!=null);
+  return { total: graded.reduce((s, x) => s + GRADE[x.key], 0), graded: graded.length, n: parts.length };
+}
+$("#ex-vars").innerHTML = EXAMS.map(e => `<button type="button" data-ex="${e.id}" aria-pressed="false">${esc(e.title)}</button>`).join("");
+$("#ex-vars").addEventListener("click", e => { const b = e.target.closest("[data-ex]"); if(!b) return; exVar = b.dataset.ex; store.set("exvar", exVar); exExpand = false; renderExam(); });
+let exExpand = false;
+function gState(p, g){ return g==null ? "" : g===0 ? "zero" : g>=p ? "full" : "part"; }
+function renderExam(){
+  const ex = EX(exVar);
+  $$("#ex-vars button").forEach(b => b.setAttribute("aria-pressed", b.dataset.ex===exVar ? "true":"false"));
+  $("#ex-src").textContent = ex.src;
+  $("#ex-expand").textContent = exExpand ? "Свернуть все решения" : "Раскрыть все решения";
+  $("#ex-body").innerHTML = ex.qs.map(q => {
+    const pts = q.parts.reduce((s, p) => s + p.p, 0);
+    return `<article class="exq">
+      <h3><span>Question ${q.n} · ${esc(q.t)}</span><span class="qp">${pts} pts</span></h3>
+      <div class="ctx">${q.ctx}</div>
+      ${q.parts.map(p => { const key = ex.id+"."+q.n+p.l, g = GRADE[key]; return `
+      <div class="sq" data-key="${key}" data-g="${gState(p.p, g)}">
+        <div class="sq-q"><span class="lt">${p.l})</span><p>${p.q}</p><span class="pts">${g==null ? "" : fmtPts(g)+" / "}${p.p} pts</span></div>
+        <details ${exExpand ? "open" : ""}><summary>Показать решение</summary>
+          <div class="sol">${p.a}<p class="why"><b>За что баллы:</b> ${esc(p.why)}</p></div>
+        </details>
+        <div class="grade"><span class="lbl">Мои баллы:</span>${gradeSteps(p.p).map(v => `<button class="gbtn" type="button" data-v="${v}" data-max="${p.p}" aria-pressed="${g===v}">${fmtPts(v)}</button>`).join("")}</div>
+      </div>`; }).join("")}
+    </article>`;
+  }).join("");
+  renderMx($("#ex-body"));
+  paintExTotals();
+}
+function paintExTotals(){
+  const ex = EX(exVar), t = exTotals(ex);
+  $("#ex-tot").textContent = fmtPts(t.total);
+  $("#ex-graded").textContent = `оценено ${t.graded} из ${t.n} пунктов`;
+  $("#ex-res").innerHTML = ex.qs.map(q => {
+    const parts = q.parts.map(p => ({ key: ex.id+"."+q.n+p.l, p: p.p }));
+    const max = parts.reduce((s, x) => s + x.p, 0), got = parts.reduce((s, x) => s + (GRADE[x.key] || 0), 0);
+    const done = parts.every(x => GRADE[x.key]!=null);
+    return `<div><b>${parts.some(x => GRADE[x.key]!=null) ? fmtPts(got) : "—"}<small style="font-size:13px;color:var(--muted)"> / ${max}</small></b><span>Q${q.n} ${esc(q.t)}${done ? "" : parts.some(x => GRADE[x.key]!=null) ? " · не всё оценено" : ""}</span></div>`;
+  }).join("");
+  $("#ex-note").textContent = t.graded===t.n ? `Вариант оценён полностью: ${fmtPts(t.total)} из 100. ${t.total >= 85 ? "Отличный результат." : t.total >= 70 ? "Хорошо, добей слабые вопросы." : "Посмотри решения слабых вопросов и реши другой вариант."}`
+    : "Поставь баллы за каждый пункт, чтобы получить итог варианта.";
+}
+$("#ex-body").addEventListener("click", e => {
+  const b = e.target.closest(".gbtn"); if(!b) return;
+  const sq = b.closest(".sq"), key = sq.dataset.key, v = +b.dataset.v, max = +b.dataset.max;
+  if(GRADE[key]===v) delete GRADE[key]; else GRADE[key] = v;
+  store.set("exam", GRADE);
+  const g = GRADE[key];
+  sq.dataset.g = gState(max, g);
+  sq.querySelector(".pts").textContent = (g==null ? "" : fmtPts(g)+" / ") + max + " pts";
+  sq.querySelectorAll(".gbtn").forEach(x => x.setAttribute("aria-pressed", g===+x.dataset.v ? "true":"false"));
+  paintExTotals();
+});
+$("#ex-expand").addEventListener("click", () => { exExpand = !exExpand; $$("#ex-body details").forEach(d => d.open = exExpand); $("#ex-expand").textContent = exExpand ? "Свернуть все решения" : "Раскрыть все решения"; });
+armedReset($("#ex-reset"), "Сбросить оценки варианта", () => { exParts(EX(exVar)).forEach(x => delete GRADE[x.key]); store.set("exam", GRADE); renderExam(); });
+
+/* exam timer: 120 minutes, survives reloads */
+const EX_MS = 120 * 60 * 1000;
+let TIMER = store.get("timer", { acc: 0, start: null });
+const elapsed = () => TIMER.acc + (TIMER.start ? Date.now() - TIMER.start : 0);
+function paintTimer(){
+  const left = EX_MS - elapsed(), over = left < 0, s = Math.floor(Math.abs(left) / 1000);
+  const mm = String(Math.floor(s / 60)).padStart(2, "0"), ss = String(s % 60).padStart(2, "0");
+  $("#ex-timer").textContent = (over ? "+" : "") + mm + ":" + ss;
+  $("#ex-timer").classList.toggle("over", over);
+  $("#ex-tbtn").textContent = TIMER.start ? "Пауза" : elapsed() ? "Продолжить" : "Старт";
+}
+$("#ex-tbtn").addEventListener("click", () => {
+  if(TIMER.start){ TIMER.acc += Date.now() - TIMER.start; TIMER.start = null; } else TIMER.start = Date.now();
+  store.set("timer", TIMER); paintTimer();
+});
+$("#ex-treset").addEventListener("click", () => { TIMER = { acc: 0, start: null }; store.set("timer", TIMER); paintTimer(); });
+setInterval(() => { if(TIMER.start) paintTimer(); }, 1000);
+paintTimer();
+
+/* ---------- drills: helpers ---------- */
+const ri = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const r1 = (a, b) => ri(a * 10, b * 10) / 10;
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const m = x => String(x).replace(/-/g, "−");                      // typographic minus
+const fx = (x, d) => { const s = (+x).toFixed(d); return m(/^-0\.?0*$/.test(s) ? s.slice(1) : s); };
+const p = x => x < 0 ? `(${m(x)})` : m(x);                        // parenthesize negatives in products
+const p1 = x => x < 0 ? `(${fx(x, 1)})` : fx(x, 1);
+const argmax = a => a.indexOf(Math.max(...a));
+const uniqueMax = a => a.filter(x => x === Math.max(...a)).length === 1;
+const SUB = ["₀","₁","₂","₃","₄","₅"];
+const CLASSSETS = [["Cat","Dog","Bird"],["Plastic","Paper","Glass"],["Car","Truck","Bike"],["Healthy","Rust","Blight"],["Stop","Yield","Speed"],["Apple","Banana","Orange"]];
+const table = (head, rows) => `<div class="tbl"><table><thead><tr>${head.map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+const mxr = (label, rows) => `<span class="mx-eq">${label}</span><span class="mx" data-m="${rows.map(r => (Array.isArray(r) ? r : [r]).map(m).join(" ")).join(";")}"></span>`;
+const num = (id, label, ans, tol, o) => Object.assign({ id, label, kind: "num", ans, tol: tol || 0 }, o || {});
+const sel = (id, label, options, ans) => ({ id, label, kind: "sel", options, ans });
+
+/* ---------- drills: generators ----------
+   each returns { task: HTML, fields: [...], sol: HTML }. fields: num (ans, tol, pct = accept 0.75 or 75), sel, shape (array). */
+const GEN = {
+  linear: { t: "s = Wx + b", src: "Q3 образца", f(){
+    const D = Math.random() < .3 ? 3 : 2, names = pick(CLASSSETS);
+    let W, x, b, s;
+    do {
+      W = [0,1,2].map(() => Array.from({length: D}, () => ri(-3, 3)));
+      x = Array.from({length: D}, () => ri(-3, 3)); b = [0,1,2].map(() => ri(-2, 2));
+      s = W.map((r, i) => r.reduce((a, w, j) => a + w * x[j], 0) + b[i]);
+    } while(!uniqueMax(s) || x.every(v => v === 0));
+    const k = argmax(s);
+    return {
+      task: `<p>Посчитай <code>s = Wx + b</code> и предсказанный класс. Классы: ${names.map((n, i) => `${i} = ${n}`).join(", ")}.</p>
+        <div class="mx-row">${mxr("x =", x)}${mxr("W =", W)}${mxr("b =", b)}</div>`,
+      fields: [num("s0", "s₀", s[0]), num("s1", "s₁", s[1]), num("s2", "s₂", s[2]), sel("cls", "Класс", names, names[k])],
+      sol: `<ol>${W.map((r, i) => `<li><code>s${SUB[i]} = ${r.map((w, j) => `${p(w)}·${p(x[j])}`).join(" + ")} + ${p(b[i])} = ${m(r.reduce((a, w, j) => a + w * x[j], 0))} + ${p(b[i])} = <b>${m(s[i])}</b></code></li>`).join("")}
+        <li><code>argmax(${s.map(m).join(", ")}) = ${k}</code> → <b>${names[k]}</b></li></ol>`
+    };
+  } },
+  acc: { t: "Predictions и accuracy", src: "Q2 образца", f(){
+    const names = pick(CLASSSETS), n = ri(4, 6), L = "ABCDEF";
+    let rows, correct;
+    do {
+      rows = Array.from({length: n}, () => {
+        let s; do { s = [0,1,2].map(() => r1(-1, 3)); } while(!uniqueMax(s));
+        const pr = argmax(s), tr = Math.random() < .65 ? pr : pick([0,1,2].filter(i => i !== pr));
+        return { s, pr, tr };
+      });
+      correct = rows.filter(r => r.pr === r.tr).length;
+    } while(correct === 0 || correct === n);
+    return {
+      task: `<p>Классификатор выдал scores. Запиши предсказанный класс для каждого изображения и accuracy (в процентах).</p>
+        ${table(["Image", ...names, "True class"], rows.map((r, i) => [L[i], ...r.s.map(v => fx(v, 1)), names[r.tr]]))}`,
+      fields: [...rows.map((r, i) => sel("p" + i, L[i], names, names[r.pr])), num("acc", "Accuracy, %", 100 * correct / n, .6, { pct: 1 })],
+      sol: `<ol>${rows.map((r, i) => `<li>${L[i]}: max(${r.s.map(v => fx(v, 1)).join(", ")}) = ${fx(r.s[r.pr], 1)} → <b>${names[r.pr]}</b> ${r.pr === r.tr ? "✔" : `✘ (true: ${names[r.tr]})`}</li>`).join("")}
+        <li><code>accuracy = correct / total = ${correct} / ${n} = ${fx(correct / n, 3)} = <b>${fx(100 * correct / n, 1)}%</b></code></li></ol>`
+    };
+  } },
+  softmax: { t: "Softmax и cross-entropy", src: "Q2d, L3", f(){
+    const names = pick(CLASSSETS); let s; do { s = [0,1,2].map(() => r1(-1, 3)); } while(!uniqueMax(s));
+    const y = ri(0, 2), e = s.map(Math.exp), Z = e.reduce((a, v) => a + v, 0), P = e.map(v => v / Z), L = -Math.log(P[y]);
+    return {
+      task: `<p>Scores для одного изображения: ${names.map((nm, i) => `${nm} = <b>${fx(s[i], 1)}</b>`).join(", ")}. Верный класс: <b>${names[y]}</b>.</p><p>Найди softmax-вероятности (3 знака) и cross-entropy loss <code>L = −ln p_y</code>.</p>`,
+      fields: [...names.map((nm, i) => num("p" + i, "p(" + nm + ")", P[i], .006)), num("L", "Loss", L, .012)],
+      sol: `<ol><li>Exponentiate: ${s.map((v, i) => `<code>e^${fx(v, 1)} = ${fx(e[i], 3)}</code>`).join(", ")}</li>
+        <li>Sum: <code>${e.map(v => fx(v, 3)).join(" + ")} = ${fx(Z, 3)}</code></li>
+        <li>Normalize: ${names.map((nm, i) => `<code>p(${nm}) = ${fx(e[i], 3)} / ${fx(Z, 3)} = <b>${fx(P[i], 3)}</b></code>`).join(", ")} (сумма = 1)</li>
+        <li><code>L = −ln p(${names[y]}) = −ln ${fx(P[y], 3)} = <b>${fx(L, 3)}</b></code></li></ol>`
+    };
+  } },
+  svm: { t: "Multiclass SVM loss", src: "L3", f(){
+    const names = pick(CLASSSETS); let s, y, terms, L;
+    do { s = [0,1,2].map(() => r1(-1, 3)); y = ri(0, 2); terms = s.map((v, j) => j === y ? null : Math.max(0, v - s[y] + 1)); L = terms.reduce((a, v) => a + (v || 0), 0); } while(L === 0 && Math.random() < .75);
+    return {
+      task: `<p>Scores: ${names.map((nm, i) => `${nm} = <b>${fx(s[i], 1)}</b>`).join(", ")}. Верный класс: <b>${names[y]}</b>. Найди multiclass SVM loss с Δ = 1: <code>L = Σ_{j≠y} max(0, sⱼ − s_y + 1)</code>.</p>`,
+      fields: [num("L", "Loss", L, .011)],
+      sol: `<ol><li><code>s_y = s(${names[y]}) = ${fx(s[y], 1)}</code></li>${s.map((v, j) => j === y ? "" : `<li>${names[j]}: <code>max(0, ${fx(v, 1)} − ${p1(s[y])} + 1) = max(0, ${fx(v - s[y] + 1, 1)}) = <b>${fx(terms[j], 1)}</b></code></li>`).join("")}
+        <li><code>L = ${terms.filter(v => v != null).map(v => fx(v, 1)).join(" + ")} = <b>${fx(L, 1)}</b></code></li></ol>`
+    };
+  } },
+  metrics: { t: "Precision, recall, F1", src: "L3, Q5d", f(){
+    const pos = pick([["diseased", "healthy"], ["defect", "OK"], ["malignant", "benign"], ["spam", "not spam"], ["glass", "not glass"]]);
+    const TP = ri(15, 60), FN = ri(1, 15), FP = ri(1, 15), TN = ri(30, 90), T = TP + FN + FP + TN;
+    const A = (TP + TN) / T, P = TP / (TP + FP), R = TP / (TP + FN), F = 2 * P * R / (P + R);
+    return {
+      task: `<p>Confusion matrix (positive = <b>${pos[0]}</b>). Посчитай accuracy, precision, recall и F1 для класса ${pos[0]} (доли, 3 знака, или проценты).</p>
+        ${table(["", "Pred " + pos[0], "Pred " + pos[1]], [["True " + pos[0], TP + " (TP)", FN + " (FN)"], ["True " + pos[1], FP + " (FP)", TN + " (TN)"]])}`,
+      fields: [num("a", "Accuracy", A, .006, { frac: 1 }), num("p", "Precision", P, .006, { frac: 1 }), num("r", "Recall", R, .006, { frac: 1 }), num("f", "F1", F, .006, { frac: 1 })],
+      sol: `<ol><li><code>accuracy = (TP + TN) / total = (${TP} + ${TN}) / ${T} = <b>${fx(A, 3)}</b></code></li>
+        <li><code>precision = TP / (TP + FP) = ${TP} / ${TP + FP} = <b>${fx(P, 3)}</b></code></li>
+        <li><code>recall = TP / (TP + FN) = ${TP} / ${TP + FN} = <b>${fx(R, 3)}</b></code></li>
+        <li><code>F1 = 2PR / (P + R) = 2·${fx(P, 3)}·${fx(R, 3)} / (${fx(P, 3)} + ${fx(R, 3)}) = <b>${fx(F, 3)}</b></code></li></ol>`
+    };
+  } },
+  shape: { t: "Shape после OpenCV", src: "Q4 образца", f(){
+    let [H, W] = pick([[480, 640], [720, 1280], [600, 800], [1080, 1920], [300, 400], [512, 512]]), C = 3;
+    const lines = [`img = cv2.imread("photo.jpg")   # ${H} × ${W} (H × W)`], steps = [`imread → (${H}, ${W}, 3), BGR`];
+    const n = ri(2, 4);
+    for(let i = 0; i < n; i++){
+      const ops = ["resize", "crop", "blur"]; if(C === 3) ops.push("gray", "hsv", "gray"); if(C === 1) ops.push("canny", "canny");
+      const op = pick(ops);
+      if(op === "resize"){ const [w, h] = pick([[224, 224], [320, 240], [64, 32], [128, 96], [256, 128], [32, 32], [100, 50]]); W = w; H = h; lines.push(`img = cv2.resize(img, (${w}, ${h}))`); steps.push(`resize берёт (width, height) = (${w}, ${h}) → shape <b>${C === 3 ? `(${h}, ${w}, 3)` : `(${h}, ${w})`}</b>`); }
+      else if(op === "crop"){ const hh = Math.max(10, Math.round(H * (.3 + Math.random() * .4) / 10) * 10), ww = Math.max(10, Math.round(W * (.3 + Math.random() * .4) / 10) * 10);
+        const y1 = Math.floor((H - hh) * Math.random() / 10) * 10, x1 = Math.floor((W - ww) * Math.random() / 10) * 10;
+        lines.push(`img = img[${y1}:${y1 + hh}, ${x1}:${x1 + ww}]`); H = hh; W = ww; steps.push(`срез [y1:y2, x1:x2]: ${y1 + hh} − ${y1} = ${hh} строк, ${x1 + ww} − ${x1} = ${ww} столбцов → <b>${C === 3 ? `(${H}, ${W}, 3)` : `(${H}, ${W})`}</b>`); }
+      else if(op === "blur"){ lines.push(`img = cv2.GaussianBlur(img, (5, 5), 0)`); steps.push(`GaussianBlur не меняет размер → <b>${C === 3 ? `(${H}, ${W}, 3)` : `(${H}, ${W})`}</b>`); }
+      else if(op === "gray"){ C = 1; lines.push(`img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)`); steps.push(`BGR2GRAY: 3 канала → 1 → <b>(${H}, ${W})</b>`); }
+      else if(op === "hsv"){ lines.push(`img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)`); steps.push(`BGR2HSV: всё ещё 3 канала (H, S, V) → <b>(${H}, ${W}, 3)</b>`); }
+      else if(op === "canny"){ C = 1; lines.push(`img = cv2.Canny(img, 100, 200)`); steps.push(`Canny: одноканальная карта краёв 0/255 → <b>(${H}, ${W})</b>`); }
+    }
+    let ans = C === 3 ? [H, W, 3] : [H, W];
+    if(Math.random() < .35){ lines.push(`x = img.flatten()`); const t = H * W * C; steps.push(`flatten: ${H}·${W}${C === 3 ? "·3" : ""} = ${t} → <b>(${t},)</b>`); ans = [t]; }
+    const total = ans.reduce((a, v) => a * v, 1);
+    return {
+      task: `<p>Какая shape получится в конце и сколько в ней чисел?</p><pre><code>${esc(lines.join("\n"))}</code></pre>`,
+      fields: [{ id: "sh", label: "Shape, например (224, 224, 3)", kind: "shape", ans }, num("n", "Всего чисел", total)],
+      sol: `<ol>${steps.map(s => `<li>${s}</li>`).join("")}<li>Всего чисел: <code>${ans.join(" · ")} = <b>${total}</b></code></li></ol>`
+    };
+  } },
+  split: { t: "Train / val / test split", src: "Q5b образца", f(){
+    const N = pick([800, 1200, 2000, 2400, 3200, 4000, 6000]), sp = pick([[80, 20, 0], [70, 15, 15], [80, 10, 10], [60, 20, 20], [70, 30, 0], [75, 25, 0]]), K = 4;
+    const [tr, va, te] = sp.map(v => N * v / 100), cls = pick([["Plastic", "Paper", "Glass", "Other"], ["Beshbarmak", "Plov", "Manti", "Baursak"], ["OK", "Scratch", "Dent", "Crack"]]);
+    return {
+      task: `<p>${N} изображений, 4 сбалансированных класса (${cls.join(", ")}). Split <b>${sp[2] ? sp.join(" / ") : sp[0] + " / " + sp[1]}</b>${sp[2] ? " (train / val / test)" : " (train / test)"}, stratified. Сколько изображений в каждой части и сколько ${cls[0]} в train?</p>`,
+      fields: [num("tr", "Train", tr), ...(sp[2] ? [num("va", "Validation", va)] : []), num("te", "Test", sp[2] ? te : va), num("pc", cls[0] + " в train", tr / K)],
+      sol: `<ol><li><code>train = ${N} · ${sp[0] / 100} = <b>${tr}</b></code></li>${sp[2] ? `<li><code>val = ${N} · ${sp[1] / 100} = <b>${va}</b></code></li><li><code>test = ${N} · ${sp[2] / 100} = <b>${te}</b></code></li>` : `<li><code>test = ${N} · ${sp[1] / 100} = <b>${va}</b></code></li>`}
+        <li>Stratified и классы сбалансированы → в train по <code>${tr} / 4 = <b>${tr / K}</b></code> на класс.</li></ol>`
+    };
+  } },
+  knn: { t: "kNN: расстояния и голосование", src: "L2", f(){
+    const names = pick([["Cat", "Dog"], ["Spam", "Ham"], ["Paper", "Plastic"]]), L2 = Math.random() < .4;
+    let pts, T, d, order;
+    const dist = (a, b) => L2 ? Math.hypot(a[0] - b[0], a[1] - b[1]) : Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]);
+    do {
+      pts = Array.from({length: 5}, () => [ri(0, 6), ri(0, 6), ri(0, 1)]);
+      T = [ri(1, 5), ri(1, 5)]; d = pts.map(q => dist(q, T)); order = d.map((v, i) => i).sort((a, b) => d[a] - d[b]);
+    } while(new Set(pts.map(q => q[0] + "," + q[1])).size < 5 || d.some(v => v === 0) || d[order[0]] === d[order[1]] || d[order[2]] === d[order[3]] || new Set(pts.map(q => q[2])).size < 2);
+    const nn1 = names[pts[order[0]][2]], v3 = order.slice(0, 3).map(i => pts[i][2]), nn3 = names[v3.filter(x => x === 1).length >= 2 ? 1 : 0];
+    return {
+      task: `<p>Обучающие точки и тестовая точка <b>T = (${T.join(", ")})</b>. Метрика: <b>${L2 ? "L2 (Euclidean)" : "L1 (Manhattan)"}</b>. Найди расстояния${L2 ? " (2 знака)" : ""} и предсказания 1-NN и 3-NN.</p>
+        ${table(["Point", "Features", "Label"], pts.map((q, i) => ["P" + (i + 1), `(${q[0]}, ${q[1]})`, names[q[2]]]))}`,
+      fields: [...pts.map((q, i) => num("d" + i, "d(T, P" + (i + 1) + ")", d[i], L2 ? .011 : 0)), sel("n1", "1-NN", names, nn1), sel("n3", "3-NN", names, nn3)],
+      sol: `<ol>${pts.map((q, i) => `<li>P${i + 1}: <code>${L2 ? `√((${T[0]} − ${q[0]})² + (${T[1]} − ${q[1]})²) = √${(T[0] - q[0]) ** 2 + (T[1] - q[1]) ** 2}` : `|${T[0]} − ${q[0]}| + |${T[1]} − ${q[1]}|`} = <b>${L2 ? fx(d[i], 2) : d[i]}</b></code></li>`).join("")}
+        <li>1-NN: ближайшая P${order[0] + 1} → <b>${nn1}</b></li>
+        <li>3-NN: ${order.slice(0, 3).map(i => `P${i + 1} (${names[pts[i][2]]})`).join(", ")} → большинство <b>${nn3}</b></li></ol>`
+    };
+  } },
+  backprop: { t: "Backprop на графе", src: "L4.2", f(){
+    const form = pick(["add-mul", "mul-add", "max-mul", "sub-mul"]);
+    let x, y, z; do { x = ri(-5, 5); y = ri(-5, 5); z = ri(-5, 5); } while(!x || !y || !z || (form === "max-mul" && x === y));
+    let f, dx, dy, dz, expr, steps;
+    if(form === "add-mul"){ const q = x + y; f = q * z; dx = z; dy = z; dz = q; expr = "f = (x + y) · z";
+      steps = [`q = x + y = ${m(x)} + ${p(y)} = ${m(q)}; f = q · z = ${m(q)} · ${p(z)} = ${m(f)}`, `multiply (swapper): ∂f/∂z = q = <b>${m(q)}</b>, ∂f/∂q = z = ${m(z)}`, `add (distributor): ∂f/∂x = ∂f/∂y = ∂f/∂q · 1 = <b>${m(z)}</b>`]; }
+    else if(form === "mul-add"){ const q = x * y; f = q + z; dx = y; dy = x; dz = 1; expr = "f = x · y + z";
+      steps = [`q = x · y = ${m(x)} · ${p(y)} = ${m(q)}; f = q + z = ${m(f)}`, `add (distributor): ∂f/∂q = 1, ∂f/∂z = <b>1</b>`, `multiply (swapper): ∂f/∂x = y · 1 = <b>${m(y)}</b>, ∂f/∂y = x · 1 = <b>${m(x)}</b>`]; }
+    else if(form === "max-mul"){ const q = Math.max(x, y); f = q * z; dx = x > y ? z : 0; dy = y > x ? z : 0; dz = q; expr = "f = max(x, y) · z";
+      steps = [`q = max(${m(x)}, ${m(y)}) = ${m(q)}; f = q · z = ${m(f)}`, `multiply: ∂f/∂z = q = <b>${m(q)}</b>, ∂f/∂q = z = ${m(z)}`, `max (router): весь градиент ${x > y ? "x" : "y"} (больший вход): ∂f/∂x = <b>${m(dx)}</b>, ∂f/∂y = <b>${m(dy)}</b>`]; }
+    else { const q = x - y; f = q * z; dx = z; dy = -z; dz = q; expr = "f = (x − y) · z";
+      steps = [`q = x − y = ${m(x)} − ${p(y)} = ${m(q)}; f = q · z = ${m(f)}`, `multiply: ∂f/∂z = q = <b>${m(q)}</b>, ∂f/∂q = z = ${m(z)}`, `вычитание: ∂q/∂x = 1, ∂q/∂y = −1 → ∂f/∂x = <b>${m(dx)}</b>, ∂f/∂y = <b>${m(dy)}</b>`]; }
+    return {
+      task: `<p><code>${expr}</code>, x = <b>${m(x)}</b>, y = <b>${m(y)}</b>, z = <b>${m(z)}</b>. Найди f и градиенты (downstream = local × upstream).</p>`,
+      fields: [num("f", "f", f), num("dx", "∂f/∂x", dx), num("dy", "∂f/∂y", dy), num("dz", "∂f/∂z", dz)],
+      sol: `<ol>${steps.map(s => `<li><code>${s}</code></li>`).join("")}</ol>`
+    };
+  } },
+  perceptron: { t: "Шаг perceptron", src: "L3", f(){
+    let w, b, x, y, sc;
+    do { w = [ri(-3, 3), ri(-3, 3)]; b = ri(-2, 2); x = [ri(-3, 4), ri(-3, 4)]; y = pick([-1, 1]); sc = w[0] * x[0] + w[1] * x[1] + b; } while(y * sc > 0 && Math.random() < .7);
+    const mis = y * sc <= 0, nw = mis ? [w[0] + y * x[0], w[1] + y * x[1]] : w, nb = mis ? b + y : b;
+    return {
+      task: `<p>Perceptron, η = 1: <code>w = (${w.map(m).join(", ")})</code>, <code>b = ${m(b)}</code>. Пример <code>x = (${x.map(m).join(", ")})</code>, <code>y = ${m(y)}</code>. Посчитай score, есть ли ошибка, и w, b после шага.</p>`,
+      fields: [num("s", "w·x + b", sc), sel("mis", "Ошибка?", ["да", "нет"], mis ? "да" : "нет"), num("w1", "new w₁", nw[0]), num("w2", "new w₂", nw[1]), num("b", "new b", nb)],
+      sol: `<ol><li><code>w·x + b = ${p(w[0])}·${p(x[0])} + ${p(w[1])}·${p(x[1])} + ${p(b)} = <b>${m(sc)}</b></code></li>
+        <li><code>y·score = ${m(y)}·${p(sc)} = ${m(y * sc)}</code> ${mis ? "≤ 0 → <b>ошибка</b>, обновляем" : "> 0 → <b>верно</b>, веса не меняются"}</li>
+        ${mis ? `<li><code>w ← w + y·x = (${m(w[0])} + ${p(y * x[0])}, ${m(w[1])} + ${p(y * x[1])}) = <b>(${nw.map(m).join(", ")})</b></code></li><li><code>b ← b + y = ${m(b)} + ${p(y)} = <b>${m(nb)}</b></code></li>` : `<li><code>w = (${w.map(m).join(", ")}), b = ${m(b)}</code></li>`}</ol>`
+    };
+  } },
+  neuron: { t: "Forward pass нейрона", src: "L4.1", f(){
+    const act = pick(["ReLU", "sigmoid"]), x = [ri(0, 1), ri(0, 1), ri(0, 1)];
+    if(!x.some(Boolean)) x[ri(0, 2)] = 1;
+    const w = [r1(-1, 1), r1(-1, 1), r1(-1, 1)], b = r1(-0.5, 0.5), z = w.reduce((a, v, i) => a + v * x[i], 0) + b;
+    const a = act === "ReLU" ? Math.max(0, z) : 1 / (1 + Math.exp(-z));
+    return {
+      task: `<p>Нейрон: <code>x = [${x.join(", ")}]</code>, <code>w = [${w.map(v => fx(v, 1)).join(", ")}]</code>, <code>b = ${fx(b, 1)}</code>, activation = <b>${act}</b>. Найди z и a = g(z)${act === "sigmoid" ? " (3 знака)" : ""}.</p>`,
+      fields: [num("z", "z", z, .011), num("a", "a", a, act === "ReLU" ? .011 : .006)],
+      sol: `<ol><li><code>z = ${w.map((v, i) => `${p(+v.toFixed(1))}·${x[i]}`).join(" + ")} + ${p(+b.toFixed(1))} = <b>${fx(z, 2)}</b></code></li>
+        <li>${act === "ReLU" ? `<code>a = max(0, ${fx(z, 2)}) = <b>${fx(a, 2)}</b></code>${z < 0 ? " — ReLU обрезает отрицательное" : ""}` : `<code>a = 1 / (1 + e^${fx(-z, 2)}) = <b>${fx(a, 3)}</b></code>${a > .5 ? " &gt; 0.5 → класс 1" : " &lt; 0.5 → класс 0"}`}</li></ol>`
+    };
+  } },
+  params: { t: "Shapes и число параметров", src: "L3–L4", f(){
+    const [h, w, c] = pick([[32, 32, 3], [28, 28, 1], [64, 64, 3], [32, 64, 3], [48, 48, 1], [16, 16, 3]]), D = h * w * c, K = pick([3, 4, 10, 43]), two = Math.random() < .5, Hd = pick([50, 64, 100, 128]);
+    const p1 = two ? D * Hd + Hd : D * K + K, p2 = two ? Hd * K + K : 0;
+    return {
+      task: `<p>Изображение ${h}×${w}×${c} разворачивается в вектор и подаётся в ${two ? `двухслойную сеть: Linear(D → ${Hd}) → ReLU → Linear(${Hd} → ${K})` : `линейный классификатор s = Wx + b`} на ${K} классов. Найди D и число параметров.</p>`,
+      fields: [num("D", "D (длина x)", D), num("p1", two ? "Параметры слоя 1" : "Параметры W и b", p1), ...(two ? [num("p2", "Параметры слоя 2", p2)] : []), num("tot", "Всего", p1 + p2)],
+      sol: `<ol><li><code>D = ${h}·${w}·${c} = <b>${D}</b></code></li>${two
+        ? `<li>Слой 1: <code>W₁: ${Hd}×${D}, b₁: ${Hd} → ${D}·${Hd} + ${Hd} = <b>${p1}</b></code></li><li>Слой 2: <code>W₂: ${K}×${Hd}, b₂: ${K} → ${Hd}·${K} + ${K} = <b>${p2}</b></code></li><li>Всего: <code>${p1} + ${p2} = <b>${p1 + p2}</b></code></li>`
+        : `<li><code>W: ${K}×${D}, b: ${K} → ${D}·${K} + ${K} = <b>${p1}</b></code></li>`}</ol>`
+    };
+  } }
+};
+const GKEYS = Object.keys(GEN);
+
+/* ---------- drills: UI ---------- */
+let DST = store.get("drill", {});      // type → [correct, attempted]
+let drType = store.get("drtype", "all");
+if(drType !== "all" && !GEN[drType]) drType = "all";
+let cur = null;
+function paintTypes(){
+  $("#dr-types").innerHTML = `<button type="button" data-dt="all" aria-pressed="${drType === "all"}">Все вперемешку</button>` + GKEYS.map(k => {
+    const s = DST[k]; return `<button type="button" data-dt="${k}" aria-pressed="${drType === k}">${esc(GEN[k].t)}${s ? ` <span class="c">${s[0]}/${s[1]}</span>` : ""}</button>`;
+  }).join("");
+  const tot = GKEYS.reduce((a, k) => [a[0] + (DST[k] ? DST[k][0] : 0), a[1] + (DST[k] ? DST[k][1] : 0)], [0, 0]);
+  $("#dr-stats").innerHTML = tot[1] ? `<span>Решено верно с первой попытки: <b>${tot[0]}</b> из <b>${tot[1]}</b></span><span>${Math.round(100 * tot[0] / tot[1])}%</span> <button class="linkbtn" type="button" id="dr-reset">Сбросить статистику</button>` : `<span>Статистика появится после первой проверки.</span>`;
+  const rb = $("#dr-reset"); if(rb) armedReset(rb, "Сбросить статистику", () => { DST = {}; store.set("drill", DST); paintTypes(); });
+}
+$("#dr-types").addEventListener("click", e => { const b = e.target.closest("[data-dt]"); if(!b) return; drType = b.dataset.dt; store.set("drtype", drType); newTask(); });
+function newTask(){
+  const k = drType === "all" ? pick(GKEYS) : drType, g = GEN[k].f();
+  cur = Object.assign({ k, checked: false }, g);
+  $("#dr-tag").textContent = GEN[k].t;
+  $("#dr-src").textContent = "как в: " + GEN[k].src;
+  $("#dr-task").innerHTML = g.task;
+  $("#dr-in").innerHTML = g.fields.map(f => `<label>${esc(f.label)}${f.kind === "sel"
+    ? `<select data-f="${f.id}"><option value="">—</option>${f.options.map(o => `<option>${esc(o)}</option>`).join("")}</select>`
+    : `<input data-f="${f.id}" inputmode="${f.kind === "shape" ? "text" : "decimal"}" autocomplete="off" class="${f.kind === "shape" ? "wide" : ""}">`}</label>`).join("");
+  $("#dr-fb").textContent = ""; $("#dr-fb").className = "dr-fb";
+  $("#dr-sol").hidden = true; $("#dr-sol").innerHTML = `<b>Решение</b>${g.sol}`;
+  renderMx($("#dr-task")); paintTypes();
+}
+const parseNum = s => { s = String(s).trim().replace(/\s/g, "").replace(/[−–]/g, "-").replace(",", ".").replace(/%$/, ""); return s === "" || isNaN(+s) ? null : +s; };
+function okField(f, raw){
+  if(f.kind === "sel") return raw === f.ans;
+  if(f.kind === "shape"){ const a = (String(raw).match(/\d+/g) || []).map(Number); return a.length === f.ans.length && a.every((v, i) => v === f.ans[i]); }
+  const v = parseNum(raw); if(v == null) return false;
+  const near = x => Math.abs(x - f.ans) <= f.tol + 1e-9;
+  if(f.frac) return near(v) || near(v / 100);           // answer is a fraction; accept 0.75 or 75
+  if(f.pct) return near(v) || near(v * 100);            // answer is a percent; accept 75 or 0.75
+  return near(v);
+}
+$("#dr-check").addEventListener("click", () => {
+  if(!cur) return;
+  let good = 0, filled = 0;
+  cur.fields.forEach(f => {
+    const el = $(`#dr-in [data-f="${f.id}"]`), raw = el.value;
+    el.classList.remove("ok", "bad");
+    if(String(raw).trim() === "") return;
+    filled++;
+    const ok = okField(f, raw); if(ok) good++;
+    el.classList.add(ok ? "ok" : "bad");
+  });
+  const all = good === cur.fields.length;
+  $("#dr-fb").className = "dr-fb " + (all ? "ok" : "bad");
+  $("#dr-fb").textContent = all ? "Всё верно ✔" : filled < cur.fields.length ? `Верно ${good} из ${cur.fields.length}. Заполни все поля.` : `Верно ${good} из ${cur.fields.length}. Проверь выделенные поля или открой решение.`;
+  if(!cur.checked && filled === cur.fields.length){ cur.checked = true; const s = DST[cur.k] || [0, 0]; s[1]++; if(all) s[0]++; DST[cur.k] = s; store.set("drill", DST); paintTypes(); }
+  if(all) $("#dr-sol").hidden = false;
+});
+$("#dr-show").addEventListener("click", () => { if(!cur) return; if(!cur.checked){ cur.checked = true; const s = DST[cur.k] || [0, 0]; s[1]++; DST[cur.k] = s; store.set("drill", DST); paintTypes(); } $("#dr-sol").hidden = false; $("#dr-sol").scrollIntoView({behavior: "smooth", block: "nearest"}); });
+$("#dr-next").addEventListener("click", () => { newTask(); $("#dr-task").scrollIntoView({behavior: "smooth", block: "nearest"}); });
+$("#dr-in").addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); $("#dr-check").click(); } });
+$$("[data-drill]").forEach(b => b.addEventListener("click", () => { drType = b.dataset.drill; store.set("drtype", drType); cur = null; showView("drill"); }));
+
+/* ---------- home ---------- */
+function bestExam(){
+  const done = EXAMS.map(exTotals).filter(t => t.graded === t.n);
+  return done.length ? Math.max(...done.map(t => t.total)) : null;
+}
+function renderHome(){
+  const nStar = OQ.filter(q=>q.p).length;
+  $("#h-q").textContent = OQ.length;
+  $("#h-var").textContent = EXAMS.length;
+  $("#h-dr").textContent = GKEYS.length + " " + plural(GKEYS.length, "тип", "типа", "типов");
+  $("#h-q2").textContent = OQ.length + " " + plural(OQ.length, "вопрос", "вопроса", "вопросов");
+  $("#h-star").textContent = "★ " + nStar + " вероятных";
+  const be = bestExam(); $("#h-ex").textContent = be == null ? "—" : fmtPts(be) + "/100";
+  $("#h-map").innerHTML = LECS.map(l => {
+    const qs = OQ.filter(q => q.l===l.k), rated = qs.filter(q => RATE[q.id]!=null).length, s = score(qs);
+    return `<button class="h-row" type="button" data-lec-open="${l.k}" title="Open questions ${l.s}">
+      <span class="code">${l.s}</span>
+      <span class="name">${esc(l.t)}<small>${qs.length} вопр. · оценено ${rated}</small></span>
+      <span><span class="h-meter"><i style="width:${s}%"></i></span><span class="pct">${rated ? s + "%" : "—"}</span></span>
+    </button>`;
+  }).join("") + EXAMS.map(e => { const t = exTotals(e); return `<button class="h-row" type="button" data-ex-open="${e.id}" title="${esc(e.title)}">
+      <span class="code">${e.id.toUpperCase()}</span>
+      <span class="name">Мидтерм ${esc(e.title)}<small>${esc(e.src)} · оценено ${t.graded} из ${t.n}</small></span>
+      <span><span class="h-meter"><i style="width:${t.total}%"></i></span><span class="pct">${t.graded ? fmtPts(t.total) : "—"}</span></span>
+    </button>`; }).join("");
+}
+function openLec(k, mode){ F.lecs = [k]; F.rf = "all"; F.star = false; F.mode = mode || "list"; saveF(); run = null; showView("open"); }
+$("#h-map").addEventListener("click", e => {
+  const r = e.target.closest("[data-lec-open]"); if(r) return openLec(r.dataset.lecOpen);
+  const x = e.target.closest("[data-ex-open]"); if(x){ exVar = x.dataset.exOpen; store.set("exvar", exVar); showView("exam"); }
+});
+$$("[data-oq-lec]").forEach(b => b.addEventListener("click", () => openLec(b.dataset.oqLec)));
+$$("[data-go]").forEach(b => b.addEventListener("click", () => {
+  if(b.dataset.omode){ F.mode = b.dataset.omode; saveF(); if(F.mode==="practice") run = null; }
+  showView(b.dataset.go);
+}));
+
+/* ---------- theme (shared with the hub and other trainers via cfq:v1) ---------- */
+function isDark(){ const t = document.documentElement.getAttribute("data-theme"); return t ? t==="dark" : matchMedia("(prefers-color-scheme: dark)").matches; }
+function paintTheme(){ $("#theme-btn").textContent = isDark() ? "☀ Светлая" : "☾ Тёмная"; }
+$("#theme-btn").addEventListener("click",()=>{
+  const t = isDark() ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", t);
+  try{ const s = JSON.parse(localStorage.getItem("cfq:v1")||"{}"); s.theme = t; localStorage.setItem("cfq:v1", JSON.stringify(s)); }catch(e){}
+  paintTheme();
+});
+paintTheme();
+
+/* ---------- init ---------- */
+renderMx(document);
+showLec(store.get("lec", LECS[0].k));
+const h = (location.hash||"").slice(1);
+showView(VIEWS.includes(h) ? h : "home");
+window.addEventListener("hashchange",()=>{ const v = location.hash.slice(1); if(VIEWS.includes(v)) showView(v); });
+</script>
+</body>
+</html>
