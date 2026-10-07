@@ -1,0 +1,2294 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Computer Networks · Тренажёр</title>
+<meta name="description" content="Computer Networks (Cisco ITN): конспекты лекций 1–5, ключевое и команды IOS, тест с пояснениями, задачи на hex/MAC/bandwidth/MAC-таблицу и open questions.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&family=Unbounded:wght@500;700&display=swap">
+<script>try{var t=(JSON.parse(localStorage.getItem("cfq:v1")||"{}")).theme;if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}</script>
+<style>
+/* Layout: same binder as Computer Vision. Sticky tab bar; notes = lecture index + reading column;
+   quiz = setup card / one question card / results; open questions = filter bar + answer cards;
+   drills = one generated task at a time with a worked solution. */
+:root{
+  --paper:#F1F4F4; --card:#FFFFFF; --ink:#132020; --muted:#53625F; --line:#D3DDDB;
+  --accent:#0A6C78; --accent-ink:#FFFFFF; --accent-soft:#DCEFF0;
+  --mark:#F7E58A; --mark-ink:#1A1622;
+  --ok:#1F7A4A; --ok-soft:#E1F1E6; --mid:#9A6200; --mid-soft:#FBEFD6; --bad:#B03F36; --bad-soft:#F8E3E0;
+  --f-display:"Unbounded", "IBM Plex Sans", system-ui, sans-serif;
+  --f-body:"IBM Plex Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1414; --card:#162020; --ink:#E3EDEB; --muted:#97A8A5; --line:#273533;
+    --accent:#5CC6D2; --accent-ink:#06191C; --accent-soft:#12343A;
+    --mark:#5C5220; --mark-ink:#F4EDC8;
+    --ok:#6CC28E; --ok-soft:#183026; --mid:#E2B356; --mid-soft:#3A2E14; --bad:#E7847A; --bad-soft:#3A1E1B;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1414; --card:#162020; --ink:#E3EDEB; --muted:#97A8A5; --line:#273533;
+  --accent:#5CC6D2; --accent-ink:#06191C; --accent-soft:#12343A;
+  --mark:#5C5220; --mark-ink:#F4EDC8;
+  --ok:#6CC28E; --ok-soft:#183026; --mid:#E2B356; --mid-soft:#3A2E14; --bad:#E7847A; --bad-soft:#3A1E1B;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16.5px;line-height:1.6;padding-inline:16px;padding-block:0 64px}
+h1,h2,h3,h4{line-height:1.2;text-wrap:balance;margin:0}
+h1,h2{font-family:var(--f-display);font-weight:700;letter-spacing:-.01em}
+h3,h4{font-family:var(--f-body);font-weight:700}
+p{margin:0}
+a{color:var(--accent)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+mark{background:var(--mark);color:var(--mark-ink);padding:0 .15em;border-radius:2px}
+code,.mono{font-family:var(--f-mono);font-size:.86em}
+pre{margin:0;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px;overflow-x:auto;font-size:14px;line-height:1.5}
+pre code{font-size:13px}
+.wrap{max-width:1120px;margin-inline:auto}
+[hidden]{display:none!important}
+
+/* top bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--paper);border-bottom:1px solid var(--line);margin-inline:-16px;padding:10px 16px}
+.bar .wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.brand-btn{display:flex;align-items:center;gap:10px;background:none;border:0;padding:0;cursor:pointer;text-align:left;margin-right:auto}
+.brand-mark{width:34px;height:34px;border-radius:9px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font:700 13px/1 var(--f-mono);flex:none}
+.brand{display:flex;flex-direction:column;line-height:1.15}
+.brand b{font-family:var(--f-display);font-size:17px;font-weight:700}
+.brand span{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.back{font-size:14px;font-weight:600;text-decoration:none;color:var(--muted)}
+.back:hover{color:var(--accent)}
+.theme-btn{border:1px solid var(--line);background:none;border-radius:999px;padding:6px 14px;font-size:14px;cursor:pointer;white-space:nowrap}
+.theme-btn:hover{border-color:var(--muted)}
+.tabs{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px}
+.tab{border:0;background:none;padding:6px 16px;border-radius:999px;cursor:pointer;font-weight:600;font-size:15px;color:var(--muted);white-space:nowrap}
+.tab[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+.view{padding-top:28px}
+
+/* shared bits */
+.eyebrow,.h-eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.btn{border:1px solid var(--line);background:var(--card);padding:9px 18px;border-radius:8px;cursor:pointer;font-weight:600;font-size:15px}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.sub{color:var(--muted)}
+
+/* matrices: <span class="mx" data-m="a b;c d"> is expanded by script into a bracketed grid */
+.mx-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;overflow-x:auto;padding:2px 0}
+.mx{display:inline-grid;gap:2px 14px;padding:6px 10px;border-left:2px solid var(--ink);border-right:2px solid var(--ink);border-radius:6px;font-family:var(--f-mono);font-size:13.5px;line-height:1.35;text-align:center;background:var(--card)}
+.mx-eq{font-family:var(--f-mono);font-size:13.5px;color:var(--ink)}
+
+/* ---------- HOME ---------- */
+.h-hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:40px;padding-block:20px 32px;align-items:start}
+.h-hero h1{font-size:clamp(28px,4.4vw,48px);line-height:1.1;margin-top:16px}
+.h-hero h1 em{font-style:normal;color:var(--accent)}
+.h-lede{margin-top:18px;color:var(--muted);font-size:17.5px;max-width:34em}
+.h-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.h-btn{display:inline-flex;align-items:center;gap:10px;border:0;border-radius:999px;padding:12px 22px;font-weight:700;font-size:16px;cursor:pointer;background:var(--accent);color:var(--accent-ink)}
+.h-btn:hover{filter:brightness(1.08)}
+.h-btn.sec{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.h-btn.sec:hover{border-color:var(--muted);filter:none}
+.h-stats{display:flex;flex-wrap:wrap;gap:28px;margin-top:34px;padding-top:22px;border-top:1px solid var(--line)}
+.h-stat b{display:block;font-family:var(--f-display);font-size:30px;line-height:1;font-weight:700;font-variant-numeric:tabular-nums}
+.h-stat span{display:block;margin-top:6px;font-size:14px;color:var(--muted)}
+.h-map{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;min-width:0;box-shadow:0 1px 2px rgba(0,0,0,.05),0 8px 24px rgba(0,0,0,.05)}
+.h-map-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:2px 4px 12px}
+.h-map-head h2{font-family:var(--f-body);font-size:17px;font-weight:700;letter-spacing:0}
+.h-row{display:grid;grid-template-columns:52px minmax(0,1fr) 70px;gap:12px;align-items:center;padding:8px 6px;border-radius:8px;background:none;border:0;text-align:left;cursor:pointer;width:100%}
+.h-row:hover{background:var(--accent-soft)}
+.h-row .code{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--muted)}
+.h-row .name{font-size:14.5px;line-height:1.3;min-width:0}
+.h-row .name small{display:block;font-family:var(--f-mono);font-size:11px;color:var(--muted);margin-top:2px}
+.h-meter{display:block;height:6px;border-radius:99px;background:var(--paper);border:1px solid var(--line);overflow:hidden;position:relative}
+.h-meter i{position:absolute;inset:0 auto 0 0;background:var(--ok);border-radius:99px}
+.h-row .pct{display:block;font-family:var(--f-mono);font-size:11px;color:var(--muted);text-align:right;margin-top:4px;font-variant-numeric:tabular-nums}
+.h-section{padding-block:12px 24px}
+.h-section>.h-eyebrow{display:block;margin-bottom:10px}
+.h-section h2.big{font-size:clamp(22px,2.8vw,28px);margin-bottom:22px}
+.h-modes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.h-mode{display:flex;flex-direction:column;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;text-align:left;cursor:pointer;min-width:0;transition:border-color .15s,transform .15s}
+.h-mode:hover{border-color:var(--accent);transform:translateY(-2px)}
+.h-mode.featured{border-color:var(--accent);background:var(--accent-soft)}
+.h-mode.featured .h-chip{background:var(--card)}
+.h-mode .tag{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--accent);letter-spacing:.04em}
+.h-mode h3{font-size:20px}
+.h-mode p{color:var(--muted);font-size:15px;line-height:1.5}
+.h-facts{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+.h-chip{font-family:var(--f-mono);font-size:12px;line-height:1;padding:6px 9px;border-radius:99px;background:var(--paper);border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.h-mode .go{display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px solid var(--line);font-weight:700;font-size:15px}
+.h-info{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.h-box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.h-box h3{font-size:18px}
+.h-box ol,.h-box ul{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+.h-box .tbl{background:var(--paper)}
+@media (max-width:1080px){.h-modes{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:880px){.h-hero,.h-info{grid-template-columns:minmax(0,1fr);gap:28px}.h-hero{padding-block:8px 16px}}
+
+/* ---------- NOTES ---------- */
+.notes{display:grid;grid-template-columns:260px minmax(0,1fr);gap:40px;align-items:start}
+.lec-index{position:sticky;top:calc(env(safe-area-inset-top,0px) + 84px);display:flex;flex-direction:column;gap:2px}
+.lec-index .lbl{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:0 12px 8px}
+.lec-btn{display:grid;grid-template-columns:44px 1fr;gap:8px;align-items:baseline;text-align:left;border:0;background:none;padding:9px 12px;border-radius:8px;cursor:pointer;color:var(--ink)}
+.lec-btn .n{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.lec-btn .t{font-size:14.5px;line-height:1.3}
+.lec-btn:hover{background:var(--accent-soft)}
+.lec-btn[aria-current="true"]{background:var(--card);box-shadow:inset 3px 0 0 var(--accent)}
+.lec-btn[aria-current="true"] .n{color:var(--accent);font-weight:600}
+article.lec{max-width:780px;display:flex;flex-direction:column;gap:20px}
+.lec-head{display:flex;flex-direction:column;gap:10px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+.lec-head .eyebrow{color:var(--accent)}
+.lec-head h2{font-size:clamp(24px,3.4vw,32px)}
+.lede{color:var(--muted);font-size:17px}
+article.lec h3{font-size:21px;margin-top:12px;scroll-margin-top:90px}
+article.lec h4{font-size:17px}
+article.lec ul,article.lec ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+dl.defs{margin:0;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--r);background:var(--card);overflow:hidden}
+dl.defs>div{display:grid;grid-template-columns:190px minmax(0,1fr);gap:16px;padding:11px 16px;border-top:1px solid var(--line)}
+dl.defs>div:first-child{border-top:0}
+dl.defs dt{font-weight:700}
+dl.defs dt small{display:block;font-weight:400;color:var(--muted);font-size:13px}
+dl.defs dd{margin:0}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{text-align:left;vertical-align:top;padding:9px 14px;border-top:1px solid var(--line)}
+thead th{border-top:0;font-family:var(--f-mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--paper)}
+td:first-child{font-weight:600}
+.flow{list-style:none;padding:0!important;display:flex!important;flex-direction:row!important;flex-wrap:wrap;gap:8px!important;counter-reset:f}
+.flow li{counter-increment:f;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:14.5px;line-height:1.3;flex:1 1 130px;min-width:0}
+.flow li::before{content:counter(f);display:block;font-family:var(--f-mono);font-size:11px;color:var(--accent);font-weight:600}
+.flow li b{display:block}
+.remember{border-left:4px solid var(--mark);background:var(--card);padding:12px 16px;border-radius:0 var(--r) var(--r) 0}
+.remember .k{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:4px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.two>div{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.two h4{font-size:16.5px}
+.lec-foot{display:flex;gap:12px;flex-wrap:wrap;align-items:center;padding-top:18px;border-top:1px solid var(--line)}
+
+/* ---------- KEYS ---------- */
+.keys-wrap{max-width:840px;margin-inline:auto;display:flex;flex-direction:column;gap:24px}
+.keys-wrap>header{display:flex;flex-direction:column;gap:8px}
+.keys-wrap>header h2,.panel>header h2{font-size:clamp(24px,3vw,30px)}
+.keys-jump{display:flex;flex-wrap:wrap;gap:8px}
+.keys-jump a{font-family:var(--f-mono);font-size:13px;font-weight:600;text-decoration:none;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 14px;color:var(--ink)}
+.keys-jump a:hover{border-color:var(--accent);color:var(--accent)}
+.kblock{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;display:flex;flex-direction:column;gap:14px;scroll-margin-top:90px;min-width:0}
+.kblock h3{font-size:20px;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.kblock h3 .n{font-family:var(--f-mono);font-size:13px;color:var(--accent);font-weight:600}
+ul.klist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+ul.klist li{padding:9px 0 9px 22px;border-top:1px solid var(--line);position:relative;line-height:1.5}
+ul.klist li:first-child{border-top:0}
+ul.klist li::before{content:"";position:absolute;left:4px;top:18px;width:7px;height:7px;border-radius:2px;background:var(--accent)}
+.kblock .tbl,.kblock .mx{background:var(--paper)}
+.fgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.fcell{border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;background:var(--paper);min-width:0}
+.fcell b{font-size:14.5px}
+.fcell code{font-size:13px}
+.fcell .mx{background:var(--card)}
+
+/* ---------- OPEN QUESTIONS ---------- */
+.panel{max-width:860px;margin-inline:auto;display:flex;flex-direction:column;gap:18px}
+.panel>header{display:flex;flex-direction:column;gap:8px}
+.filters{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:14px}
+.f-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.f-lbl{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;min-width:72px}
+.chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:6px 12px;cursor:pointer;font-size:14px;user-select:none;white-space:nowrap}
+.chip input{accent-color:var(--accent);margin:0}
+.chip:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.chip .c{font-family:var(--f-mono);font-size:11.5px;color:var(--muted)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--paper)}
+.seg button{border:0;background:none;border-radius:999px;padding:6px 14px;font-weight:600;font-size:14px;cursor:pointer;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.linkbtn{background:none;border:0;padding:0;color:var(--accent);cursor:pointer;font-size:14px;font-weight:600}
+.oq-sum{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted)}
+.oq-sum b{color:var(--ink);font-variant-numeric:tabular-nums}
+.oq-list{display:flex;flex-direction:column;gap:12px}
+.oq{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.oq[data-rate="2"]{border-left:4px solid var(--ok)}
+.oq[data-rate="1"]{border-left:4px solid var(--mid)}
+.oq[data-rate="0"]{border-left:4px solid var(--bad)}
+.oq-top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.tagl{font-weight:600;color:var(--accent)}
+.star{color:var(--mid);font-weight:700}
+.oq-q{font-size:18px;font-weight:700;line-height:1.4}
+.oq-ru{color:var(--muted);font-size:15px}
+.oq details>summary{cursor:pointer;font-weight:600;color:var(--accent);list-style:none;display:inline-flex;align-items:center;gap:8px}
+.oq details>summary::-webkit-details-marker{display:none}
+.oq details>summary::before{content:"▸";font-size:12px;transition:transform .15s}
+.oq details[open]>summary::before{transform:rotate(90deg)}
+.ans{margin-top:12px;display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line);padding-top:12px}
+.ans ul,.ans ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:4px}
+.ans>div{display:flex;flex-direction:column;gap:8px}
+.ans pre{background:var(--paper)}
+.ans .mx{background:var(--paper)}
+.kw{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.kw .lbl{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-right:4px}
+.kw span.k{font-size:13px;padding:4px 9px;border-radius:99px;background:var(--accent-soft);color:var(--ink)}
+.rate{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.rate .lbl{font-size:13.5px;color:var(--muted);margin-right:4px}
+.rbtn{border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:5px 13px;font-size:14px;font-weight:600;cursor:pointer}
+.rbtn[data-r="2"]:hover,.rbtn[data-r="2"][aria-pressed="true"]{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.rbtn[data-r="1"]:hover,.rbtn[data-r="1"][aria-pressed="true"]{border-color:var(--mid);background:var(--mid-soft);color:var(--mid)}
+.rbtn[data-r="0"]:hover,.rbtn[data-r="0"][aria-pressed="true"]{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}
+.empty{background:var(--card);border:1px dashed var(--line);border-radius:14px;padding:28px;text-align:center;color:var(--muted)}
+.pcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:16px}
+.ptop{display:flex;justify-content:space-between;gap:12px;font-family:var(--f-mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+.prog{height:4px;background:var(--line);border-radius:4px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--accent);transition:width .25s}
+.pq{font-size:21px;font-weight:700;line-height:1.35}
+textarea{width:100%;min-height:150px;resize:vertical;border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--paper);color:var(--ink);font:inherit;font-size:15.5px;line-height:1.5}
+textarea:focus{outline:none;border-color:var(--accent)}
+.hint{font-size:13px;color:var(--muted)}
+.howto ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+.done-score{display:flex;gap:18px;flex-wrap:wrap}
+.done-score div{display:flex;flex-direction:column;gap:4px}
+.done-score b{font-family:var(--f-display);font-size:34px;line-height:1}
+.done-score .g b{color:var(--ok)} .done-score .m b{color:var(--mid)} .done-score .x b{color:var(--bad)}
+@media (prefers-reduced-motion: reduce){.prog i,.h-mode{transition:none}}
+
+/* ---------- DRILLS ---------- */
+.dr-wrap{max-width:860px;margin-inline:auto;display:flex;flex-direction:column;gap:18px}
+.dr-wrap>header{display:flex;flex-direction:column;gap:8px}
+.dr-wrap>header h2{font-size:clamp(24px,3vw,30px)}
+.dr-types{display:flex;flex-wrap:wrap;gap:8px}
+.dr-types button{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 13px;font-size:14px;cursor:pointer;font-weight:500;display:inline-flex;gap:8px;align-items:center}
+.dr-types button .c{font-family:var(--f-mono);font-size:11.5px;color:var(--muted)}
+.dr-types button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--ink);font-weight:600}
+.dr-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.dr-card .dtop{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-family:var(--f-mono);font-size:12.5px;color:var(--muted)}
+.dr-task{display:flex;flex-direction:column;gap:12px;font-size:16.5px}
+.dr-task .tbl,.dr-task pre,.dr-task .mx{background:var(--paper)}
+.dr-in{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:flex-end}
+.dr-in label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted);font-weight:600}
+.dr-in input,.dr-in select{font:inherit;font-family:var(--f-mono);font-size:15px;width:118px;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
+.dr-in select{width:auto;min-width:118px}
+.dr-in input.wide{width:200px}
+.dr-in input:focus,.dr-in select:focus{outline:none;border-color:var(--accent)}
+.dr-in input.ok,.dr-in select.ok{border-color:var(--ok);background:var(--ok-soft)}
+.dr-in input.bad,.dr-in select.bad{border-color:var(--bad);background:var(--bad-soft)}
+.dr-fb{font-weight:600}
+.dr-fb.ok{color:var(--ok)} .dr-fb.bad{color:var(--bad)}
+.dr-sol{display:flex;flex-direction:column;gap:8px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px;min-width:0}
+.dr-sol ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:5px}
+.dr-sol code{font-size:13.5px}
+.dr-stats{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14px;color:var(--muted)}
+.dr-stats b{color:var(--ink);font-variant-numeric:tabular-nums}
+.net-modes{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:1080px){.net-modes{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:900px){
+  .notes{grid-template-columns:minmax(0,1fr);gap:20px}
+  .lec-index{position:static;flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:6px}
+  .lec-index .lbl{display:none}
+  .lec-btn{grid-template-columns:auto;flex:0 0 auto;max-width:220px;background:var(--card);border:1px solid var(--line)}
+  .lec-btn .t{font-size:13px}
+  .lec-btn[aria-current="true"]{box-shadow:none;border-color:var(--accent);background:var(--accent-soft)}
+}
+@media (max-width:620px){
+  body{font-size:16px}
+  .h-modes,.fgrid,.two{grid-template-columns:minmax(0,1fr)}
+  .brand-btn{flex:1 1 100%}
+  .theme-btn{margin-left:auto}
+  .h-row{grid-template-columns:44px minmax(0,1fr) 56px}
+  dl.defs>div{grid-template-columns:minmax(0,1fr);gap:4px}
+  .tabs{max-width:100%;overflow-x:auto}
+  .tab{padding:6px 11px;font-size:14px}
+  .kblock,.oq,.pcard{padding:16px}
+  .pq{font-size:18px}
+  .f-lbl{min-width:0;width:100%}
+}@media (max-width:620px){
+  .exq,.dr-card{padding:16px}
+  .dr-in input{width:100px}
+  .net-modes{grid-template-columns:minmax(0,1fr)}
+}
+
+/* ---------- QUIZ ---------- */
+.qz-wrap{max-width:820px;margin-inline:auto;display:flex;flex-direction:column;gap:18px}
+.qz-wrap>header{display:flex;flex-direction:column;gap:8px}
+.qz-wrap>header h2{font-size:clamp(24px,3vw,30px)}
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.hist{font-size:14.5px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+.hist b{color:var(--ink)}
+.qtext{font-size:21px;line-height:1.4;font-weight:700}
+.qtext code{font-size:.85em}
+.qtag{font-family:var(--f-mono);font-size:11.5px;color:var(--muted)}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;align-items:start;text-align:left;border:1.5px solid var(--line);background:var(--card);border-radius:10px;padding:12px 14px;cursor:pointer;font-size:16px;line-height:1.45}
+.opt .k{font-family:var(--f-mono);font-size:13px;width:26px;height:26px;border:1px solid var(--line);border-radius:6px;display:grid;place-items:center;color:var(--muted)}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:disabled{cursor:default}
+.opt.right{border-color:var(--ok);background:var(--ok-soft)}
+.opt.right .k{background:var(--ok);border-color:var(--ok);color:var(--card)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt.wrong .k{background:var(--bad);border-color:var(--bad);color:var(--card)}
+.opt.miss{border-style:dashed;border-color:var(--ok)}
+.opt .box{width:26px;height:26px;border:1.5px solid var(--line);border-radius:6px;display:grid;place-items:center;font-size:14px}
+.opt.sel{border-color:var(--accent);background:var(--accent-soft)}
+.explain{border-radius:10px;padding:14px 16px;background:var(--paper);border:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.explain .verdict{font-weight:700}
+.explain.ok .verdict{color:var(--ok)}
+.explain.no .verdict{color:var(--bad)}
+.score{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.score .big{font-family:var(--f-display);font-size:60px;line-height:1;font-weight:700;font-variant-numeric:tabular-nums}
+.score .of{color:var(--muted);font-size:18px}
+.breakdown{display:flex;flex-direction:column;gap:10px}
+.bd{display:grid;grid-template-columns:70px minmax(0,1fr) 64px;gap:12px;align-items:center;font-size:14.5px}
+.bd .bar2{height:10px;background:var(--line);border-radius:6px;overflow:hidden}
+.bd .bar2 i{display:block;height:100%;background:var(--accent)}
+.bd .v{font-family:var(--f-mono);font-size:13px;text-align:right;font-variant-numeric:tabular-nums}
+.mist{display:flex;flex-direction:column;gap:12px}
+.mist>div{border:1px solid var(--line);border-left:4px solid var(--bad);border-radius:0 10px 10px 0;padding:12px 14px;display:flex;flex-direction:column;gap:6px;background:var(--card)}
+.mist .q{font-weight:600}
+.mist .a{color:var(--ok);font-weight:600}
+.mist .y{color:var(--bad);text-decoration:line-through}
+.mist .e{color:var(--muted);font-size:15px}
+
+/* ---------- notes extras: CLI blocks, Ethernet frame ---------- */
+pre.cli{background:#0F1A1B;color:#D7ECEA;border-color:#0F1A1B}
+pre.cli .p{color:#7FD3C9}
+pre.cli .c{color:#8A9E9B}
+.frame{display:grid;grid-template-columns:1.1fr 1fr 1fr .8fr 1.6fr .7fr;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;font-size:13px;text-align:center;background:var(--card)}
+.frame>div{padding:8px 4px;border-left:1px solid var(--line);display:flex;flex-direction:column;gap:2px;justify-content:center}
+.frame>div:first-child{border-left:0;background:var(--paper);color:var(--muted)}
+.frame b{font-size:13px}.frame span{font-family:var(--f-mono);font-size:11.5px;color:var(--muted)}
+@media (max-width:620px){.frame{grid-template-columns:repeat(3,minmax(0,1fr))}.frame>div:nth-child(4){border-left:0}.frame>div:nth-child(n+4){border-top:1px solid var(--line)}.qtext{font-size:18px}.qcard{padding:16px}}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <button class="brand-btn" type="button" id="brand" aria-label="Главная Computer Networks">
+      <span class="brand-mark">CN</span>
+      <span class="brand"><b>Computer Networks</b><span>мидтерм · лекции 1–5 · Cisco ITN</span></span>
+    </button>
+    <a class="back" href="../">← Все курсы</a>
+    <button class="theme-btn" type="button" id="theme-btn" aria-label="Переключить тему">Тема</button>
+    <nav class="tabs" role="tablist" aria-label="Разделы">
+      <button class="tab" role="tab" id="tab-home" data-view="home" aria-selected="true">Главная</button>
+      <button class="tab" role="tab" id="tab-notes" data-view="notes" aria-selected="false">Конспекты</button>
+      <button class="tab" role="tab" id="tab-keys" data-view="keys" aria-selected="false">Ключевое</button>
+      <button class="tab" role="tab" id="tab-quiz" data-view="quiz" aria-selected="false">Тест</button>
+      <button class="tab" role="tab" id="tab-drill" data-view="drill" aria-selected="false">Задачи</button>
+      <button class="tab" role="tab" id="tab-open" data-view="open" aria-selected="false">Open questions</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ============ HOME ============ -->
+<section class="view" id="view-home">
+  <div class="h-hero">
+    <div>
+      <span class="h-eyebrow">Computer Networks · Midterm</span>
+      <h1>От кабеля до маршрутизатора. <em>Пять лекций, один стек.</em></h1>
+      <p class="h-lede">Компоненты сети и Cisco IOS, протоколы и модели OSI / TCP/IP, физический уровень, Ethernet и MAC-таблица коммутатора, IPv4 / IPv6, ARP и базовая настройка роутера. Тест в стиле Cisco с пояснениями, задачи со случайными числами и open questions с образцами ответов.</p>
+      <div class="h-actions">
+        <button class="h-btn" type="button" data-go="quiz">Начать тест <span aria-hidden="true">→</span></button>
+        <button class="h-btn sec" type="button" id="h-exam">Пробный мидтерм · 40</button>
+      </div>
+      <div class="h-stats">
+        <div class="h-stat"><b id="h-q">—</b><span>вопросов теста с пояснениями</span></div>
+        <div class="h-stat"><b id="h-oq">—</b><span>open questions с образцами</span></div>
+        <div class="h-stat"><b id="h-avg">—</b><span>средний лучший результат</span></div>
+      </div>
+    </div>
+    <aside class="h-map" aria-label="Карта курса">
+      <div class="h-map-head"><h2>Карта курса</h2><span class="h-eyebrow">лучший результат теста</span></div>
+      <div id="h-map"></div>
+      <div class="f-row" id="h-mist" hidden style="padding:10px 6px 0;justify-content:space-between">
+        <span class="sub">Ошибок к повтору: <b id="h-mist-n" style="color:var(--bad)"></b></span>
+        <span class="f-row"><button class="btn" type="button" id="h-mist-go">Повторить</button><button class="linkbtn" type="button" id="h-mist-clear">Очистить</button></span>
+      </div>
+    </aside>
+  </div>
+
+  <div class="h-section">
+    <span class="h-eyebrow">Режимы</span>
+    <h2 class="big">Как готовиться</h2>
+    <div class="h-modes net-modes">
+      <button class="h-mode featured" type="button" data-go="quiz">
+        <span class="tag">TEST</span>
+        <h3>Тест по лекциям</h3>
+        <p>Вопросы на английском, как в Cisco NetAcad; после каждого ответа пояснение на русском. Ошибки копятся в базу и уходят, когда ответишь верно.</p>
+        <span class="h-facts"><span class="h-chip" id="h-q2">— вопросов</span><span class="h-chip">10 / 25 / 40 / все</span></span>
+        <span class="go">Начать <span aria-hidden="true">→</span></span>
+      </button>
+      <button class="h-mode" type="button" data-go="drill">
+        <span class="tag">DRILLS</span>
+        <h3>Задачи</h3>
+        <p>Бесконечные задачи: bin / dec / hex, тип MAC и OUI, единицы bandwidth и goodput, куда коммутатор отправит кадр, режимы IOS, local / remote и ARP.</p>
+        <span class="h-facts"><span class="h-chip" id="h-dr">— типов</span><span class="h-chip">автопроверка</span></span>
+        <span class="go">Решать <span aria-hidden="true">→</span></span>
+      </button>
+      <button class="h-mode" type="button" data-go="open" data-omode="practice">
+        <span class="tag">OPEN QUESTIONS</span>
+        <h3>Open questions</h3>
+        <p>«Explain / compare / describe»: пишешь ответ, открываешь образец на английском и список «обязательно упомянуть», ставишь себе оценку.</p>
+        <span class="h-facts"><span class="h-chip" id="h-oq2">— вопросов</span><span class="h-chip">самооценка</span></span>
+        <span class="go">Тренироваться <span aria-hidden="true">→</span></span>
+      </button>
+      <button class="h-mode" type="button" data-go="keys">
+        <span class="tag">KEY POINTS</span>
+        <h3>Ключевое и команды</h3>
+        <p>Что путают, все цифры (64 / 1518, 100 м, 1-6-11, 48 / 32 / 128 бит), режимы IOS и шпаргалка команд настройки.</p>
+        <span class="h-facts"><span class="h-chip">цифры</span><span class="h-chip">IOS CLI</span></span>
+        <span class="go">Читать <span aria-hidden="true">→</span></span>
+      </button>
+      <button class="h-mode" type="button" data-go="notes">
+        <span class="tag">NOTES</span>
+        <h3>Конспекты</h3>
+        <p>Все пять лекций по слайдам: определения, таблицы, команды и пояснения к картинкам, которых нет в тексте слайдов.</p>
+        <span class="h-facts"><span class="h-chip">L1–L5</span><span class="h-chip">по-русски + термины EN</span></span>
+        <span class="go">Читать <span aria-hidden="true">→</span></span>
+      </button>
+      <button class="h-mode" type="button" data-go="drill" data-drill="switch">
+        <span class="tag">SWITCH IT!</span>
+        <h3>MAC-таблица коммутатора</h3>
+        <p>Как активность «Switch It!» из лекции 4: дана таблица и кадр, отвечаешь, что коммутатор выучит и через какие порты отправит кадр.</p>
+        <span class="h-facts"><span class="h-chip">learn</span><span class="h-chip">forward / flood</span></span>
+        <span class="go">Решать <span aria-hidden="true">→</span></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="h-section">
+    <span class="h-eyebrow">Программа</span>
+    <h2 class="big">Что входит в мидтерм</h2>
+    <div class="h-info">
+      <div class="h-box">
+        <h3>Лекции 1–5</h3>
+        <div class="tbl"><table>
+          <thead><tr><th>Лекция</th><th>Главное</th></tr></thead>
+          <tbody>
+            <tr><td>L1</td><td>Hosts, P2P, intermediary devices, media; LAN / WAN; fault tolerance, scalability, QoS, security; IOS modes, пароли, running / startup-config</td></tr>
+            <tr><td>L2</td><td>Требования к протоколам, unicast / multicast / broadcast, TCP/IP и OSI, организации стандартов, PDU и инкапсуляция</td></tr>
+            <tr><td>L3</td><td>Physical layer: encoding, signaling, bandwidth / throughput / goodput, UTP / STP / coax, straight-through / crossover, fiber SMF / MMF, Wi-Fi 2.4 / 5 GHz</td></tr>
+            <tr><td>L4</td><td>Data link: LLC / MAC, CSMA/CD и CSMA/CA, топологии, кадр Ethernet 64–1518, MAC-адреса и hex, MAC address table</td></tr>
+            <tr><td>L5</td><td>IP: connectionless, best effort; заголовки IPv4 и IPv6, default gateway, routing table, ARP, настройка роутера и интерфейсов</td></tr>
+          </tbody>
+        </table></div>
+        <p class="sub">Формат конкретного мидтерма в слайдах не указан. Здесь всё покрыто в двух форматах: выбор ответа (как Cisco checkpoint exam) и развёрнутые ответы.</p>
+      </div>
+      <div class="h-box howto">
+        <h3>Порядок подготовки</h3>
+        <ol>
+          <li><b>Прочитай «Ключевое».</b> Таблица «что путают» и цифры дают половину баллов в тестах Cisco.</li>
+          <li><b>Пройди тест по одной лекции</b>, сразу читай пояснения. Цель: стабильно выше 80%.</li>
+          <li><b>Реши задачи</b> на hex и MAC-таблицу, пока не будут получаться без ошибок: это любимые вопросы по L4.</li>
+          <li><b>Выучи порядок команд</b> настройки роутера (L5) и переходы между режимами IOS (L1): их просят написать руками.</li>
+          <li><b>Пробный мидтерм на 40 вопросов</b> из всех лекций и повтор ошибок, пока база не опустеет.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NOTES ============ -->
+<section class="view" id="view-notes" hidden>
+<div class="notes">
+  <nav class="lec-index" aria-label="Лекции" id="lec-index"></nav>
+  <div>
+
+<!-- L1 -->
+<article class="lec" data-lec="1">
+  <div class="lec-head">
+    <span class="eyebrow">Lecture 1</span>
+    <h2>Networking Today. Basic Switch and End Device Configuration</h2>
+    <p class="lede">Из чего состоит сеть, какие бывают сети и подключения к интернету, четыре свойства надёжной сети, тренды, а затем Cisco IOS: доступ, режимы, синтаксис команд, базовая настройка и сохранение конфигурации.</p>
+  </div>
+
+  <h3>Компоненты сети</h3>
+  <dl class="defs">
+    <div><dt>Host / end device</dt><dd>Любой компьютер в сети. Сообщение <b>начинается и заканчивается</b> на end device (ПК, ноутбук, телефон, принтер, IP-телефон, сервер).</dd></div>
+    <div><dt>Server</dt><dd>Компьютер, который <b>предоставляет</b> информацию: email server, web server, file server. На нём стоит серверное ПО.</dd></div>
+    <div><dt>Client</dt><dd>Компьютер, который <b>отправляет запросы</b> серверу: браузер запрашивает страницу у web server, почтовый клиент забирает письма с email server.</dd></div>
+    <div><dt>Intermediary device</dt><dd>Соединяет end devices: <b>switch, wireless access point, router, firewall</b>. Также управляет потоком данных: <i>regenerate and retransmit</i> сигналы, хранит информацию о существующих путях, сообщает другим устройствам об ошибках и сбоях связи.</dd></div>
+    <div><dt>Network media</dt><dd>Среда передачи: <b>медные провода</b> (электрические импульсы), <b>оптоволокно</b> из стекла или пластика (импульсы света), <b>беспроводная</b> передача (модуляция определённых частот электромагнитных волн).</dd></div>
+  </dl>
+
+  <h4>Peer-to-Peer</h4>
+  <p>Устройство может быть <b>одновременно клиентом и сервером</b>. Рекомендуется только для очень маленьких сетей.</p>
+  <div class="two">
+    <div><h4>Плюсы</h4><ul><li>Easy to set up</li><li>Less complex</li><li>Lower cost</li><li>Для простых задач: передача файлов, общий принтер</li></ul></div>
+    <div><h4>Минусы</h4><ul><li>No centralized administration</li><li>Not as secure</li><li>Not scalable</li><li>Slower performance</li></ul></div>
+  </div>
+
+  <h3>Представления и топологии</h3>
+  <ul>
+    <li><b>NIC</b> (Network Interface Card) — подключает устройство к сети. <b>Physical port</b> — разъём на устройстве. <b>Interface</b> — специализированный порт; термины port и interface часто используются как синонимы.</li>
+    <li><b>Physical topology diagram</b> — физическое расположение промежуточных устройств и прокладка кабелей (комнаты, стойки).</li>
+    <li><b>Logical topology diagram</b> — устройства, порты и <b>схема адресации</b> (IP-адреса, сети).</li>
+  </ul>
+
+  <h3>Типы сетей</h3>
+  <p>По размеру: <b>small home</b> (несколько компьютеров + интернет), <b>SOHO</b> (Small Office / Home Office: домашний или удалённый офис подключается к корпоративной сети), <b>medium to large</b> (много площадок, сотни и тысячи компьютеров), <b>world wide</b> (интернет, сотни миллионов компьютеров).</p>
+  <div class="tbl"><table>
+    <thead><tr><th></th><th>LAN</th><th>WAN</th></tr></thead>
+    <tbody>
+      <tr><td>Область</td><td>Небольшая география (здание, кампус)</td><td>Большая география, соединяет LAN между собой</td></tr>
+      <tr><td>Кто управляет</td><td>Одна организация или человек</td><td>Обычно один или несколько service providers</td></tr>
+      <tr><td>Скорость</td><td>High-speed bandwidth внутри</td><td>Обычно более медленные каналы между LAN</td></tr>
+    </tbody>
+  </table></div>
+  <ul>
+    <li><b>Internet</b> — всемирная совокупность связанных LAN и WAN. Никому не принадлежит. За структурой следят <b>IETF, ICANN, IAB</b>.</li>
+    <li><b>Intranet</b> — частная сеть LAN/WAN организации, доступна только её членам и тем, у кого есть разрешение.</li>
+    <li><b>Extranet</b> — безопасный доступ к сети организации для людей из <b>другой организации</b>, которым нужны её данные (поставщики, партнёры).</li>
+  </ul>
+
+  <h3>Подключение к интернету</h3>
+  <div class="two">
+    <div><h4>Дом и малый офис</h4><ul>
+      <li><b>Cable</b> — высокая пропускная способность, always-on, от кабельного ТВ-провайдера.</li>
+      <li><b>DSL</b> — высокая пропускная способность, always-on, по <b>телефонной линии</b>.</li>
+      <li><b>Cellular</b> — через сеть мобильной связи.</li>
+      <li><b>Satellite</b> — главный плюс для сельской местности без ISP.</li>
+      <li><b>Dial-up</b> — дешёвый, низкая скорость, через модем и телефонную линию.</li>
+    </ul></div>
+    <div><h4>Бизнес</h4><ul>
+      <li>Нужны higher bandwidth, dedicated connections, managed services.</li>
+      <li><b>Dedicated leased line</b> — зарезервированные каналы в сети провайдера между удалёнными офисами.</li>
+      <li><b>Ethernet WAN (Metro Ethernet)</b> — LAN-технология, расширенная на WAN.</li>
+      <li><b>Business DSL</b>, в том числе <b>SDSL</b> (Symmetric DSL).</li>
+      <li><b>Satellite</b> — когда проводного решения нет.</li>
+    </ul></div>
+  </div>
+  <div class="remember"><span class="k">Converged network</span>Раньше телефон, видео и данные шли по <b>отдельным</b> сетям с разными правилами. <b>Converged network</b> несёт <mark>data, voice и video по одной инфраструктуре</mark> с одним набором правил и стандартов.</div>
+
+  <h3>Надёжная сеть: 4 характеристики архитектуры</h3>
+  <dl class="defs">
+    <div><dt>Fault Tolerance</dt><dd>Ограничивает влияние сбоя (затронуто как можно меньше устройств). Нужны <b>несколько путей</b> (redundancy). Обеспечивается <b>packet switching</b>: трафик режется на пакеты, каждый может пойти своим путём. В <b>circuit-switched</b> сетях (выделенный канал) так нельзя.</dd></div>
+    <div><dt>Scalability</dt><dd>Сеть можно быстро и легко расширить для новых пользователей и приложений <b>без ухудшения</b> для существующих. Достигается следованием принятым стандартам и протоколам.</dd></div>
+    <div><dt>Quality of Service (QoS)</dt><dd>Главный механизм надёжной доставки для всех пользователей. Голос и живое видео требовательны; рывки видео = спрос на bandwidth выше доступного и QoS не настроен. С QoS-политикой роутер управляет потоком данных и голоса.</dd></div>
+    <div><dt>Security</dt><dd><b>Network infrastructure security</b> (физическая защита устройств, запрет неавторизованного доступа) и <b>information security</b> (защита передаваемых данных). Три цели: <b>Confidentiality</b> (читают только адресаты), <b>Integrity</b> (данные не изменены в пути), <b>Availability</b> (своевременный надёжный доступ для авторизованных).</dd></div>
+  </dl>
+
+  <h3>Тренды</h3>
+  <ul>
+    <li><b>BYOD</b> (Bring Your Own Device) — «any device, with any ownership, used anywhere»: ноутбуки, планшеты, смартфоны, e-readers.</li>
+    <li><b>Online collaboration</b> — Cisco WebEx / Webex Teams: сообщения, картинки, видео, ссылки.</li>
+    <li><b>Video communications</b> — видеозвонки и конференции (Cisco TelePresence).</li>
+    <li><b>Cloud computing</b> — хранить файлы и запускать приложения на серверах в интернете; возможно благодаря <b>data centers</b>. Четыре типа облаков: <b>Public</b> (для всех, pay-per-use или бесплатно), <b>Private</b> (для одной организации, например правительства), <b>Hybrid</b> (два и более типа, части связаны одной архитектурой), <b>Custom</b> (под отрасль: здравоохранение, медиа; может быть private или public).</li>
+    <li><b>Smart home</b> — техника в бытовых приборах (духовка знает из календаря, когда ты придёшь).</li>
+    <li><b>Powerline networking</b> — подключение к LAN через <b>электророзетку</b> адаптером, данные на определённых частотах; удобно там, где не достаёт Wi-Fi.</li>
+    <li><b>Wireless broadband</b> — <b>WISP</b> (Wireless ISP, чаще в сельской местности) и сотовая технология с антенной снаружи дома.</li>
+  </ul>
+
+  <h3>Cisco IOS: доступ</h3>
+  <ul>
+    <li><b>Shell</b> — интерфейс пользователя (CLI или GUI). <b>Kernel</b> — связывает железо и ПО, распределяет ресурсы. <b>Hardware</b> — физическая часть.</li>
+    <li><b>GUI</b> удобнее, но может падать и зависать, поэтому сетевые устройства обычно настраивают через <b>CLI</b>.</li>
+  </ul>
+  <dl class="defs">
+    <div><dt>Console</dt><dd>Физический management port. Для обслуживания и <b>начальной настройки</b> (устройству не нужна сеть).</dd></div>
+    <div><dt>SSH</dt><dd>Secure Shell: <b>защищённое</b> удалённое CLI-подключение через виртуальный интерфейс по сети. <mark>Рекомендуемый способ</mark> удалённого доступа.</dd></div>
+    <div><dt>Telnet</dt><dd><b>Незащищённое</b> удалённое подключение: логин, пароли и команды идут <b>plaintext</b>.</dd></div>
+  </dl>
+  <p><b>Terminal emulation programs</b> для подключения через console, SSH или Telnet: <b>PuTTY, Tera Term, SecureCRT</b>.</p>
+
+  <h3>Режимы IOS</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Режим</th><th>Prompt</th><th>Что можно</th></tr></thead>
+    <tbody>
+      <tr><td>User EXEC</td><td><code>Switch&gt;</code></td><td>Только базовые команды мониторинга</td></tr>
+      <tr><td>Privileged EXEC</td><td><code>Switch#</code></td><td>Все команды и функции (show, copy, reload, debug)</td></tr>
+      <tr><td>Global configuration</td><td><code>Switch(config)#</code></td><td>Настройки всего устройства</td></tr>
+      <tr><td>Line configuration</td><td><code>Switch(config-line)#</code></td><td>Console, SSH, Telnet, AUX доступ</td></tr>
+      <tr><td>Interface configuration</td><td><code>Switch(config-if)#</code></td><td>Порт коммутатора или интерфейс роутера</td></tr>
+    </tbody>
+  </table></div>
+<pre class="cli"><code><span class="p">Switch&gt;</span> enable                  <span class="c">! user EXEC → privileged EXEC</span>
+<span class="p">Switch#</span> configure terminal      <span class="c">! → global config</span>
+<span class="p">Switch(config)#</span> line console 0  <span class="c">! → line config</span>
+<span class="p">Switch(config-line)#</span> interface vlan 1   <span class="c">! сразу в другой sub-режим</span>
+<span class="p">Switch(config-if)#</span> exit        <span class="c">! на уровень выше → global config</span>
+<span class="p">Switch(config)#</span> end            <span class="c">! или Ctrl+Z → сразу в privileged EXEC</span>
+<span class="p">Switch#</span> disable                 <span class="c">! → user EXEC</span></code></pre>
+  <div class="remember"><span class="k">exit / end</span><code>exit</code> поднимает на <b>один уровень</b> (из sub-режима в global config, из global config в privileged EXEC). <code>end</code> и <b>Ctrl+Z</b> из любого режима конфигурации возвращают <b>сразу в privileged EXEC</b>. Из одного sub-режима в другой можно перейти напрямую, введя команду нужного режима.</div>
+
+  <h3>Структура команды</h3>
+  <p><code>Switch&gt; ping 192.168.10.5</code> — prompt, <b>command</b>, пробел, <b>keyword или argument</b>. <b>Keyword</b> — параметр, определённый в ОС (<code>show <b>ip protocols</b></code>). <b>Argument</b> — значение, которое задаёт пользователь (<code>192.168.10.5</code>).</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Обозначение</th><th>Смысл</th></tr></thead>
+    <tbody>
+      <tr><td><b>boldface</b></td><td>команды и keywords вводятся буквально</td></tr>
+      <tr><td><i>italics</i></td><td>аргументы, значение даёшь ты</td></tr>
+      <tr><td>[x]</td><td>необязательный элемент</td></tr>
+      <tr><td>{x}</td><td>обязательный элемент</td></tr>
+      <tr><td>[x {y | z}]</td><td>обязательный выбор внутри необязательного элемента</td></tr>
+    </tbody>
+  </table></div>
+  <ul>
+    <li><b>Context-sensitive help</b> (<code>?</code>): какие команды есть в режиме, какие начинаются с данных букв, какие аргументы и keywords у команды.</li>
+    <li><b>Command syntax check</b>: если интерпретатор не понял команду, он объясняет, что не так (ambiguous, incomplete, incorrect).</li>
+    <li>Команды можно <b>сокращать</b> до уникального префикса: <code>conf t</code> = <code>configure terminal</code>.</li>
+  </ul>
+  <div class="tbl"><table>
+    <thead><tr><th>Клавиша</th><th>Действие</th></tr></thead>
+    <tbody>
+      <tr><td>Tab</td><td>дополняет частично введённую команду</td></tr>
+      <tr><td>Backspace</td><td>стирает символ слева от курсора</td></tr>
+      <tr><td>← / Ctrl+B, → / Ctrl+F</td><td>курсор на символ влево / вправо</td></tr>
+      <tr><td>↑ / Ctrl+P</td><td>предыдущие команды из history buffer</td></tr>
+      <tr><td>Enter / Space (при --More--)</td><td>следующая строка / следующий экран; любая другая клавиша прерывает вывод</td></tr>
+      <tr><td>Ctrl+C, Ctrl+Z</td><td>выйти из режима конфигурации в privileged EXEC</td></tr>
+      <tr><td>Ctrl+Shift+6</td><td>универсальный break: прервать DNS lookup, traceroute, ping</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Базовая настройка</h3>
+  <h4>Hostname</h4>
+  <p>Первая команда на любом устройстве. По умолчанию имя заводское (у коммутатора Cisco это «Switch»). Правила: начинается с <b>буквы</b>, <b>без пробелов</b>, заканчивается буквой или цифрой, только буквы, цифры и дефисы, <b>меньше 64 символов</b>. Вернуть по умолчанию: <code>no hostname</code>.</p>
+  <h4>Пароли</h4>
+  <p>Длиннее 8 символов, смесь регистров, цифр и спецсимволов, не один пароль на все устройства, не обычные слова. В лабах используют <code>cisco</code> и <code>class</code> — это слабые пароли, не для продакшена.</p>
+<pre class="cli"><code><span class="p">Switch(config)#</span> hostname Sw-Floor-1
+<span class="p">Sw-Floor-1(config)#</span> line console 0          <span class="c">! пароль user EXEC через консоль</span>
+<span class="p">Sw-Floor-1(config-line)#</span> password cisco
+<span class="p">Sw-Floor-1(config-line)#</span> login             <span class="c">! без login пароль не спрашивается</span>
+<span class="p">Sw-Floor-1(config-line)#</span> exit
+<span class="p">Sw-Floor-1(config)#</span> enable secret class     <span class="c">! пароль privileged EXEC</span>
+<span class="p">Sw-Floor-1(config)#</span> line vty 0 15           <span class="c">! удалённый доступ Telnet/SSH, 16 линий</span>
+<span class="p">Sw-Floor-1(config-line)#</span> password cisco
+<span class="p">Sw-Floor-1(config-line)#</span> login
+<span class="p">Sw-Floor-1(config-line)#</span> exit
+<span class="p">Sw-Floor-1(config)#</span> service password-encryption   <span class="c">! шифрует все plaintext-пароли</span>
+<span class="p">Sw-Floor-1(config)#</span> banner motd # Authorized Access Only! #
+<span class="p">Sw-Floor-1(config)#</span> end
+<span class="p">Sw-Floor-1#</span> copy running-config startup-config</code></pre>
+  <ul>
+    <li><b>VTY lines</b> — виртуальные линии для Telnet/SSH. Многие коммутаторы Cisco поддерживают <b>16</b> линий: <code>0 15</code>.</li>
+    <li>startup-config и running-config показывают большинство паролей открытым текстом → <code>service password-encryption</code>, проверить через <code>show running-config</code>.</li>
+    <li><b>Banner MOTD</b> предупреждает неавторизованных; <code>#</code> — <b>delimiting character</b>, ставится до и после текста.</li>
+  </ul>
+
+  <h3>Файлы конфигурации</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Файл</th><th>Где</th><th>Свойства</th></tr></thead>
+    <tbody>
+      <tr><td>startup-config</td><td><b>NVRAM</b></td><td>Сохранённая конфигурация, загружается при старте или перезагрузке. Не теряется при выключении.</td></tr>
+      <tr><td>running-config</td><td><b>RAM</b></td><td>Текущая конфигурация, изменения действуют <b>сразу</b>. RAM volatile: всё теряется при выключении или перезагрузке.</td></tr>
+    </tbody>
+  </table></div>
+  <ul>
+    <li>Сохранить: <code>copy running-config startup-config</code> (privileged EXEC).</li>
+    <li>Изменения не помогли и ещё не сохранены → удалить команды по одной или <code>reload</code> (устройство ненадолго уйдёт offline).</li>
+    <li>Плохие изменения уже сохранены → <code>erase startup-config</code>, затем <code>reload</code>, чтобы очистить running-config в RAM.</li>
+    <li>Архив в текстовый файл: в PuTTY / Tera Term включить logging, выполнить <code>show running-config</code>, выключить logging.</li>
+  </ul>
+  <div class="lec-foot"><button class="btn" type="button" data-quiz-lec="1">Тест по L1 →</button><button class="btn" type="button" data-oq-lec="1">Open questions по L1 →</button></div>
+</article>
+
+<!-- L2 -->
+<article class="lec" data-lec="2" hidden>
+  <div class="lec-head">
+    <span class="eyebrow">Lecture 2</span>
+    <h2>Protocols and Models</h2>
+    <p class="lede">Правила коммуникации, функции протоколов, наборы протоколов и TCP/IP, организации стандартов, модели OSI и TCP/IP, сегментация, PDU, инкапсуляция и деинкапсуляция.</p>
+  </div>
+
+  <h3>Правила коммуникации</h3>
+  <p>Мало иметь соединение: устройства должны договориться, <b>как</b> общаться. Три элемента любой коммуникации: <b>source</b> (отправитель), <b>destination</b> (получатель), <b>channel / media</b> (путь). Все коммуникации регулируются <b>протоколами</b> — правилами.</p>
+  <div class="two">
+    <div><h4>Протоколы учитывают</h4><ul><li>Identified sender and receiver</li><li>Common language and grammar</li><li>Speed and timing of delivery</li><li>Confirmation / acknowledgment</li></ul></div>
+    <div><h4>Требования сетевых протоколов</h4><ul><li>Message encoding</li><li>Message formatting and encapsulation</li><li>Message size</li><li>Message timing</li><li>Message delivery options</li></ul></div>
+  </div>
+  <dl class="defs">
+    <div><dt>Encoding</dt><dd>Преобразование информации в форму, пригодную для передачи. <b>Decoding</b> — обратный процесс.</dd></div>
+    <div><dt>Formatting &amp; encapsulation</dt><dd>Сообщение должно иметь определённый формат, который зависит от типа сообщения и канала.</dd></div>
+    <div><dt>Message size</dt><dd>Кадры ограничены по размеру (минимум и максимум), поэтому длинное сообщение режется на части, у каждой своя адресация; у получателя части собираются обратно.</dd></div>
+    <div><dt>Message timing</dt><dd><b>Flow control</b> — скорость и объём передачи. <b>Response timeout</b> — сколько ждать ответа. <b>Access method</b> — когда можно отправлять; collision = два устройства передают одновременно. Есть проактивные протоколы (предотвращают коллизии) и реактивные (восстанавливаются после).</dd></div>
+  </dl>
+  <div class="tbl"><table>
+    <thead><tr><th>Delivery option</th><th>Кому</th></tr></thead>
+    <tbody>
+      <tr><td>Unicast</td><td>one to one</td></tr>
+      <tr><td>Multicast</td><td>one to many (группа, обычно не все)</td></tr>
+      <tr><td>Broadcast</td><td>one to all. Есть в IPv4, <b>нет в IPv6</b>. В IPv6 добавляется <b>anycast</b>.</td></tr>
+    </tbody>
+  </table></div>
+  <p>В документации все устройства иногда рисуют одним <b>node icon</b> (кружок).</p>
+
+  <h3>Протоколы</h3>
+  <p>Реализуются в software, hardware или в обоих; у каждого своя <b>function, format, rules</b>.</p>
+  <div class="two">
+    <div><h4>Типы</h4><ul>
+      <li><b>Network communications</b> — общение устройств через сети</li>
+      <li><b>Network security</b> — аутентификация, целостность, шифрование</li>
+      <li><b>Routing</b> — роутеры обмениваются маршрутами и выбирают лучший путь</li>
+      <li><b>Service discovery</b> — автоматическое обнаружение устройств и сервисов</li>
+    </ul></div>
+    <div><h4>Функции</h4><ul>
+      <li><b>Addressing</b> — кто отправитель и получатель</li>
+      <li><b>Reliability</b> — гарантированная доставка</li>
+      <li><b>Flow control</b> — эффективная скорость</li>
+      <li><b>Sequencing</b> — уникальная метка каждого сегмента</li>
+      <li><b>Error detection</b> — испорчены ли данные</li>
+      <li><b>Application interface</b> — process-to-process между приложениями</li>
+    </ul></div>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>Протокол</th><th>Роль при загрузке веб-страницы</th></tr></thead>
+    <tbody>
+      <tr><td>HTTP</td><td>Как взаимодействуют web server и web client; содержимое и формат</td></tr>
+      <tr><td>TCP</td><td>Ведёт отдельные разговоры, гарантирует доставку, flow control</td></tr>
+      <tr><td>IP</td><td>Доставляет сообщения <b>глобально</b> от отправителя к получателю</td></tr>
+      <tr><td>Ethernet</td><td>Доставляет сообщения от одного NIC к другому NIC <b>в той же</b> Ethernet LAN</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Protocol suites</h3>
+  <p><b>Protocol suite</b> — группа взаимосвязанных протоколов для одной коммуникационной функции. Рассматриваются по уровням: верхние и нижние (нижние перемещают данные и обслуживают верхние).</p>
+  <ul>
+    <li><b>TCP/IP</b> — самый распространённый, поддерживается <b>IETF</b>. <b>Open standard</b> (свободно доступен любому производителю) и <b>standards-based</b> (одобрен организацией стандартов для interoperability).</li>
+    <li><b>OSI</b> — разработан <b>ISO</b> и <b>ITU</b>.</li>
+    <li><b>AppleTalk</b> (Apple) и <b>Novell NetWare</b> (Novell) — проприетарные.</li>
+  </ul>
+  <p>Протоколы TCP/IP работают на application, transport и internet уровнях. Самые частые LAN-протоколы network access уровня: <b>Ethernet и WLAN</b>.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Уровень TCP/IP</th><th>Протоколы</th></tr></thead>
+    <tbody>
+      <tr><td>Application</td><td>DNS, DHCP, SMTP, POP3, IMAP, FTP, TFTP, HTTP / HTTPS</td></tr>
+      <tr><td>Transport</td><td>TCP, UDP</td></tr>
+      <tr><td>Internet</td><td>IPv4, IPv6, ICMPv4, ICMPv6, NAT, OSPF, EIGRP</td></tr>
+      <tr><td>Network Access</td><td>ARP, Ethernet, WLAN</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Организации стандартов</h3>
+  <p>Open standards поощряют <b>interoperability, competition, innovation</b>. Организации vendor-neutral и non-profit.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Организация</th><th>Чем занимается</th></tr></thead>
+    <tbody>
+      <tr><td>ISOC</td><td>Internet Society: открытое развитие и эволюция интернета</td></tr>
+      <tr><td>IAB</td><td>Internet Architecture Board: управление и развитие стандартов интернета</td></tr>
+      <tr><td>IETF</td><td>Internet Engineering Task Force: разрабатывает, обновляет и поддерживает технологии интернета и TCP/IP (RFC)</td></tr>
+      <tr><td>IRTF</td><td>Internet Research Task Force: долгосрочные исследования по интернету и TCP/IP</td></tr>
+      <tr><td>ICANN</td><td>Координирует распределение IP-адресов, управление доменными именами</td></tr>
+      <tr><td>IANA</td><td>Для ICANN управляет IP-адресами, доменами и идентификаторами протоколов (номера портов)</td></tr>
+      <tr><td>IEEE</td><td>«I-triple-E»: стандарты в энергетике, медицине, телекоме и сетях (802.3 Ethernet, 802.11 Wi-Fi)</td></tr>
+      <tr><td>EIA</td><td>Электрическая проводка, разъёмы, 19-дюймовые стойки</td></tr>
+      <tr><td>TIA</td><td>Радиооборудование, вышки сотовой связи, VoIP, спутниковая связь</td></tr>
+      <tr><td>ITU-T</td><td>Сжатие видео, IPTV, широкополосная связь (DSL)</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Модели</h3>
+  <p>Польза layered model: помогает в <b>проектировании протоколов</b> (у уровня свои данные и интерфейсы с соседями), <b>поощряет конкуренцию</b> (продукты разных вендоров работают вместе), изменения в одном уровне <b>не затрагивают</b> другие, даёт <b>общий язык</b>.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>OSI</th><th>Что делает</th><th>TCP/IP</th></tr></thead>
+    <tbody>
+      <tr><td>7 Application</td><td>Протоколы process-to-process коммуникации</td><td rowspan="3"><b>Application</b>: представляет данные пользователю, кодирование, управление диалогом</td></tr>
+      <tr><td>6 Presentation</td><td>Общее представление данных между сервисами приложений (формат, сжатие, шифрование)</td></tr>
+      <tr><td>5 Session</td><td>Сервисы для presentation, управление обменом данными (сессии)</td></tr>
+      <tr><td>4 Transport</td><td>Сегментация, передача и сборка данных отдельных коммуникаций</td><td><b>Transport</b>: связь между устройствами через разные сети</td></tr>
+      <tr><td>3 Network</td><td>Обмен отдельными кусками данных по сети (адресация, маршрутизация)</td><td><b>Internet</b>: лучший путь через сеть</td></tr>
+      <tr><td>2 Data Link</td><td>Методы обмена кадрами через общую среду</td><td rowspan="2"><b>Network Access</b>: управляет железом и средой</td></tr>
+      <tr><td>1 Physical</td><td>Активировать, поддерживать и деактивировать физические соединения</td></tr>
+    </tbody>
+  </table></div>
+  <div class="remember"><span class="k">Сравнение</span>OSI делит <b>application</b> уровень TCP/IP на 3 (application, presentation, session), а <b>network access</b> на 2 (data link, physical). TCP/IP <b>не указывает</b>, какие протоколы использовать на физической среде; это описывают уровни 1 и 2 OSI. Мнемоника сверху вниз: <b>A</b>ll <b>P</b>eople <b>S</b>eem <b>T</b>o <b>N</b>eed <b>D</b>ata <b>P</b>rocessing.</div>
+
+  <h3>Сегментация и инкапсуляция</h3>
+  <ul>
+    <li><b>Segmenting</b> — разбиение сообщения на меньшие части. <b>Multiplexing</b> — чередование нескольких потоков сегментов в одном канале.</li>
+    <li>Плюсы сегментации: <b>increases speed</b> (большие данные не занимают канал целиком) и <b>increases efficiency</b> (повторно отправляются только потерянные сегменты, а не весь поток).</li>
+    <li><b>Sequencing</b> — нумерация сегментов для сборки у получателя; за это отвечает <b>TCP</b>.</li>
+    <li><b>Encapsulation</b> — каждый протокол добавляет свою информацию (header, у кадра ещё trailer). На каждом этапе у <b>PDU</b> (Protocol Data Unit) своё имя.</li>
+  </ul>
+  <ol class="flow">
+    <li><b>Data</b>Application (data stream)</li>
+    <li><b>Segment</b>Transport (+ TCP/UDP header)</li>
+    <li><b>Packet</b>Network (+ IP header)</li>
+    <li><b>Frame</b>Data link (+ header и trailer)</li>
+    <li><b>Bits</b>Physical (bit stream)</li>
+  </ol>
+  <p><b>Encapsulation</b> — процесс сверху вниз: уровень делает своё и передаёт ниже, пока данные не уйдут битами. <b>De-encapsulation</b> у получателя — снизу вверх: каждый уровень снимает свой заголовок и передаёт выше: bits → frame → packet → segment → data. Пример: web server инкапсулирует страницу, клиент деинкапсулирует её для браузера.</p>
+  <div class="lec-foot"><button class="btn" type="button" data-quiz-lec="2">Тест по L2 →</button><button class="btn" type="button" data-oq-lec="2">Open questions по L2 →</button></div>
+</article>
+
+<!-- L3 -->
+<article class="lec" data-lec="3" hidden>
+  <div class="lec-head">
+    <span class="eyebrow">Lecture 3</span>
+    <h2>Physical Layer</h2>
+    <p class="lede">Зачем нужен физический уровень, его стандарты (components, encoding, signaling), bandwidth и родственные термины, медь (UTP, STP, coax), straight-through и crossover, оптоволокно, беспроводная среда и Wi-Fi: каналы, частоты, RSSI и SNR.</p>
+  </div>
+
+  <h3>Назначение</h3>
+  <ul>
+    <li>До любой коммуникации нужно <b>физическое подключение</b> к локальной сети, проводное или беспроводное. Подключает устройство <b>NIC</b>; у устройства может быть несколько NIC (wired и wireless). Не все подключения одинаково быстры.</li>
+    <li>Физический уровень <b>транспортирует биты</b> через среду. Принимает от data link уровня <b>целый кадр</b> и кодирует его в серию сигналов. Это <b>последний шаг инкапсуляции</b>.</li>
+    <li>Следующее устройство на пути принимает биты, снова собирает кадр и решает, что с ним делать.</li>
+    <li>На домашнем беспроводном роутере: антенны Wi-Fi, несколько Ethernet switchports и internet port.</li>
+  </ul>
+
+  <h3>Стандарты физического уровня</h3>
+  <p>Их пишут организации по железу и электрике: ISO, EIA/TIA, ITU-T, ANSI, IEEE (а не IETF, как для верхних уровней). Три функциональные области:</p>
+  <dl class="defs">
+    <div><dt>Physical components</dt><dd>Железо, среда и разъёмы, которые передают сигналы: NIC, интерфейсы, коннекторы, материалы и конструкция кабелей.</dd></div>
+    <div><dt>Encoding</dt><dd>Превращает поток битов в формат, который распознает следующее устройство: <b>предсказуемые шаблоны</b>. Примеры: <b>Manchester</b>, <b>4B/5B</b>, <b>8B/10B</b>. В Manchester бит кодируется переходом в середине интервала (по Cisco: 0 = переход high→low, 1 = low→high).</dd></div>
+    <div><dt>Signaling</dt><dd>Как «1» и «0» представлены в среде: <b>электрические сигналы по меди</b>, <b>импульсы света по оптике</b>, <b>микроволновые сигналы по беспроводной</b> среде.</dd></div>
+  </dl>
+
+  <h3>Bandwidth и термины</h3>
+  <p><b>Bandwidth</b> — ёмкость, с которой среда может переносить данные. <b>Digital bandwidth</b> — сколько данных проходит за единицу времени: <b>бит в секунду</b>. Зависит от свойств среды, технологий и законов физики.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Единица</th><th>Сокр.</th><th>Равно</th></tr></thead>
+    <tbody>
+      <tr><td>Bits per second</td><td>bps</td><td>базовая единица</td></tr>
+      <tr><td>Kilobits per second</td><td>Kbps</td><td>1 000 bps = 10³</td></tr>
+      <tr><td>Megabits per second</td><td>Mbps</td><td>1 000 000 bps = 10⁶</td></tr>
+      <tr><td>Gigabits per second</td><td>Gbps</td><td>10⁹ bps</td></tr>
+      <tr><td>Terabits per second</td><td>Tbps</td><td>10¹² bps</td></tr>
+    </tbody>
+  </table></div>
+  <dl class="defs">
+    <div><dt>Latency</dt><dd>Время (включая задержки), за которое данные проходят от одной точки до другой.</dd></div>
+    <div><dt>Throughput</dt><dd>Реально переданные биты через среду за период времени. Обычно <b>меньше</b> bandwidth.</dd></div>
+    <div><dt>Goodput</dt><dd>Полезные данные за период. <mark>Goodput = Throughput − traffic overhead</mark> (заголовки, подтверждения, установка соединения, повторы).</dd></div>
+  </dl>
+
+  <h3>Медный кабель</h3>
+  <p>Самый распространённый: дешёвый, легко монтируется, низкое сопротивление току.</p>
+  <div class="two">
+    <div><h4>Ограничения</h4><ul>
+      <li><b>Attenuation</b> — чем длиннее путь, тем слабее сигнал.</li>
+      <li><b>EMI</b> (electromagnetic interference) и <b>RFI</b> (radio frequency interference) искажают сигнал.</li>
+      <li><b>Crosstalk</b> — наводка от соседних проводов.</li>
+    </ul></div>
+    <div><h4>Защита</h4><ul>
+      <li>Строго соблюдать <b>ограничения длины</b> → против attenuation.</li>
+      <li><b>Металлический экран и заземление</b> → против EMI/RFI.</li>
+      <li><b>Скручивание пар</b> → против crosstalk.</li>
+    </ul></div>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>Тип</th><th>Устройство</th><th>Где</th></tr></thead>
+    <tbody>
+      <tr><td>UTP</td><td>4 цветные витые пары в пластиковой оболочке, <b>без экрана</b>; разъём <b>RJ-45</b>. Оболочка защищает от повреждений, скрутка от помех, цветная изоляция разделяет и маркирует провода.</td><td>Самая частая среда: хосты ↔ промежуточные устройства</td></tr>
+      <tr><td>STP</td><td>Общий оплёточный или фольгированный экран + фольга на каждой паре; RJ-45. <b>Лучше защита</b> от шума, но <b>дороже и сложнее</b> в монтаже.</td><td>Там, где сильные помехи</td></tr>
+      <tr><td>Coaxial</td><td>Оболочка → медная оплётка / фольга (второй проводник и экран) → пластиковая изоляция → медная жила. Разные коннекторы.</td><td>Антенны беспроводных устройств, кабельный интернет у клиента</td></tr>
+    </tbody>
+  </table></div>
+  <h4>Свойства UTP</h4>
+  <ul>
+    <li>Скорость от <b>10 Mbps до 40 Gbps</b>, самый дешёвый на узел, маленькие кабель и разъём, <b>максимум 100 м</b> (30 м для 40 Gbps).</li>
+    <li><b>Cancellation</b>: провода в паре с противоположной полярностью; скрученные, их магнитные поля взаимно гасятся и гасят внешние EMI/RFI. Разное число скруток на парах тоже снижает crosstalk.</li>
+    <li>Стандарты кабелей: <b>TIA/EIA-568</b> (типы, длины, разъёмы, терминирование, методы тестирования). Электрические категории даёт IEEE: <b>Cat 3, Cat 5 / 5e, Cat 6</b>.</li>
+    <li>Плохо обжатый кабель: провода раскручены далеко от разъёма. Правильно: оболочка заходит в RJ-45, раскрутка минимальная.</li>
+  </ul>
+  <h4>Straight-through или crossover</h4>
+  <div class="two">
+    <div><h4>Straight-through</h4><p>Оба конца по одному стандарту (T568A–T568A или T568B–T568B). Соединяет <b>разные</b> устройства:</p><ul><li>switch ↔ router</li><li>switch ↔ PC</li><li>switch ↔ server</li></ul></div>
+    <div><h4>Crossover</h4><p>Один конец T568A, другой T568B (пары передачи и приёма меняются местами). Соединяет <b>однотипные</b>:</p><ul><li>switch ↔ switch</li><li>router ↔ router</li><li>router ↔ PC (оба «хосты»)</li><li>PC ↔ PC</li></ul></div>
+  </div>
+  <div class="remember"><span class="k">Правило</span>Switch с «хостами» (PC, server, router) → <b>straight-through</b>. Одинаковые группы (switch–switch, а также router и PC между собой) → <b>crossover</b>. Сейчас многие устройства умеют <b>auto-MDIX</b> и подстраиваются сами.</div>
+
+  <h3>Оптоволокно</h3>
+  <ul>
+    <li>Реже UTP из-за <b>цены</b>, но передаёт <b>дальше и быстрее</b> любой другой среды.</li>
+    <li>Меньше затухание и <b>полностью невосприимчив к EMI/RFI</b>.</li>
+    <li>Тонкие гибкие нити из очень чистого <b>стекла</b>; биты кодируются импульсами света от <b>лазера или LED</b>; кабель работает как <b>wave guide</b>.</li>
+  </ul>
+  <div class="tbl"><table>
+    <thead><tr><th></th><th>Single-Mode Fiber (SMF)</th><th>Multimode Fiber (MMF)</th></tr></thead>
+    <tbody>
+      <tr><td>Ядро</td><td>Очень маленькое</td><td>Больше</td></tr>
+      <tr><td>Источник</td><td>Дорогие <b>лазеры</b>, один луч</td><td>Дешёвые <b>LED</b>, свет под разными углами</td></tr>
+      <tr><td>Расстояние</td><td>Long-distance, до ~100 км</td><td>До <b>10 Gbps на 550 м</b></td></tr>
+      <tr><td>Dispersion</td><td>Меньше</td><td>Больше (поэтому максимум 550 м)</td></tr>
+      <tr><td>Цвет оболочки</td><td><b>Жёлтый</b></td><td><b>Оранжевый или aqua</b></td></tr>
+    </tbody>
+  </table></div>
+  <p><b>Dispersion</b> — растягивание светового импульса во времени; больше дисперсия → больше потеря сигнала.</p>
+  <p>Применение: <b>enterprise networks</b> (backbone и соединение инфраструктуры), <b>FTTH</b> (always-on широкополосный доступ домам), <b>long-haul</b> (провайдеры между городами и странами), <b>submarine</b> (трансокеанские подводные). Разъёмы: <b>ST</b> (straight-tip), <b>SC</b> (subscriber connector), <b>LC</b> (lucent connector, simplex и duplex). Patch cords: SC-SC, LC-LC, ST-LC, ST-SC.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Свойство</th><th>UTP</th><th>Fiber</th></tr></thead>
+    <tbody>
+      <tr><td>Bandwidth</td><td>10 Mb/s – 10 Gb/s</td><td>10 Mb/s – 100 Gb/s</td></tr>
+      <tr><td>Distance</td><td>1 – 100 м</td><td>1 – 100 000 м</td></tr>
+      <tr><td>Immunity to EMI/RFI</td><td>Low</td><td>High (полностью)</td></tr>
+      <tr><td>Immunity to electrical hazards</td><td>Low</td><td>High (полностью)</td></tr>
+      <tr><td>Стоимость среды и разъёмов</td><td>Lowest</td><td>Highest</td></tr>
+      <tr><td>Навыки монтажа / меры безопасности</td><td>Lowest</td><td>Highest</td></tr>
+    </tbody>
+  </table></div>
+  <p>Fiber — в основном <b>backbone</b> для нагруженных point-to-point соединений между узлами распределения и между зданиями кампуса.</p>
+
+  <h3>Беспроводная среда</h3>
+  <p>Электромагнитные сигналы радио- и микроволновых частот; <b>максимальная мобильность</b>. Ограничения:</p>
+  <ul>
+    <li><b>Coverage area</b> — зависит от физических особенностей места (стены, здания).</li>
+    <li><b>Interference</b> — мешают многие бытовые устройства.</li>
+    <li><b>Security</b> — физический доступ к среде не нужен, передачу может принять кто угодно.</li>
+    <li><b>Shared medium</b> — WLAN работают в <b>half-duplex</b>: одновременно передаёт одно устройство; больше пользователей → меньше bandwidth каждому.</li>
+  </ul>
+  <p>Стандарты беспроводной связи охватывают <b>data link и physical</b> уровни: кодирование в радиосигнал, частота и мощность, приём и декодирование, конструкция антенн.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Стандарт</th><th>IEEE</th><th>Что</th></tr></thead>
+    <tbody>
+      <tr><td>Wi-Fi</td><td>802.11</td><td>Wireless LAN (WLAN)</td></tr>
+      <tr><td>Bluetooth</td><td>802.15</td><td>Wireless Personal Area Network (WPAN)</td></tr>
+      <tr><td>WiMAX</td><td>802.16</td><td>Point-to-multipoint, широкополосный беспроводной доступ</td></tr>
+      <tr><td>Zigbee</td><td>802.15.4</td><td>Низкая скорость и энергопотребление, IoT</td></tr>
+    </tbody>
+  </table></div>
+  <p><b>WLAN</b> требует <b>Wireless Access Point (AP)</b> (собирает сигналы пользователей и подключает к медной инфраструктуре) и <b>wireless NIC adapters</b> на хостах. Важны совместимость оборудования и строгие политики безопасности.</p>
+  <ul>
+    <li><b>Infrastructure mode</b>: клиенты подключаются к AP. <b>BSA</b> (Basic Service Area) — зона одного AP; несколько BSA, соединённых <b>DS</b> (Distribution System, проводная сеть), образуют <b>ESS</b> (Extended Service Set). Клиент может <b>roaming</b> между AP.</li>
+    <li><b>SSID</b> — имя беспроводной сети («guest», «voice»). <b>BSSID</b> — MAC-адрес радио AP. Один AP может вещать несколько SSID (<b>MBSSID</b>).</li>
+  </ul>
+  <div class="tbl"><table>
+    <thead><tr><th>802.11</th><th>Частота</th><th>Скорость, Mbps</th></tr></thead>
+    <tbody>
+      <tr><td>802.11</td><td>2.4 GHz</td><td>1, 2</td></tr>
+      <tr><td>802.11a</td><td>5 GHz</td><td>до 54</td></tr>
+      <tr><td>802.11b</td><td>2.4 GHz</td><td>до 11</td></tr>
+      <tr><td>802.11g</td><td>2.4 GHz</td><td>до 54</td></tr>
+      <tr><td>802.11n</td><td>2.4 и 5 GHz</td><td>до 600</td></tr>
+      <tr><td>802.11ac</td><td>5 GHz</td><td>до 3500</td></tr>
+    </tbody>
+  </table></div>
+  <h4>Каналы</h4>
+  <ul>
+    <li><b>2.4 GHz ISM</b>: 2.4–2.4835 GHz (2.497 в Японии); каналы 1–14 (в США до 11, в Европе 13, в Японии 14). <b>Непересекающиеся: 1, 6, 11</b> (в Японии ещё 14).</li>
+    <li><b>5 GHz</b>: четыре полосы UNII (UNII-1 5.15–5.25, UNII-2 5.25–5.35, UNII-2 extended 5.470–5.725, UNII-3 5.725–5.825) и ISM 5.725–5.875 (пересекается с UNII-3). Возможен <b>channel bonding</b>: 40, 80, 160 MHz.</li>
+    <li>Каждый AP работает на одном канале; каналы соседних AP должны <b>не перекрываться</b>, иначе <b>co-channel</b> и <b>adjacent channel interference</b>.</li>
+  </ul>
+  <div class="two">
+    <div><h4>2.4 GHz</h4><p>+ больше дальность, лучше распространение</p><p>− больше помех (Wi-Fi и не-Wi-Fi), мало каналов</p></div>
+    <div><h4>5 GHz</h4><p>+ менее загруженный спектр, больше непересекающихся каналов</p><p>− хуже распространение, старые устройства не поддерживают</p></div>
+  </div>
+  <h4>Радиосигнал</h4>
+  <dl class="defs">
+    <div><dt>Frequency</dt><dd>Сколько циклов в секунду (Hz): как часто виден сигнал. 2 цикла за 1 с = 2 Hz.</dd></div>
+    <div><dt>Wavelength</dt><dd>Длина одного цикла волны (λ). Выше частота → короче волна.</dd></div>
+    <div><dt>Amplitude</dt><dd>Сила (высота) сигнала.</dd></div>
+    <div><dt>Free path loss</dt><dd>Электромагнитная волна <b>ослабевает</b>, распространяясь от излучателя.</dd></div>
+    <div><dt>RSSI</dt><dd>Received Signal Strength Indicator: насколько хорошо устройство принимает сигнал (в dBm, например −60 dBm).</dd></div>
+    <div><dt>SNR</dt><dd>Signal-to-Noise Ratio: сила сигнала после влияния шума. <mark>SNR = RSSI − Noise</mark>: −60 dBm − (−100 dBm) = <b>40 dB</b>. Больше — лучше.</dd></div>
+  </dl>
+  <p><b>Безопасность Wi-Fi</b>: «open air» — нет физических барьеров, тихие атаки; протокол 802.11 хорошо задокументирован, большинство атак нацелены на <b>management frames</b>; нелицензируемый спектр — дешёвое и доступное оборудование.</p>
+  <div class="lec-foot"><button class="btn" type="button" data-quiz-lec="3">Тест по L3 →</button><button class="btn" type="button" data-oq-lec="3">Open questions по L3 →</button></div>
+</article>
+
+<!-- L4 -->
+<article class="lec" data-lec="4" hidden>
+  <div class="lec-head">
+    <span class="eyebrow">Lecture 4</span>
+    <h2>Data Link Layer. Ethernet Switching</h2>
+    <p class="lede">Подуровни LLC и MAC, топологии и duplex, CSMA/CD и CSMA/CA, кадр и его поля, кадр Ethernet, MAC-адрес в hex, unicast / broadcast / multicast и как коммутатор учит и пересылает кадры по MAC address table.</p>
+  </div>
+
+  <h3>Назначение data link уровня</h3>
+  <ul>
+    <li>Отвечает за связь между <b>NIC</b> конечных устройств.</li>
+    <li>Даёт верхним протоколам доступ к физической среде и <b>инкапсулирует пакеты Layer 3 (IPv4, IPv6) в кадры Layer 2</b>.</li>
+    <li>Выполняет <b>error detection</b> и отбрасывает испорченные кадры.</li>
+    <li>Ethernet работает на data link и physical уровнях; семейство описано в <b>IEEE 802.2 и 802.3</b>.</li>
+  </ul>
+  <div class="tbl"><table>
+    <thead><tr><th>Подуровень</th><th>Стандарт</th><th>Роль</th></tr></thead>
+    <tbody>
+      <tr><td>LLC (Logical Link Control)</td><td>IEEE 802.2</td><td>Связь между сетевым ПО верхних уровней и железом. Помещает в кадр информацию, <b>какой протокол сетевого уровня</b> используется.</td></tr>
+      <tr><td>MAC (Media Access Control)</td><td>IEEE 802.3 (Ethernet), 802.11 (Wi-Fi), 802.15 (Bluetooth)</td><td><b>Инкапсуляция данных и управление доступом к среде</b>, адресация data link уровня. Реализован в железе (NIC).</td></tr>
+    </tbody>
+  </table></div>
+  <p>Инкапсуляция IEEE 802.3 включает: <b>Ethernet frame</b> (внутренняя структура), <b>Ethernet addressing</b> (source и destination MAC от NIC к NIC в одной LAN), <b>Ethernet error detection</b> (trailer <b>FCS</b>).</p>
+  <p>Media access: legacy Ethernet на шине или хабах — общая <b>half-duplex</b> среда с <b>CSMA/CD</b>. Современные LAN на коммутаторах работают в <b>full-duplex</b> и <b>не нуждаются</b> в CSMA/CD.</p>
+  <p>Стандарты data link пишут <b>IEEE, ITU, ISO, ANSI</b>.</p>
+
+  <h3>Топологии</h3>
+  <ul>
+    <li><b>Physical topology</b> — физические соединения. <b>Logical topology</b> — виртуальные связи через интерфейсы и схему IP-адресации.</li>
+    <li><b>WAN</b>: <b>point-to-point</b> (самая простая и частая, постоянная связь двух узлов; среда не делится, поэтому протоколы простые), <b>hub and spoke</b> (как звезда: центральный узел соединён с филиалами point-to-point каналами), <b>mesh</b> (высокая доступность, каждый соединён с каждым).</li>
+    <li><b>LAN</b>: <b>star / extended star</b> (легко ставить, масштабировать и чинить). Устаревшие: <b>bus</b> (все в цепочке, терминаторы на концах; ранний Ethernet) и <b>ring</b> (каждый с соседями; Token Ring).</li>
+  </ul>
+  <div class="two">
+    <div><h4>Half-duplex</h4><p>Одновременно передаёт или принимает <b>одно</b> устройство на общей среде. WLAN и legacy шины с хабами.</p></div>
+    <div><h4>Full-duplex</h4><p>Оба устройства передают и принимают <b>одновременно</b>. Так работают Ethernet-коммутаторы.</p></div>
+  </div>
+
+  <h3>Методы доступа</h3>
+  <p><b>Multiaccess network</b> — два и более устройства пытаются обратиться к сети одновременно.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Метод</th><th>Как</th><th>Где</th></tr></thead>
+    <tbody>
+      <tr><td>CSMA/CD</td><td>Contention-based, half-duplex. Устройства передают одновременно → коллизия → обнаруживают её → ждут <b>случайное время</b> и повторяют.</td><td>Legacy Ethernet (шина, хабы)</td></tr>
+      <tr><td>CSMA/CA</td><td>Contention-based, half-duplex. Передающий указывает <b>время передачи</b>; остальные знают, сколько среда будет занята, и избегают коллизий.</td><td>IEEE 802.11 WLAN</td></tr>
+      <tr><td>Controlled access</td><td>Deterministic: у каждого узла своё время в среде.</td><td>Legacy: Token Ring, ARCNET</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Кадр data link</h3>
+  <p>Data link инкапсулирует данные <b>header + data + trailer</b>. Поля зависят от протокола; объём управляющей информации зависит от метода доступа и логической топологии.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Поле</th><th>Назначение</th></tr></thead>
+    <tbody>
+      <tr><td>Frame start / stop</td><td>Начало и конец кадра</td></tr>
+      <tr><td>Addressing</td><td>Source и destination узлы</td></tr>
+      <tr><td>Type</td><td>Какой Layer 3 протокол внутри</td></tr>
+      <tr><td>Control</td><td>Flow control services</td></tr>
+      <tr><td>Data</td><td>Payload</td></tr>
+      <tr><td>Error detection</td><td>Ошибки передачи (trailer)</td></tr>
+    </tbody>
+  </table></div>
+  <ul>
+    <li><b>Layer 2 address</b> = physical address: в заголовке кадра, только для <b>локальной доставки по линку</b>, <b>меняется</b> каждым устройством, которое пересылает кадр (роутер переписывает MAC).</li>
+    <li>Протоколы L2 зависят от топологии и среды: <b>Ethernet, 802.11 Wireless, PPP, HDLC, Frame Relay</b>. Ethernet и 802.11 — LAN; PPP, HDLC, Frame Relay — WAN.</li>
+  </ul>
+
+  <h3>Кадр Ethernet</h3>
+  <div class="frame" role="img" aria-label="Ethernet frame: Preamble and SFD 8 bytes, Destination MAC 6, Source MAC 6, Type/Length 2, Data 46 to 1500, FCS 4">
+    <div><b>Preamble + SFD</b><span>8 B</span></div>
+    <div><b>Destination MAC</b><span>6 B</span></div>
+    <div><b>Source MAC</b><span>6 B</span></div>
+    <div><b>Type / Length</b><span>2 B</span></div>
+    <div><b>Data</b><span>46–1500 B</span></div>
+    <div><b>FCS</b><span>4 B</span></div>
+  </div>
+  <ul>
+    <li>Минимум <b>64 байта</b>, максимум <b>1518 байт</b>; <b>preamble не считается</b>. 6 + 6 + 2 + 46 + 4 = 64; 6 + 6 + 2 + 1500 + 4 = 1518.</li>
+    <li>Меньше 64 байт → <b>collision fragment / runt frame</b>, автоматически отбрасывается.</li>
+    <li>Больше 1500 байт данных → <b>jumbo</b> или <b>baby giant</b> frame. Кадр вне min/max получатель отбрасывает (обычно это коллизии или помехи), но jumbo frames поддерживают большинство Fast и Gigabit Ethernet коммутаторов и NIC.</li>
+    <li><b>FCS</b> (Frame Check Sequence) — CRC для обнаружения ошибок; не совпало → кадр отброшен.</li>
+  </ul>
+
+  <h3>MAC-адрес и hex</h3>
+  <ul>
+    <li>MAC-адрес Ethernet = <b>48 бит</b> = <b>12 hex-цифр</b> = <b>6 байт</b>. Один байт = 8 бит = 2 hex-цифры (00–FF). Одна hex-цифра = 4 бита.</li>
+    <li>В hex всегда показывают ведущие нули: 0000 1010 = <code>0A</code>. Обозначения hex: <code>0x73</code>, <code>73<sub>16</sub></code>, <code>73H</code>.</li>
+    <li>Первые <b>24 бита (6 hex)</b> = <b>OUI</b> (Organizationally Unique Identifier), производитель получает его у <b>IEEE</b>. Остальные 24 бита назначает производитель, уникальны для каждого устройства.</li>
+    <li>Форматы записи: <code>00-60-2F-3A-07-BC</code>, <code>00:60:2F:3A:07:BC</code>, <code>0060.2F3A.07BC</code> (Cisco).</li>
+  </ul>
+  <div class="tbl"><table>
+    <thead><tr><th>Hex</th><th>Dec</th><th>Bin</th><th>Hex</th><th>Dec</th><th>Bin</th></tr></thead>
+    <tbody>
+      <tr><td>0</td><td>0</td><td>0000</td><td>8</td><td>8</td><td>1000</td></tr>
+      <tr><td>1</td><td>1</td><td>0001</td><td>9</td><td>9</td><td>1001</td></tr>
+      <tr><td>2</td><td>2</td><td>0010</td><td>A</td><td>10</td><td>1010</td></tr>
+      <tr><td>3</td><td>3</td><td>0011</td><td>B</td><td>11</td><td>1011</td></tr>
+      <tr><td>4</td><td>4</td><td>0100</td><td>C</td><td>12</td><td>1100</td></tr>
+      <tr><td>5</td><td>5</td><td>0101</td><td>D</td><td>13</td><td>1101</td></tr>
+      <tr><td>6</td><td>6</td><td>0110</td><td>E</td><td>14</td><td>1110</td></tr>
+      <tr><td>7</td><td>7</td><td>0111</td><td>F</td><td>15</td><td>1111</td></tr>
+    </tbody>
+  </table></div>
+  <p>Пример: <code>0xC9</code> = C·16 + 9 = 12·16 + 9 = <b>201</b> = 1100 1001. Обратно: 201 / 16 = 12 остаток 9 → C9.</p>
+
+  <h4>Обработка кадра NIC</h4>
+  <p>NIC сравнивает destination MAC с <b>собственным MAC в RAM</b>. Не совпало → кадр отбрасывается. Совпало → передаётся вверх на деинкапсуляцию. NIC также принимает <b>broadcast</b> и <b>multicast</b> групп, в которых состоит хост. MAC есть у всех, кто бывает источником или получателем кадра: рабочие станции, серверы, принтеры, мобильные устройства, роутеры.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Тип</th><th>Destination MAC</th><th>Как пересылается</th></tr></thead>
+    <tbody>
+      <tr><td>Unicast</td><td>Уникальный адрес одного устройства</td><td>По MAC-таблице в один порт (или flood, если адрес неизвестен). MAC по IPv4 находит <b>ARP</b>, по IPv6 — <b>Neighbor Discovery (ND)</b>.</td></tr>
+      <tr><td>Broadcast</td><td><code>FF-FF-FF-FF-FF-FF</code> (48 единиц)</td><td>Flood во все порты, кроме входящего. <b>Роутер не пересылает.</b> Внутри обычно IPv4 broadcast (все единицы в host-части) — его получают все в broadcast domain.</td></tr>
+      <tr><td>Multicast</td><td><code>01-00-5E-…</code> для IPv4, <code>33-33-…</code> для IPv6</td><td>Flood во все порты, кроме входящего, если нет multicast snooping. Роутер не пересылает, если не настроена маршрутизация multicast. Бывают и не-IP (например STP).</td></tr>
+    </tbody>
+  </table></div>
+  <div class="remember"><span class="k">Важно</span><b>Source MAC всегда unicast.</b> Broadcast и multicast бывают только адресом назначения. Многоадресному IP нужен соответствующий multicast MAC.</div>
+
+  <h3>MAC address table</h3>
+  <ul>
+    <li>Коммутатор L2 решает только по <b>MAC-адресам</b> и не знает, что внутри кадра (IPv4, ARP, IPv6 ND).</li>
+    <li>В отличие от <b>хаба</b>, который повторяет биты во все порты кроме входящего, коммутатор смотрит в MAC address table (она же <b>CAM table</b>, content addressable memory).</li>
+    <li>При включении таблица <b>пустая</b>.</li>
+  </ul>
+  <ol class="flow">
+    <li><b>Learn</b>Смотрит <b>source MAC</b> и порт входа. Нет в таблице → добавляет. Есть → обновляет таймер (по умолчанию запись живёт <b>5 минут</b>).</li>
+    <li><b>Forward</b>Смотрит <b>destination MAC</b>. Unicast есть в таблице → в этот порт (<b>filtering</b>). Нет → <b>unknown unicast</b>: flood во все порты, кроме входящего.</li>
+    <li><b>Broadcast / multicast</b>Всегда flood во все порты, кроме входящего.</li>
+  </ol>
+  <p>Пример из «Switch It!»: в таблице Fa1 = 0A, Fa3 = 0B, Fa9 = 0E. Кадр от 0C (на Fa5) к 0A → коммутатор выучит 0C на Fa5 и отправит кадр только в Fa1. Кадр к 0D, которого нет в таблице, → unknown unicast, flood во все порты, кроме Fa5. Если destination MAC выучен <b>на том же порту</b>, откуда пришёл кадр (например за хабом), коммутатор кадр отбрасывает.</p>
+  <div class="lec-foot"><button class="btn" type="button" data-quiz-lec="4">Тест по L4 →</button><button class="btn" type="button" data-drill="switch">Задачи «Switch It!» →</button><button class="btn" type="button" data-oq-lec="4">Open questions по L4 →</button></div>
+</article>
+
+<!-- L5 -->
+<article class="lec" data-lec="5" hidden>
+  <div class="lec-head">
+    <span class="eyebrow">Lecture 5</span>
+    <h2>Network Layer. Address Resolution. Basic Router Configuration</h2>
+    <p class="lede">Свойства IP, заголовки IPv4 и IPv6, как хост решает local / remote и использует default gateway, таблица маршрутизации роутера, MAC и IP вместе, ARP, начальная настройка роутера, интерфейсов и default gateway.</p>
+  </div>
+
+  <h3>Сетевой уровень</h3>
+  <p>Даёт конечным устройствам обмениваться данными. Основные протоколы: <b>IPv4 и IPv6</b>. Четыре операции: <b>addressing end devices, encapsulation, routing, de-encapsulation</b>.</p>
+  <ul>
+    <li>IP инкапсулирует <b>сегмент</b> транспортного уровня; IPv4 или IPv6 не влияет на сегмент L4.</li>
+    <li>Пакет просматривают все L3-устройства на пути. <b>IP-адресация не меняется</b> от источника до получателя (кроме NAT).</li>
+  </ul>
+  <dl class="defs">
+    <div><dt>Connectionless</dt><dd>Не устанавливает соединение перед отправкой, нет управляющей информации (синхронизации, подтверждения). Если нужно соединение, это делает другой протокол, обычно <b>TCP</b>.</dd></div>
+    <div><dt>Best effort</dt><dd><b>Не гарантирует доставку</b>: нет механизма повторной отправки (меньше overhead), не ждёт подтверждений, не знает, работает ли получатель.</dd></div>
+    <div><dt>Media independent</dt><dd>Не важно, какой кадр на L2 и какая среда на L1: медь, оптика, беспроводная.</dd></div>
+  </dl>
+  <p>IP <b>ненадёжен</b> (unreliable): не исправляет потерянные или испорченные пакеты, не переотправляет, не упорядочивает. Это делают другие протоколы.</p>
+  <ul>
+    <li><b>MTU</b> (Maximum Transmission Unit) сетевой уровень узнаёт из управляющей информации data link уровня.</li>
+    <li><b>Fragmentation</b>: L3 режет пакет IPv4 на меньшие части, например роутер переходит из Ethernet в медленный WAN с меньшим MTU. Фрагментация добавляет <b>latency</b>. <mark>IPv6 роутеры не фрагментируют.</mark></li>
+  </ul>
+
+  <h3>Заголовок IPv4</h3>
+  <p>Двоичный, читается слева направо по 4 байта в строке; главные поля — source и destination. Используется всеми L3-устройствами.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Поле</th><th>Смысл</th></tr></thead>
+    <tbody>
+      <tr><td>Version</td><td>4 бита, <code>0100</code> для IPv4</td></tr>
+      <tr><td>Differentiated Services (DS)</td><td>QoS: DiffServ (раньше ToS, Type of Service)</td></tr>
+      <tr><td>Header Checksum</td><td>Обнаруживает порчу <b>заголовка</b> IPv4</td></tr>
+      <tr><td>Time to Live (TTL)</td><td>Счётчик хопов L3: каждый роутер уменьшает на 1; дошёл до <b>0</b> → роутер отбрасывает пакет (и шлёт ICMP Time Exceeded)</td></tr>
+      <tr><td>Protocol</td><td>Протокол следующего уровня: ICMP (1), TCP (6), UDP (17)</td></tr>
+      <tr><td>Source / Destination IPv4 Address</td><td>По <b>32 бита</b></td></tr>
+    </tbody>
+  </table></div>
+  <p>Ещё есть: Internet Header Length, Total Length, Identification, Flags, Fragment Offset (для фрагментации), Options.</p>
+
+  <h3>IPv6</h3>
+  <p>Ограничения IPv4: <b>address depletion</b> (адреса кончились), <b>нет end-to-end connectivity</b> (частные адреса и NAT), <b>рост сложности</b> (NAT задумывался временным, добавляет latency и мешает troubleshooting).</p>
+  <p>IPv6 разработан <b>IETF</b>: <b>128-битные</b> адреса, упрощённый заголовок (меньше полей), <b>не нужен NAT</b>.</p>
+  <ul>
+    <li>Заголовок <b>упрощён, но не меньше</b>: фиксирован <b>40 байт</b>.</li>
+    <li>Убраны поля IPv4: <b>Flags, Fragment Offset, Header Checksum</b> (и IHL, Identification, Options).</li>
+  </ul>
+  <div class="tbl"><table>
+    <thead><tr><th>Поле IPv6</th><th>Смысл</th></tr></thead>
+    <tbody>
+      <tr><td>Version</td><td>4 бита, <code>0110</code></td></tr>
+      <tr><td>Traffic Class</td><td>QoS, как DS в IPv4</td></tr>
+      <tr><td>Flow Label</td><td>20 бит: пакеты с одинаковой меткой обрабатывать одинаково</td></tr>
+      <tr><td>Payload Length</td><td>16 бит: длина данных (payload)</td></tr>
+      <tr><td>Next Header</td><td>Протокол следующего уровня, как Protocol в IPv4</td></tr>
+      <tr><td>Hop Limit</td><td>Заменяет TTL</td></tr>
+      <tr><td>Source / Destination</td><td>По <b>128 бит</b></td></tr>
+    </tbody>
+  </table></div>
+  <p><b>Extension headers (EH)</b> — необязательные, между заголовком IPv6 и payload: фрагментация (её делает источник), безопасность, мобильность.</p>
+
+  <h3>Как маршрутизирует хост</h3>
+  <ul>
+    <li>Пакет всегда создаётся у источника; каждый хост строит <b>свою</b> таблицу маршрутизации.</li>
+    <li>Хост отправляет: <b>себе</b> (loopback <code>127.0.0.1</code>, <code>::1</code>), <b>локальным хостам</b> (та же LAN), <b>удалённым хостам</b> (другая сеть).</li>
+    <li>Local или remote: IPv4 — по своему IP, <b>маске подсети</b> и IP получателя; IPv6 — по префиксу, который анонсирует локальный роутер.</li>
+    <li>Локальный трафик выходит с интерфейса хоста к промежуточному устройству (коммутатору). <b>Удалённый трафик идёт на default gateway</b>.</li>
+  </ul>
+  <div class="remember"><span class="k">Default gateway</span>Роутер или L3-коммутатор. IP <b>в том же диапазоне</b>, что LAN; принимает данные из LAN и может отправить их за её пределы; умеет маршрутизировать. Нет шлюза или он неверный → <b>трафик не выйдет из LAN</b>, а внутри LAN всё работает. Хост узнаёт шлюз статически или по <b>DHCP</b> (IPv4), в IPv6 через <b>Router Solicitation (RS)</b> или вручную. Шлюз — это маршрут «последней надежды» в таблице хоста.</div>
+  <p>Таблица маршрутизации на Windows: <code>route print</code> или <code>netstat -r</code>. Три секции: <b>Interface List</b> (интерфейсы и MAC), <b>IPv4 Route Table</b>, <b>IPv6 Route Table</b>.</p>
+
+  <h3>Таблица маршрутизации роутера</h3>
+  <dl class="defs">
+    <div><dt>Directly connected</dt><dd>Добавляются <b>автоматически</b>, если интерфейс активен и имеет адрес.</dd></div>
+    <div><dt>Remote</dt><dd>Сети без прямого подключения: <b>вручную</b> (static route) или <b>динамически</b> (routing protocol, роутеры обмениваются информацией).</dd></div>
+    <div><dt>Default route</dt><dd>Куда отправлять весь трафик, если в таблице нет совпадения.</dd></div>
+  </dl>
+  <div class="two">
+    <div><h4>Static routing</h4><ul><li>Настраивается вручную</li><li>При изменении топологии правится вручную</li><li>Для маленьких сетей без резервирования</li><li>Часто вместе с dynamic для default route</li></ul></div>
+    <div><h4>Dynamic routing</h4><ul><li>Сам находит удалённые сети</li><li>Поддерживает актуальность</li><li>Выбирает лучший путь</li><li>Находит новый путь при изменении топологии</li><li>Может раздавать static default route</li></ul></div>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>Код в <code>show ip route</code></th><th>Источник</th></tr></thead>
+    <tbody>
+      <tr><td>L</td><td>Local: IP-адрес самого интерфейса (/32)</td></tr>
+      <tr><td>C</td><td>Directly connected network</td></tr>
+      <tr><td>S</td><td>Static route (вручную); <code>S*</code> — default route</td></tr>
+      <tr><td>O</td><td>OSPF</td></tr>
+      <tr><td>D</td><td>EIGRP</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>MAC и IP вместе</h3>
+  <ul>
+    <li><b>MAC (L2, physical)</b> — от NIC к NIC в <b>одной</b> сети. <b>IP (L3, logical)</b> — от источника до конечного получателя.</li>
+    <li>Получатель в <b>той же сети</b> → destination MAC = MAC самого получателя.</li>
+    <li>Получатель в <b>удалённой сети</b> → <mark>destination MAC = MAC default gateway</mark>, а destination IP остаётся IP конечного хоста.</li>
+    <li>Связь IPv4 ↔ MAC находит <b>ARP</b>, IPv6 ↔ MAC — <b>ICMPv6</b> (Neighbor Discovery).</li>
+  </ul>
+
+  <h3>ARP</h3>
+  <p>Две функции: <b>resolve IPv4 → MAC</b> и <b>вести ARP table</b> (кэш соответствий IPv4–MAC).</p>
+  <ol>
+    <li>Чтобы отправить кадр, устройство ищет в ARP table IPv4 и MAC.</li>
+    <li>Получатель в той же сети → ищет IPv4 <b>получателя</b>. В другой сети → ищет IPv4 <b>default gateway</b>.</li>
+    <li>Нашёл → берёт MAC как destination MAC кадра.</li>
+    <li>Не нашёл → отправляет <b>ARP request</b> (broadcast <code>FF-FF-FF-FF-FF-FF</code>: «у кого этот IP?»). Владелец отвечает <b>ARP reply</b> (unicast) со своим MAC, запись попадает в таблицу.</li>
+  </ol>
+
+  <h3>Начальная настройка роутера</h3>
+  <ol>
+    <li>Имя устройства</li><li>Защитить privileged EXEC</li><li>Защитить user EXEC</li><li>Защитить удалённый Telnet / SSH</li><li>Зашифровать пароли</li><li>Legal notification (banner) и сохранить</li>
+  </ol>
+<pre class="cli"><code><span class="p">Router(config)#</span> hostname R1
+<span class="p">R1(config)#</span> enable secret class
+<span class="p">R1(config)#</span> line console 0
+<span class="p">R1(config-line)#</span> password cisco
+<span class="p">R1(config-line)#</span> login
+<span class="p">R1(config-line)#</span> line vty 0 4               <span class="c">! у роутера обычно 5 VTY: 0–4</span>
+<span class="p">R1(config-line)#</span> password cisco
+<span class="p">R1(config-line)#</span> login
+<span class="p">R1(config-line)#</span> transport input ssh telnet
+<span class="p">R1(config-line)#</span> exit
+<span class="p">R1(config)#</span> service password-encryption
+<span class="p">R1(config)#</span> banner motd # WARNING: Unauthorized access is prohibited! #
+<span class="p">R1(config)#</span> exit
+<span class="p">R1#</span> copy running-config startup-config      <span class="c">! сохранить в NVRAM</span></code></pre>
+
+  <h3>Интерфейсы</h3>
+<pre class="cli"><code><span class="p">R1(config)#</span> interface gigabitEthernet 0/0/0
+<span class="p">R1(config-if)#</span> description Link to LAN
+<span class="p">R1(config-if)#</span> ip address 192.168.10.1 255.255.255.0
+<span class="p">R1(config-if)#</span> ipv6 address 2001:db8:acad:10::1/64
+<span class="p">R1(config-if)#</span> no shutdown              <span class="c">! включить интерфейс (на роутере по умолчанию выключен)</span>
+<span class="p">R1(config-if)#</span> exit
+<span class="c">%LINK-3-UPDOWN: Interface GigabitEthernet0/0/0, changed state to up
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0/0, changed state to up</span></code></pre>
+  <p>Хорошая практика — <code>description</code> с информацией о подключённой сети. Второй интерфейс в примере: G0/0/1 «Link to R2», <code>209.165.200.225 255.255.255.252</code>, <code>2001:db8:feed:224::1/64</code>.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Команда проверки</th><th>Что показывает</th></tr></thead>
+    <tbody>
+      <tr><td><code>show ip interface brief</code><br><code>show ipv6 interface brief</code></td><td>Все интерфейсы, IP-адреса и статус (Status / Protocol: up / up, administratively down)</td></tr>
+      <tr><td><code>show ip route</code><br><code>show ipv6 route</code></td><td>Таблица маршрутизации в RAM</td></tr>
+      <tr><td><code>show interfaces</code></td><td>Статистика всех интерфейсов (MAC, MTU, BW, duplex, runts, giants); из адресов только IPv4</td></tr>
+      <tr><td><code>show ip interface</code></td><td>IPv4-статистика интерфейсов роутера</td></tr>
+      <tr><td><code>show ipv6 interface</code></td><td>IPv6-статистика (link-local, global unicast, joined groups FF02::1)</td></tr>
+    </tbody>
+  </table></div>
+<pre class="cli"><code><span class="p">R1#</span> show ip route
+<span class="c">Gateway of last resort is not set</span>
+C   192.168.10.0/24 is directly connected, GigabitEthernet0/0/0
+L   192.168.10.1/32 is directly connected, GigabitEthernet0/0/0
+C   209.165.200.224/30 is directly connected, GigabitEthernet0/0/1
+L   209.165.200.225/32 is directly connected, GigabitEthernet0/0/1</code></pre>
+  <p>Каждый активный интерфейс с адресом даёт <b>две</b> записи: <b>C</b> (сеть) и <b>L</b> (адрес самого интерфейса /32, в IPv6 /128). IPv6 интерфейс автоматически получает link-local <code>FE80::…</code>.</p>
+
+  <h3>Default gateway</h3>
+  <ul>
+    <li><b>На хосте</b>: шлюз используется, когда пакет идёт в другую сеть; это обычно адрес интерфейса роутера в локальной сети хоста. PC1 адресует пакет на IPv4 PC3, но отправляет кадр на G0/0/0 роутера R1. IP хоста и интерфейса роутера должны быть <b>в одной сети</b>.</li>
+    <li><b>На коммутаторе</b>: нужен, чтобы <b>управлять коммутатором удалённо</b> из другой сети. Команда в global config: <code>ip default-gateway 192.168.10.1</code>. Коммутатор L2 трафик хостов не маршрутизирует, шлюз нужен только для его собственного management-трафика.</li>
+  </ul>
+  <div class="lec-foot"><button class="btn" type="button" data-quiz-lec="5">Тест по L5 →</button><button class="btn" type="button" data-oq-lec="5">Open questions по L5 →</button></div>
+</article>
+
+  </div>
+</div>
+</section>
+
+<!-- ============ KEY POINTS ============ -->
+<section class="view" id="view-keys" hidden>
+<div class="keys-wrap">
+  <header>
+    <h2>Ключевое и команды</h2>
+    <p class="sub">Самое важное без лишнего. Подробности во вкладке «Конспекты», расчёты тренируются во вкладке «Задачи».</p>
+    <nav class="keys-jump" aria-label="Разделы">
+      <a href="#" data-jump="k-pairs">Путают</a><a href="#" data-jump="k-num">Цифры</a><a href="#" data-jump="k-osi">OSI</a><a href="#" data-jump="k-ios">IOS</a><a href="#" data-jump="k1">L1</a><a href="#" data-jump="k2">L2</a><a href="#" data-jump="k3">L3</a><a href="#" data-jump="k4">L4</a><a href="#" data-jump="k5">L5</a>
+    </nav>
+  </header>
+
+  <div class="kblock" id="k-pairs">
+    <h3>Что чаще всего путают</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>Пара</th><th>Разница</th></tr></thead>
+      <tbody>
+        <tr><td>Host / intermediary</td><td>сообщение начинается и заканчивается на host (PC, server, printer) / промежуточное соединяет и пересылает (switch, router, AP, firewall)</td></tr>
+        <tr><td>Intranet / extranet</td><td>только свои сотрудники / безопасный доступ для другой организации</td></tr>
+        <tr><td>Physical / logical topology</td><td>где стоят устройства и кабели / порты и схема IP-адресации</td></tr>
+        <tr><td>Packet / circuit switching</td><td>пакеты идут разными путями → fault tolerance / выделенный канал, его обрыв рвёт связь</td></tr>
+        <tr><td>Console / SSH / Telnet</td><td>физический порт, начальная настройка / удалённо и зашифровано (рекомендуется) / удалённо, всё plaintext</td></tr>
+        <tr><td><code>&gt;</code> / <code>#</code></td><td>user EXEC (только мониторинг) / privileged EXEC (всё)</td></tr>
+        <tr><td><code>exit</code> / <code>end</code></td><td>на один уровень вверх / из любого config-режима сразу в privileged EXEC (= Ctrl+Z)</td></tr>
+        <tr><td><code>enable password</code> / <code>enable secret</code></td><td>хранится открыто / хешируется; использовать secret</td></tr>
+        <tr><td>running-config / startup-config</td><td>RAM, действует сразу, теряется при выключении / NVRAM, грузится при старте</td></tr>
+        <tr><td>Keyword / argument</td><td>определён в IOS (<code>ip protocols</code>) / значение пользователя (<code>192.168.10.5</code>)</td></tr>
+        <tr><td>Encoding / signaling</td><td>биты → предсказуемый шаблон (Manchester, 4B/5B) / как 0 и 1 выглядят в среде (ток, свет, радио)</td></tr>
+        <tr><td>Bandwidth / throughput / goodput</td><td>ёмкость среды / реально прошедшие биты / только полезные данные = throughput − overhead</td></tr>
+        <tr><td>Attenuation / crosstalk / EMI</td><td>ослабление с расстоянием (лечится длиной) / наводка соседних пар (скрутка) / внешние помехи (экран)</td></tr>
+        <tr><td>UTP / STP</td><td>без экрана, дешевле / экран, лучше от шума, дороже и сложнее</td></tr>
+        <tr><td>Straight-through / crossover</td><td>разные устройства: switch–PC, switch–router / одинаковые: switch–switch, router–router, PC–PC, router–PC</td></tr>
+        <tr><td>SMF / MMF</td><td>маленькое ядро, лазер, далеко, жёлтый / большое ядро, LED, до 550 м, оранжевый или aqua</td></tr>
+        <tr><td>2.4 / 5 GHz</td><td>дальше, но тесно (3 канала 1-6-11) / больше каналов, хуже проходит, старые устройства не умеют</td></tr>
+        <tr><td>LLC / MAC sublayer</td><td>802.2, какой L3 протокол внутри, связь с ПО / 802.3/802.11, инкапсуляция, доступ к среде, адресация</td></tr>
+        <tr><td>CSMA/CD / CSMA/CA</td><td>обнаружение коллизий, legacy Ethernet / избегание (объявляет длительность), Wi-Fi 802.11</td></tr>
+        <tr><td>Half / full duplex</td><td>по очереди (WLAN, хабы) / одновременно (коммутаторы, CSMA/CD не нужен)</td></tr>
+        <tr><td>Hub / switch</td><td>повторяет биты во все порты / решает по MAC-таблице</td></tr>
+        <tr><td>Runt / jumbo</td><td>меньше 64 байт, отбрасывается / больше 1500 байт данных, поддерживается многими GigE</td></tr>
+        <tr><td>Learn / forward</td><td>коммутатор учит по <b>source</b> MAC / пересылает по <b>destination</b> MAC</td></tr>
+        <tr><td>Unknown unicast / broadcast</td><td>получатель не в таблице → flood / FF-FF-FF-FF-FF-FF → всегда flood; оба не через роутер</td></tr>
+        <tr><td>MAC / IP</td><td>L2, физический, 48 бит, меняется на каждом хопе / L3, логический, 32 или 128 бит, не меняется от источника до получателя</td></tr>
+        <tr><td>ARP / ND</td><td>IPv4 → MAC / IPv6 → MAC (ICMPv6)</td></tr>
+        <tr><td>TTL / Hop Limit</td><td>IPv4 / IPv6, одно и то же: −1 на каждом роутере, 0 → drop</td></tr>
+        <tr><td>Protocol / Next Header</td><td>IPv4 / IPv6: какой протокол внутри (TCP, UDP, ICMP)</td></tr>
+        <tr><td>DS / Traffic Class</td><td>IPv4 / IPv6: QoS</td></tr>
+        <tr><td>C / L в <code>show ip route</code></td><td>connected network (/24) / адрес самого интерфейса (/32)</td></tr>
+        <tr><td>Static / dynamic route</td><td>вручную, для маленьких сетей / протокол сам находит сети и новые пути</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="kblock" id="k-num">
+    <h3>Цифры, которые спрашивают</h3>
+    <div class="fgrid">
+      <div class="fcell"><b>Ethernet frame</b><code>64 – 1518 байт</code><span class="sub">preamble (8) не считается; data 46–1500; FCS 4</span></div>
+      <div class="fcell"><b>Поля кадра</b><code>8 | 6 | 6 | 2 | 46–1500 | 4</code><span class="sub">preamble+SFD | dst MAC | src MAC | type | data | FCS</span></div>
+      <div class="fcell"><b>MAC</b><code>48 бит = 12 hex = 6 байт</code><span class="sub">OUI = первые 24 бита (6 hex), от IEEE</span></div>
+      <div class="fcell"><b>IP</b><code>IPv4 32 бита · IPv6 128 бит</code><span class="sub">заголовок IPv6 фиксирован: 40 байт</span></div>
+      <div class="fcell"><b>Version</b><code>IPv4 = 0100 · IPv6 = 0110</code><span class="sub">4-битное поле</span></div>
+      <div class="fcell"><b>Flow Label · Payload Length</b><code>20 бит · 16 бит</code><span class="sub">поля IPv6</span></div>
+      <div class="fcell"><b>Multicast MAC</b><code>01-00-5E (IPv4) · 33-33 (IPv6)</code><span class="sub">broadcast: FF-FF-FF-FF-FF-FF</span></div>
+      <div class="fcell"><b>Loopback</b><code>127.0.0.1 · ::1</code><span class="sub">хост отправляет сам себе</span></div>
+      <div class="fcell"><b>UTP</b><code>100 м (30 м на 40 Gbps)</code><span class="sub">10 Mbps – 40 Gbps, 4 пары, RJ-45</span></div>
+      <div class="fcell"><b>MMF</b><code>10 Gbps на 550 м</code><span class="sub">fiber вообще: до 100 000 м, 100 Gb/s</span></div>
+      <div class="fcell"><b>Wi-Fi 2.4 GHz</b><code>каналы 1, 6, 11</code><span class="sub">США 11 каналов, Европа 13, Япония 14</span></div>
+      <div class="fcell"><b>SNR</b><code>SNR = RSSI − Noise</code><span class="sub">−60 − (−100) = 40 dB</span></div>
+      <div class="fcell"><b>Goodput</b><code>throughput − overhead</code><span class="sub">bandwidth ≥ throughput ≥ goodput</span></div>
+      <div class="fcell"><b>Единицы</b><code>K = 10³ · M = 10⁶ · G = 10⁹ · T = 10¹²</code><span class="sub">в битах в секунду; 1 байт = 8 бит</span></div>
+      <div class="fcell"><b>VTY lines</b><code>switch: vty 0 15 · router: vty 0 4</code><span class="sub">16 и 5 линий для Telnet/SSH</span></div>
+      <div class="fcell"><b>Hostname</b><code>&lt; 64 символов</code><span class="sub">с буквы, без пробелов, конец буква/цифра</span></div>
+      <div class="fcell"><b>MAC table aging</b><code>5 минут</code><span class="sub">таймер обновляется при каждом кадре от этого MAC</span></div>
+      <div class="fcell"><b>802.11n / ac</b><code>до 600 / до 3500 Mbps</code><span class="sub">n: 2.4 и 5 GHz; ac: 5 GHz</span></div>
+    </div>
+  </div>
+
+  <div class="kblock" id="k-osi">
+    <h3>Модели, PDU и устройства</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>OSI</th><th>TCP/IP</th><th>PDU</th><th>Адрес / устройство</th><th>Протоколы</th></tr></thead>
+      <tbody>
+        <tr><td>7 Application</td><td rowspan="3">Application</td><td rowspan="3">Data</td><td rowspan="3">—</td><td rowspan="3">HTTP, DNS, DHCP, SMTP, FTP</td></tr>
+        <tr><td>6 Presentation</td></tr>
+        <tr><td>5 Session</td></tr>
+        <tr><td>4 Transport</td><td>Transport</td><td>Segment</td><td>порты</td><td>TCP, UDP</td></tr>
+        <tr><td>3 Network</td><td>Internet</td><td>Packet</td><td>IP · router</td><td>IPv4, IPv6, ICMP</td></tr>
+        <tr><td>2 Data Link</td><td rowspan="2">Network Access</td><td>Frame</td><td>MAC · switch, NIC</td><td>Ethernet, 802.11, PPP, HDLC, ARP</td></tr>
+        <tr><td>1 Physical</td><td>Bits</td><td>— · hub, кабель, AP-радио</td><td>UTP, fiber, Wi-Fi сигнал</td></tr>
+      </tbody>
+    </table></div>
+    <p>Инкапсуляция: <b>data → segment → packet → frame → bits</b> (сверху вниз у отправителя). Деинкапсуляция у получателя в обратном порядке.</p>
+  </div>
+
+  <div class="kblock" id="k-ios">
+    <h3>IOS: режимы и команды</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>Задача</th><th>Команда</th><th>Режим</th></tr></thead>
+      <tbody>
+        <tr><td>Войти в privileged EXEC</td><td><code>enable</code></td><td><code>&gt;</code></td></tr>
+        <tr><td>Войти в global config</td><td><code>configure terminal</code></td><td><code>#</code></td></tr>
+        <tr><td>Имя устройства</td><td><code>hostname R1</code></td><td>(config)</td></tr>
+        <tr><td>Пароль privileged EXEC</td><td><code>enable secret class</code></td><td>(config)</td></tr>
+        <tr><td>Пароль консоли</td><td><code>line console 0</code> → <code>password cisco</code> → <code>login</code></td><td>(config-line)</td></tr>
+        <tr><td>Пароль Telnet/SSH</td><td><code>line vty 0 15</code> → <code>password</code> → <code>login</code> → <code>transport input ssh</code></td><td>(config-line)</td></tr>
+        <tr><td>Зашифровать пароли</td><td><code>service password-encryption</code></td><td>(config)</td></tr>
+        <tr><td>Баннер</td><td><code>banner motd # текст #</code></td><td>(config)</td></tr>
+        <tr><td>Настроить интерфейс</td><td><code>interface g0/0/0</code> → <code>description</code> → <code>ip address A M</code> → <code>ipv6 address A/64</code> → <code>no shutdown</code></td><td>(config-if)</td></tr>
+        <tr><td>Адрес коммутатора для управления</td><td><code>interface vlan 1</code> → <code>ip address</code> → <code>no shutdown</code></td><td>(config-if)</td></tr>
+        <tr><td>Шлюз коммутатора</td><td><code>ip default-gateway 192.168.1.1</code></td><td>(config)</td></tr>
+        <tr><td>Сохранить</td><td><code>copy running-config startup-config</code></td><td><code>#</code></td></tr>
+        <tr><td>Стереть сохранённую</td><td><code>erase startup-config</code> → <code>reload</code></td><td><code>#</code></td></tr>
+        <tr><td>Отменить команду</td><td><code>no</code> + команда (<code>no hostname</code>, <code>no shutdown</code>)</td><td>тот же</td></tr>
+        <tr><td>Проверить</td><td><code>show running-config</code>, <code>show ip interface brief</code>, <code>show ip route</code>, <code>show interfaces</code></td><td><code>#</code></td></tr>
+        <tr><td>Таблица маршрутов на Windows</td><td><code>route print</code> или <code>netstat -r</code></td><td>cmd</td></tr>
+      </tbody>
+    </table></div>
+    <ul class="klist">
+      <li>Без <code>login</code> пароль на линии не спрашивается.</li>
+      <li>Интерфейсы роутера по умолчанию <b>administratively down</b> → нужен <code>no shutdown</code>.</li>
+      <li><code>?</code> — context-sensitive help; Tab дополняет; сокращать можно до уникального префикса (<code>conf t</code>, <code>sh ip int br</code>).</li>
+      <li>Ctrl+Shift+6 прерывает ping, traceroute и DNS lookup (например после опечатки в команде).</li>
+    </ul>
+  </div>
+
+  <div class="kblock" id="k1">
+    <h3>L1 · Networking Today <span class="n">компоненты, сети, надёжность</span></h3>
+    <ul class="klist">
+      <li>Сервер предоставляет, клиент запрашивает; в <b>P2P</b> устройство и то и другое: просто и дёшево, но нет централизации, безопасности и масштабируемости.</li>
+      <li>Media: медь — электрические импульсы, оптика — свет, беспроводная — модуляция частот электромагнитных волн.</li>
+      <li>LAN: маленькая область, одна организация, быстро. WAN: большая область, провайдеры, медленнее.</li>
+      <li>Интернетом никто не владеет; за структурой следят IETF, ICANN, IAB.</li>
+      <li>Дом: cable (ТВ-кабель), DSL (телефонная линия), cellular, satellite (сельская местность), dial-up. Бизнес: leased line, Metro Ethernet, business DSL / SDSL, satellite.</li>
+      <li>Converged network: данные, голос и видео по одной сети и одним правилам.</li>
+      <li>4 свойства архитектуры: <b>fault tolerance</b> (несколько путей, packet switching), <b>scalability</b>, <b>QoS</b>, <b>security</b> (CIA: confidentiality, integrity, availability).</li>
+      <li>Облака: public, private, hybrid, custom. Тренды: BYOD, collaboration, video, cloud, smart home, powerline, wireless broadband (WISP).</li>
+    </ul>
+  </div>
+
+  <div class="kblock" id="k2">
+    <h3>L2 · Protocols and Models <span class="n">правила, наборы, модели</span></h3>
+    <ul class="klist">
+      <li>3 элемента коммуникации: source, destination, channel.</li>
+      <li>Требования к протоколам: encoding, formatting / encapsulation, size, timing (flow control, response timeout, access method), delivery options.</li>
+      <li>Unicast — одному, multicast — группе, broadcast — всем (нет в IPv6, там anycast).</li>
+      <li>Функции протоколов: addressing, reliability, flow control, sequencing, error detection, application interface.</li>
+      <li>HTTP — веб, TCP — разговоры и гарантия доставки, IP — глобальная доставка, Ethernet — от NIC к NIC в одной LAN.</li>
+      <li>TCP/IP — open standard, IETF. OSI — ISO и ITU. AppleTalk, Novell NetWare — проприетарные.</li>
+      <li>IEEE — Ethernet и Wi-Fi; EIA — проводка и стойки; TIA — радио, VoIP; ITU-T — видео, IPTV, DSL; ICANN / IANA — адреса и домены.</li>
+      <li>Сегментация повышает скорость и эффективность (переотправляются только потерянные сегменты); sequencing делает TCP.</li>
+    </ul>
+  </div>
+
+  <div class="kblock" id="k3">
+    <h3>L3 · Physical Layer <span class="n">среда и сигналы</span></h3>
+    <ul class="klist">
+      <li>Physical layer принимает <b>кадр</b> от data link и отправляет его <b>сигналами</b>; последний шаг инкапсуляции.</li>
+      <li>Стандарты: physical components, encoding, signaling. Их пишут ISO, EIA/TIA, ITU-T, ANSI, IEEE.</li>
+      <li>Медь: дёшево, но attenuation, EMI/RFI, crosstalk. UTP гасит помехи <b>cancellation</b> (скрутка пар с противоположной полярностью).</li>
+      <li>Coax: антенны и кабельный интернет. TIA/EIA-568 — стандарт кабельной разводки; Cat 3, 5/5e, 6 — категории.</li>
+      <li>Fiber полностью невосприимчив к EMI/RFI и электрическим опасностям; дорогой; backbone, FTTH, long-haul, submarine. Разъёмы ST, SC, LC.</li>
+      <li>Wireless: coverage, interference, security, shared medium (half-duplex). WLAN = AP + wireless NIC. BSA, DS, ESS, SSID, BSSID.</li>
+      <li>Wi-Fi 802.11, Bluetooth 802.15, WiMAX 802.16, Zigbee 802.15.4 (IoT).</li>
+      <li>Frequency — как часто (Hz), wavelength — длина цикла, amplitude — сила; free path loss — сигнал слабеет с расстоянием.</li>
+    </ul>
+  </div>
+
+  <div class="kblock" id="k4">
+    <h3>L4 · Data Link &amp; Ethernet Switching <span class="n">кадры и MAC</span></h3>
+    <ul class="klist">
+      <li>Data link: связь NIC–NIC, инкапсулирует пакеты L3 в кадры L2, обнаруживает ошибки (FCS) и отбрасывает испорченные кадры.</li>
+      <li>Кадр = header + data + trailer. Поля: start/stop, addressing, type, control, data, error detection.</li>
+      <li>L2-адрес используется только для локальной доставки и <b>переписывается</b> на каждом хопе.</li>
+      <li>WAN-топологии: point-to-point, hub and spoke, mesh. LAN: star / extended star; legacy bus и ring.</li>
+      <li>Contention-based: CSMA/CD и CSMA/CA. Controlled: Token Ring, ARCNET.</li>
+      <li>NIC принимает кадр, если dst MAC = свой, broadcast или multicast своей группы; иначе отбрасывает.</li>
+      <li>Коммутатор: <b>learn по source</b>, <b>forward по destination</b>; неизвестный unicast, broadcast и multicast → flood во все порты кроме входящего.</li>
+    </ul>
+  </div>
+
+  <div class="kblock" id="k5">
+    <h3>L5 · Network Layer, ARP, Router Config <span class="n">IP и маршрутизация</span></h3>
+    <ul class="klist">
+      <li>4 операции сетевого уровня: addressing, encapsulation, routing, de-encapsulation.</li>
+      <li>IP: <b>connectionless</b>, <b>best effort</b> (не гарантирует доставку), <b>media independent</b>; ненадёжность компенсирует TCP.</li>
+      <li>Фрагментация IPv4 на роутере при меньшем MTU даёт latency; IPv6 роутеры не фрагментируют.</li>
+      <li>IPv4: Version, DS, Header Checksum, TTL, Protocol, src/dst 32 бита. IPv6 убрал Flags, Fragment Offset, Header Checksum; добавил Flow Label.</li>
+      <li>IPv4 проблемы: исчерпание адресов, нет end-to-end (NAT), сложность. IPv6: 128 бит, проще заголовок, без NAT.</li>
+      <li>Хост решает local / remote по своему IP и маске; remote → на default gateway (MAC шлюза в кадре, IP получателя в пакете).</li>
+      <li>Маршруты роутера: directly connected (автоматически), remote (static или dynamic), default.</li>
+      <li>ARP: ищет в ARP table IP получателя (local) или IP шлюза (remote); нет записи → ARP request broadcast, ответ unicast.</li>
+      <li>Коммутатору нужен <code>ip default-gateway</code>, только чтобы им управляли из другой сети.</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<!-- ============ QUIZ ============ -->
+<section class="view" id="view-quiz" hidden>
+<div class="qz-wrap">
+  <div id="quiz-setup" style="display:flex;flex-direction:column;gap:18px">
+    <header>
+      <h2>Тест по лекциям</h2>
+      <p class="sub">Вопросы на английском, как в Cisco NetAcad; пояснения на русском. Варианты перемешиваются при каждой попытке. В вопросах «Choose two» отметь нужное число вариантов и нажми «Проверить». Клавиши: 1–6 выбрать, Enter дальше.</p>
+    </header>
+    <div class="qcard">
+      <div class="f-row"><span class="f-lbl">Лекции</span><span class="f-row" id="qz-lecs"></span></div>
+      <div class="f-row"><span class="f-lbl">Сколько</span>
+        <div class="seg" role="group" aria-label="Количество вопросов" id="qz-n">
+          <button type="button" data-n="10" aria-pressed="false">10</button>
+          <button type="button" data-n="25" aria-pressed="true">25</button>
+          <button type="button" data-n="40" aria-pressed="false">40</button>
+          <button type="button" data-n="0" aria-pressed="false">все</button>
+        </div>
+        <span class="sub" id="qz-pool"></span>
+      </div>
+      <div class="f-row">
+        <button class="btn primary" type="button" id="qz-start">Начать тест →</button>
+        <button class="btn" type="button" id="qz-mist">Повторить ошибки</button>
+      </div>
+      <div class="hist" id="qz-hist"></div>
+    </div>
+  </div>
+
+  <div id="quiz-run" hidden>
+    <div class="qcard">
+      <div class="ptop"><span id="q-pos"></span><span id="q-lec"></span><span id="q-score"></span></div>
+      <div class="prog"><i id="q-bar" style="width:0"></i></div>
+      <p class="qtext" id="q-text"></p>
+      <div class="opts" id="q-opts"></div>
+      <div class="explain" id="q-exp" hidden></div>
+      <div class="f-row">
+        <button class="btn primary" type="button" id="q-check" hidden>Проверить</button>
+        <button class="btn primary" type="button" id="q-next" disabled>Дальше</button>
+        <button class="btn" type="button" id="q-quit">Закончить</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="quiz-done" hidden style="flex-direction:column;gap:18px">
+    <div class="qcard">
+      <div class="score"><span class="big" id="r-pct"></span><span class="of" id="r-of"></span></div>
+      <div class="breakdown" id="r-bd"></div>
+      <div class="f-row">
+        <button class="btn primary" type="button" id="r-again">Новая попытка</button>
+        <button class="btn" type="button" id="r-redo">Пройти ошибки ещё раз</button>
+        <button class="btn" type="button" id="r-setup">К настройкам</button>
+      </div>
+    </div>
+    <h3 id="r-mh" style="font-size:20px"></h3>
+    <div class="mist" id="r-mist"></div>
+  </div>
+</div>
+</section>
+
+<!-- ============ OPEN QUESTIONS ============ -->
+<section class="view" id="view-open" hidden>
+<div class="panel">
+  <header>
+    <h2>Open questions</h2>
+    <p class="sub">Сначала ответь сам (вслух, на бумаге или в поле тренировки), потом открой образец и оцени себя: «знаю», «частично», «не знаю». Оценки сохраняются в этом браузере.</p>
+    <div class="oq-sum" id="oq-sum"></div>
+  </header>
+
+  <div class="filters">
+    <div class="f-row"><span class="f-lbl">Режим</span>
+      <div class="seg" role="group" aria-label="Режим">
+        <button type="button" data-omode="list" aria-pressed="true">Список</button>
+        <button type="button" data-omode="practice" aria-pressed="false">Тренировка</button>
+      </div>
+    </div>
+    <div class="f-row"><span class="f-lbl">Лекции</span><span class="f-row" id="oq-lecs"></span></div>
+    <div class="f-row"><span class="f-lbl">Показать</span>
+      <label class="chip"><input type="checkbox" id="oq-star"> только ★ вероятные</label>
+      <div class="seg" role="group" aria-label="Фильтр по оценке" id="oq-rate">
+        <button type="button" data-rf="all" aria-pressed="true">все</button>
+        <button type="button" data-rf="none" aria-pressed="false">без оценки</button>
+        <button type="button" data-rf="weak" aria-pressed="false">слабые</button>
+        <button type="button" data-rf="2" aria-pressed="false">знаю</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="oq-listmode">
+    <div class="f-row" style="justify-content:space-between;margin-bottom:12px">
+      <span class="sub" id="oq-count"></span>
+      <span class="f-row"><button class="linkbtn" type="button" id="oq-expand">Раскрыть все ответы</button>
+      <button class="linkbtn" type="button" id="oq-reset">Сбросить оценки</button></span>
+    </div>
+    <div class="oq-list" id="oq-list"></div>
+  </div>
+
+  <div id="oq-practice" hidden>
+    <div class="pcard" id="pr-setup">
+      <h3 style="font-size:19px">Тренировка по одному вопросу</h3>
+      <p class="sub">Берутся вопросы по фильтрам выше в случайном порядке. Напиши ответ в поле (черновик сохранится), нажми «Показать образец», сравни по списку «обязательно упомянуть» и оцени себя.</p>
+      <div class="f-row"><span class="f-lbl">Сколько</span>
+        <div class="seg" role="group" aria-label="Количество вопросов" id="pr-n">
+          <button type="button" data-n="5" aria-pressed="false">5</button>
+          <button type="button" data-n="10" aria-pressed="true">10</button>
+          <button type="button" data-n="20" aria-pressed="false">20</button>
+          <button type="button" data-n="0" aria-pressed="false">все</button>
+        </div>
+        <span class="sub" id="pr-pool"></span>
+      </div>
+      <div class="f-row"><button class="btn primary" type="button" id="pr-start">Начать тренировку →</button></div>
+    </div>
+
+    <div class="pcard" id="pr-run" hidden>
+      <div class="ptop"><span id="pr-tag"></span><span id="pr-pos"></span></div>
+      <div class="prog"><i id="pr-bar" style="width:0"></i></div>
+      <p class="pq" id="pr-q"></p>
+      <textarea id="pr-text" placeholder="Твой ответ: определение → как работает → пример / команда" aria-label="Твой ответ"></textarea>
+      <p class="hint">Черновик сохраняется автоматически.</p>
+      <div class="f-row"><button class="btn primary" type="button" id="pr-show">Показать образец</button><button class="btn" type="button" id="pr-skip">Пропустить</button></div>
+      <div id="pr-ans" hidden>
+        <div class="ans" id="pr-ans-body"></div>
+        <div class="rate" style="margin-top:14px"><span class="lbl">Как ответил(а)?</span>
+          <button class="rbtn" type="button" data-pr="2" data-r="2">Знаю</button>
+          <button class="rbtn" type="button" data-pr="1" data-r="1">Частично</button>
+          <button class="rbtn" type="button" data-pr="0" data-r="0">Не знаю</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pcard" id="pr-done" hidden>
+      <h3 style="font-size:19px">Тренировка закончена</h3>
+      <div class="done-score" id="pr-score"></div>
+      <div class="f-row"><button class="btn primary" type="button" id="pr-weak">Повторить слабые из этой сессии</button><button class="btn" type="button" id="pr-again">Новая тренировка</button><button class="btn" type="button" id="pr-tolist">К списку</button></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ============ DRILLS ============ -->
+<section class="view" id="view-drill" hidden>
+<div class="dr-wrap">
+  <header>
+    <h2>Задачи</h2>
+    <p class="sub">Числа и адреса каждый раз новые. Реши на бумаге, впиши ответ и нажми «Проверить» (или Enter). Hex можно писать в любом регистре, с <code>0x</code> или без. Решение показывает все шаги.</p>
+    <div class="dr-types" id="dr-types" role="group" aria-label="Тип задачи"></div>
+    <div class="dr-stats" id="dr-stats"></div>
+  </header>
+  <div class="dr-card">
+    <div class="dtop"><span id="dr-tag"></span><span id="dr-src"></span></div>
+    <div class="dr-task" id="dr-task"></div>
+    <div class="dr-in" id="dr-in"></div>
+    <div class="f-row"><button class="btn primary" type="button" id="dr-check">Проверить</button><button class="btn" type="button" id="dr-show">Показать решение</button><button class="btn" type="button" id="dr-next">Следующая →</button></div>
+    <p class="dr-fb" id="dr-fb" aria-live="polite"></p>
+    <div class="dr-sol" id="dr-sol" hidden></div>
+  </div>
+</div>
+</section>
+
+</main>
+
+<script src="data-quiz.js"></script>
+<script src="data-oq.js"></script>
+<script>
+const LECS = window.NET_LECS, QZ = window.NET_QUIZ, OQ = window.NET_OQ;
+const LEC = Object.fromEntries(LECS.map(l => [l.k, l]));
+const withIds = arr => { const seen = {}; arr.forEach(q => { seen[q.l] = (seen[q.l] || 0) + 1; q.id = q.l + ":" + (seen[q.l] - 1); }); };
+withIds(QZ); withIds(OQ);
+const QBY = Object.fromEntries(QZ.map(q => [q.id, q]));
+
+/* ---------- storage (per-viewer convenience) ---------- */
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem("net_"+k); return v==null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem("net_"+k, JSON.stringify(v)); }catch(e){} }
+};
+let RATE = store.get("rate", {});
+let DRAFT = store.get("draft", {});
+const setRate = (id, r) => { if(r == null) delete RATE[id]; else RATE[id] = r; store.set("rate", RATE); };
+
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const shuffle = a => { a = a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt = s => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>");   // `code` in quiz text
+const plural = (n, one, few, many) => { const a = n%10, b = n%100; return a===1 && b!==11 ? one : a>=2 && a<=4 && (b<12 || b>14) ? few : many; };
+const score = qs => qs.length ? Math.round(100 * qs.reduce((s, q) => s + (RATE[q.id]===2 ? 1 : RATE[q.id]===1 ? .5 : 0), 0) / qs.length) : 0;
+function armedReset(btn, label, action){
+  let armed = false;
+  btn.addEventListener("click", () => {
+    if(!armed){ armed = true; btn.textContent = "Точно? Нажми ещё раз"; setTimeout(()=>{ armed = false; btn.textContent = label; }, 3000); return; }
+    armed = false; btn.textContent = label; action();
+  });
+}
+
+/* sticky offsets follow the real height of the top bar (it wraps on narrow screens) */
+const setBarH = () => document.documentElement.style.setProperty("--bar-h", $(".bar").getBoundingClientRect().bottom + "px");
+window.addEventListener("resize", setBarH); setBarH();
+
+/* ---------- views ---------- */
+const VIEWS = ["home","notes","keys","quiz","drill","open"];
+function showView(v){
+  if(v==="home") renderHome();
+  if(v==="open") renderOpen();
+  if(v==="quiz" && !qrun) renderSetup();
+  if(v==="drill" && !cur) newTask();
+  VIEWS.forEach(n=>{
+    $("#view-"+n).hidden = n!==v;
+    $("#tab-"+n).setAttribute("aria-selected", n===v ? "true":"false");
+  });
+  store.set("view", v);
+  if(location.hash !== "#"+v){ try{ history.replaceState(null,"","#"+v); }catch(e){} }
+  window.scrollTo(0,0);
+}
+$$(".tab").forEach(b=>b.addEventListener("click",()=>showView(b.dataset.view)));
+$("#brand").addEventListener("click",()=>showView("home"));
+
+/* ---------- notes ---------- */
+$("#lec-index").innerHTML = `<span class="lbl">Лекции</span>` + LECS.map(l =>
+  `<button class="lec-btn" data-lec="${l.k}"><span class="n">${l.s}</span><span class="t">${esc(l.t)}</span></button>`).join("");
+function showLec(k){
+  if(!LEC[k]) k = LECS[0].k;
+  $$("article.lec").forEach(a=>a.hidden = a.dataset.lec!==k);
+  $$(".lec-btn").forEach(b=>b.setAttribute("aria-current", b.dataset.lec===k ? "true":"false"));
+  store.set("lec", k);
+}
+$$(".lec-btn").forEach(b=>b.addEventListener("click",()=>{ showLec(b.dataset.lec); window.scrollTo(0,0); }));
+$$("[data-jump]").forEach(a=>a.addEventListener("click",e=>{
+  e.preventDefault(); const t = document.getElementById(a.dataset.jump); if(t) t.scrollIntoView({behavior:"smooth", block:"start"});
+}));
+
+/* ---------- quiz ---------- */
+// best: lecture → best % (attempts with ≥ 5 questions of that lecture); mist: ids answered wrong and not yet fixed
+const QF = Object.assign({ lecs: LECS.map(l=>l.k), n: 25 }, store.get("qf", {}));
+QF.lecs = QF.lecs.filter(k => LEC[k]);
+const qcounts = {}; QZ.forEach(q => qcounts[q.l] = (qcounts[q.l]||0) + 1);
+$("#qz-lecs").innerHTML = LECS.map(l =>
+  `<label class="chip" title="${esc(l.t)}"><input type="checkbox" value="${l.k}"> ${l.s} <span class="c">${qcounts[l.k]||0}</span></label>`).join("")
+  + `<button class="linkbtn" type="button" id="qz-all">все / ни одной</button>`;
+$("#qz-lecs").addEventListener("change", () => { QF.lecs = $$("#qz-lecs input:checked").map(i=>i.value); store.set("qf", QF); renderSetup(); });
+$("#qz-all").addEventListener("click", () => { QF.lecs = QF.lecs.length===LECS.length ? [] : LECS.map(l=>l.k); store.set("qf", QF); renderSetup(); });
+$("#qz-n").addEventListener("click", e => { const b = e.target.closest("[data-n]"); if(!b) return; QF.n = +b.dataset.n; store.set("qf", QF); renderSetup(); });
+const correctSet = q => Array.isArray(q.a) ? q.a : [q.a == null ? 0 : q.a];
+const isMulti = q => Array.isArray(q.a);
+const mistIds = () => store.get("mist", []).filter(id => QBY[id]);
+
+function renderSetup(){
+  $$("#qz-lecs input").forEach(i => i.checked = QF.lecs.includes(i.value));
+  $$("#qz-n button").forEach(b => b.setAttribute("aria-pressed", +b.dataset.n===QF.n ? "true":"false"));
+  const n = QZ.filter(q => QF.lecs.includes(q.l)).length;
+  $("#qz-pool").textContent = `в выбранных лекциях: ${n} ${plural(n,"вопрос","вопроса","вопросов")}`;
+  $("#qz-start").disabled = !n;
+  const best = store.get("best", {}), last = store.get("last", null), mist = mistIds();
+  const parts = [];
+  if(last) parts.push(`Последняя попытка: <b>${last.c}/${last.n}</b> (${Math.round(100*last.c/last.n)}%)`);
+  const bl = LECS.filter(l => best[l.k]!=null).map(l => `${l.s} <b>${best[l.k]}%</b>`);
+  if(bl.length) parts.push("Лучший результат по лекциям: " + bl.join(" · "));
+  parts.push(mist.length ? `Ошибок для повтора: <b>${mist.length}</b>` : "Ошибок для повтора пока нет.");
+  $("#qz-hist").innerHTML = parts.map(p => `<span>${p}</span>`).join("");
+  $("#qz-mist").disabled = !mist.length;
+  $("#quiz-setup").hidden = false; $("#quiz-run").hidden = true; $("#quiz-done").hidden = true;
+}
+
+let qrun = null;
+function startQuiz(pool){
+  if(!pool.length) return;
+  qrun = { qs: pool.map(q => ({ q, order: shuffle(q.o.map((_, i) => i)) })), i: 0, picks: [], correct: 0, sel: new Set() };
+  showView("quiz");
+  $("#quiz-setup").hidden = true; $("#quiz-done").hidden = true; $("#quiz-run").hidden = false;
+  renderQ();
+}
+$("#qz-start").addEventListener("click", () => { const p = shuffle(QZ.filter(q => QF.lecs.includes(q.l))); startQuiz(QF.n ? p.slice(0, QF.n) : p); });
+$("#qz-mist").addEventListener("click", () => { const ids = mistIds(); startQuiz(shuffle(ids.map(id => QBY[id]))); });
+
+function renderQ(){
+  const it = qrun.qs[qrun.i], q = it.q, n = qrun.qs.length;
+  qrun.sel = new Set();
+  $("#q-pos").textContent = `Вопрос ${qrun.i+1} из ${n}`;
+  $("#q-lec").textContent = LEC[q.l].s + " · " + LEC[q.l].t;
+  $("#q-score").textContent = `Верно: ${qrun.correct}`;
+  $("#q-bar").style.width = (100*qrun.i/n) + "%";
+  $("#q-text").innerHTML = fmt(q.q);
+  $("#q-opts").innerHTML = it.order.map((oi, k) =>
+    `<button class="opt" type="button" data-oi="${oi}"><span class="${isMulti(q) ? "box" : "k"}">${isMulti(q) ? "" : k+1}</span><span>${fmt(q.o[oi])}</span></button>`).join("");
+  $("#q-exp").hidden = true;
+  $("#q-check").hidden = !isMulti(q); $("#q-check").disabled = true;
+  $("#q-next").disabled = true;
+  $("#q-next").textContent = qrun.i===n-1 ? "Результаты" : "Дальше";
+}
+$("#q-opts").addEventListener("click", e => {
+  const b = e.target.closest(".opt"); if(!b || b.disabled) return;
+  const q = qrun.qs[qrun.i].q, oi = +b.dataset.oi;
+  if(!isMulti(q)) return answer([oi]);
+  if(qrun.sel.has(oi)) qrun.sel.delete(oi); else if(qrun.sel.size < q.a.length) qrun.sel.add(oi);
+  $$("#q-opts .opt").forEach(x => { const on = qrun.sel.has(+x.dataset.oi); x.classList.toggle("sel", on); x.querySelector(".box").textContent = on ? "✓" : ""; });
+  $("#q-check").disabled = qrun.sel.size !== q.a.length;
+});
+$("#q-check").addEventListener("click", () => { if(qrun && qrun.picks[qrun.i]==null) answer([...qrun.sel]); });
+function answer(picked){
+  const q = qrun.qs[qrun.i].q, right = correctSet(q);
+  if(qrun.picks[qrun.i]!=null) return;
+  const ok = picked.length===right.length && picked.every(x => right.includes(x));
+  qrun.picks[qrun.i] = picked; if(ok) qrun.correct++;
+  $$("#q-opts .opt").forEach(b => {
+    const v = +b.dataset.oi; b.disabled = true; b.classList.remove("sel");
+    if(right.includes(v)) b.classList.add(picked.includes(v) ? "right" : (isMulti(q) ? "miss" : "right"));
+    else if(picked.includes(v)) b.classList.add("wrong");
+  });
+  const ex = $("#q-exp");
+  ex.className = "explain " + (ok ? "ok" : "no");
+  ex.innerHTML = `<span class="verdict">${ok ? "Верно" : "Неверно. Правильно: " + right.map(i => fmt(q.o[i])).join(" + ")}</span><span>${fmt(q.e)}</span>`;
+  ex.hidden = false;
+  $("#q-check").hidden = true;
+  $("#q-score").textContent = `Верно: ${qrun.correct}`;
+  $("#q-next").disabled = false; $("#q-next").focus();
+}
+$("#q-next").addEventListener("click", () => { if(qrun.i < qrun.qs.length-1){ qrun.i++; renderQ(); window.scrollTo(0,0); } else finishQuiz(); });
+$("#q-quit").addEventListener("click", () => { if(qrun.picks.some(p => p!=null)) finishQuiz(true); else { qrun = null; renderSetup(); } });
+const pickOk = (q, p) => { const r = correctSet(q); return p.length===r.length && p.every(x => r.includes(x)); };
+function finishQuiz(partial){
+  const done = qrun.qs.map((it, i) => ({ q: it.q, p: qrun.picks[i] })).filter(x => x.p!=null);
+  const n = done.length, c = done.filter(x => pickOk(x.q, x.p)).length;
+  $("#quiz-run").hidden = true; $("#quiz-done").hidden = false;
+  $("#r-pct").textContent = Math.round(100*c/n) + "%";
+  $("#r-of").textContent = `${c} из ${n} верно` + (partial ? " (тест завершён досрочно)" : "");
+  const by = {}; done.forEach(x => { const l = x.q.l; by[l] = by[l] || { n: 0, c: 0 }; by[l].n++; if(pickOk(x.q, x.p)) by[l].c++; });
+  const best = store.get("best", {});
+  $("#r-bd").innerHTML = LECS.filter(l => by[l.k]).map(l => {
+    const b = by[l.k], p = Math.round(100*b.c/b.n);
+    if(b.n >= 5) best[l.k] = Math.max(best[l.k] || 0, p);
+    return `<div class="bd"><span>${l.s}</span><span class="bar2"><i style="width:${p}%"></i></span><span class="v">${b.c}/${b.n}</span></div>`;
+  }).join("");
+  store.set("best", best); store.set("last", { c, n });
+  const mist = new Set(store.get("mist", []));
+  done.forEach(x => { if(pickOk(x.q, x.p)) mist.delete(x.q.id); else mist.add(x.q.id); });
+  store.set("mist", [...mist]);
+  const wrong = done.filter(x => !pickOk(x.q, x.p));
+  qrun.wrong = wrong.map(x => x.q);
+  $("#r-redo").disabled = !wrong.length;
+  $("#r-mh").textContent = wrong.length ? `Ошибки (${wrong.length})` : "Ошибок нет";
+  $("#r-mist").innerHTML = wrong.map(x => `<div><span class="hint">${LEC[x.q.l].s}</span><span class="q">${fmt(x.q.q)}</span><span class="y">Твой ответ: ${x.p.map(i => fmt(x.q.o[i])).join(" + ")}</span><span class="a">Правильно: ${correctSet(x.q).map(i => fmt(x.q.o[i])).join(" + ")}</span><span class="e">${fmt(x.q.e)}</span></div>`).join("");
+  window.scrollTo(0,0);
+}
+$("#r-setup").addEventListener("click", () => { qrun = null; renderSetup(); });
+$("#r-again").addEventListener("click", () => { qrun = null; renderSetup(); $("#qz-start").click(); });
+$("#r-redo").addEventListener("click", () => { if(qrun && qrun.wrong && qrun.wrong.length) startQuiz(shuffle(qrun.wrong)); });
+function quizLec(k){ QF.lecs = [k]; store.set("qf", QF); startQuiz(shuffle(QZ.filter(q => q.l===k))); }
+$$("[data-quiz-lec]").forEach(b => b.addEventListener("click", () => quizLec(b.dataset.quizLec)));
+
+/* ---------- open questions: filters ---------- */
+const F = Object.assign({ lecs: LECS.map(l=>l.k), star: false, rf: "all", mode: "list", n: 10 }, store.get("filters", {}));
+F.lecs = F.lecs.filter(k => LEC[k]);
+const saveF = () => store.set("filters", F);
+const counts = {}; OQ.forEach(q => counts[q.l] = (counts[q.l]||0) + 1);
+$("#oq-lecs").innerHTML = LECS.map(l =>
+  `<label class="chip" title="${esc(l.t)}"><input type="checkbox" value="${l.k}"> ${l.s} <span class="c">${counts[l.k]||0}</span></label>`).join("")
+  + `<button class="linkbtn" type="button" id="oq-all">все / ни одной</button>`;
+function pool(){
+  return OQ.filter(q => F.lecs.includes(q.l) && (!F.star || q.p) && (
+    F.rf==="all" ? true : F.rf==="none" ? RATE[q.id]==null : F.rf==="weak" ? RATE[q.id]===0 || RATE[q.id]===1 : RATE[q.id]===+F.rf));
+}
+function paintFilters(){
+  $$("#oq-lecs input").forEach(i => i.checked = F.lecs.includes(i.value));
+  $("#oq-star").checked = F.star;
+  $$("#oq-rate button").forEach(b => b.setAttribute("aria-pressed", b.dataset.rf===F.rf ? "true":"false"));
+  $$(".seg [data-omode]").forEach(b => b.setAttribute("aria-pressed", b.dataset.omode===F.mode ? "true":"false"));
+  $$("#pr-n button").forEach(b => b.setAttribute("aria-pressed", +b.dataset.n===F.n ? "true":"false"));
+}
+$("#oq-lecs").addEventListener("change", () => { F.lecs = $$("#oq-lecs input:checked").map(i=>i.value); saveF(); renderOpen(); });
+$("#oq-all").addEventListener("click", () => { F.lecs = F.lecs.length===LECS.length ? [] : LECS.map(l=>l.k); saveF(); renderOpen(); });
+$("#oq-star").addEventListener("change", e => { F.star = e.target.checked; saveF(); renderOpen(); });
+$("#oq-rate").addEventListener("click", e => { const b = e.target.closest("[data-rf]"); if(!b) return; F.rf = b.dataset.rf; saveF(); renderOpen(); });
+$$(".seg [data-omode]").forEach(b => b.addEventListener("click", () => { F.mode = b.dataset.omode; saveF(); renderOpen(); }));
+$("#pr-n").addEventListener("click", e => { const b = e.target.closest("[data-n]"); if(!b) return; F.n = +b.dataset.n; saveF(); paintFilters(); paintPool(); });
+
+/* ---------- open questions: rendering ---------- */
+const RLBL = { 2: "знаю", 1: "частично", 0: "не знаю" };
+function ansHTML(q){
+  return `<p class="oq-ru"><b>Суть:</b> ${esc(q.ru)}</p>
+    <div>${q.a}</div>
+    <div class="kw"><span class="lbl">Обязательно упомянуть</span>${q.k.map(k=>`<span class="k">${esc(k)}</span>`).join("")}</div>`;
+}
+function rateHTML(q){
+  return `<div class="rate"><span class="lbl">Моя оценка:</span>${[2,1,0].map(r =>
+    `<button class="rbtn" type="button" data-r="${r}" data-qid="${q.id}" aria-pressed="${RATE[q.id]===r}">${RLBL[r][0].toUpperCase()+RLBL[r].slice(1)}</button>`).join("")}</div>`;
+}
+function renderSum(){
+  const rated = OQ.filter(q => RATE[q.id]!=null);
+  const n2 = rated.filter(q=>RATE[q.id]===2).length, n1 = rated.filter(q=>RATE[q.id]===1).length, n0 = rated.filter(q=>RATE[q.id]===0).length;
+  $("#oq-sum").innerHTML = `<span>Всего <b>${OQ.length}</b></span><span>оценено <b>${rated.length}</b></span>
+    <span style="color:var(--ok)">знаю <b style="color:inherit">${n2}</b></span><span style="color:var(--mid)">частично <b style="color:inherit">${n1}</b></span>
+    <span style="color:var(--bad)">не знаю <b style="color:inherit">${n0}</b></span><span>готовность <b>${score(OQ)}%</b></span>`;
+}
+let expandAll = false;
+function renderList(){
+  const qs = pool();
+  $("#oq-count").textContent = qs.length + " " + plural(qs.length, "вопрос", "вопроса", "вопросов");
+  $("#oq-expand").textContent = expandAll ? "Свернуть все ответы" : "Раскрыть все ответы";
+  $("#oq-list").innerHTML = qs.length ? qs.map(q => `
+    <article class="oq" data-qid="${q.id}" ${RATE[q.id]!=null ? `data-rate="${RATE[q.id]}"` : ""}>
+      <div class="oq-top"><span class="tagl">${LEC[q.l].s}</span><span>${esc(LEC[q.l].t)}</span>${q.p ? `<span class="star" title="Вероятная тема">★ вероятный</span>` : ""}</div>
+      <p class="oq-q">${esc(q.q)}</p>
+      <details ${expandAll ? "open" : ""}><summary>Показать образец ответа</summary><div class="ans">${ansHTML(q)}</div></details>
+      ${rateHTML(q)}
+    </article>`).join("")
+    : `<div class="empty">По этим фильтрам вопросов нет. Выбери другие лекции или сбрось фильтр оценки.</div>`;
+}
+$("#oq-list").addEventListener("click", e => {
+  const b = e.target.closest(".rbtn[data-qid]"); if(!b) return;
+  const id = b.dataset.qid, r = +b.dataset.r;
+  setRate(id, RATE[id]===r ? null : r);
+  const card = b.closest(".oq");
+  if(RATE[id]==null) card.removeAttribute("data-rate"); else card.dataset.rate = RATE[id];
+  card.querySelectorAll(".rbtn").forEach(x => x.setAttribute("aria-pressed", RATE[id]===+x.dataset.r ? "true":"false"));
+  renderSum();
+});
+$("#oq-expand").addEventListener("click", () => { expandAll = !expandAll; $$("#oq-list details").forEach(d => d.open = expandAll); $("#oq-expand").textContent = expandAll ? "Свернуть все ответы" : "Раскрыть все ответы"; });
+armedReset($("#oq-reset"), "Сбросить оценки", () => { RATE = {}; store.set("rate", RATE); renderOpen(); });
+function renderOpen(){
+  paintFilters(); renderSum();
+  const practice = F.mode==="practice";
+  $("#oq-listmode").hidden = practice;
+  $("#oq-practice").hidden = !practice;
+  if(practice){ if(!run) showPr("setup"); paintPool(); }
+  else renderList();
+}
+
+/* ---------- open questions: practice ---------- */
+let run = null;
+function paintPool(){ const n = pool().length; $("#pr-pool").textContent = `по фильтрам: ${n} ${plural(n,"вопрос","вопроса","вопросов")}`; $("#pr-start").disabled = !n; }
+function showPr(s){ ["setup","run","done"].forEach(x => $("#pr-"+x).hidden = x!==s); }
+function startPractice(qs){
+  if(!qs.length) return;
+  run = { qs, i: 0, res: {} };
+  F.mode = "practice"; saveF();
+  showPr("run"); renderPr();
+}
+function renderPr(){
+  const q = run.qs[run.i];
+  $("#pr-tag").innerHTML = `${LEC[q.l].s} · ${esc(LEC[q.l].t)}${q.p ? ` · <span class="star">★</span>` : ""}`;
+  $("#pr-pos").textContent = `${run.i+1} / ${run.qs.length}`;
+  $("#pr-bar").style.width = (100*run.i/run.qs.length) + "%";
+  $("#pr-q").textContent = q.q;
+  $("#pr-text").value = DRAFT[q.id] || "";
+  $("#pr-ans").hidden = true;
+  $("#pr-show").hidden = false;
+  $("#pr-ans-body").innerHTML = ansHTML(q);
+  $$("#pr-ans .rbtn").forEach(b => b.setAttribute("aria-pressed", RATE[q.id]===+b.dataset.pr ? "true":"false"));
+}
+let draftT = null;
+$("#pr-text").addEventListener("input", e => {
+  if(!run) return; const id = run.qs[run.i].id, v = e.target.value;
+  clearTimeout(draftT); draftT = setTimeout(() => { if(v.trim()) DRAFT[id] = v; else delete DRAFT[id]; store.set("draft", DRAFT); }, 300);
+});
+$("#pr-show").addEventListener("click", () => { $("#pr-ans").hidden = false; $("#pr-show").hidden = true; $("#pr-ans").scrollIntoView({behavior:"smooth", block:"nearest"}); });
+function nextPr(){
+  run.i++;
+  if(run.i >= run.qs.length) return finishPr();
+  renderPr(); window.scrollTo(0, $("#view-open").offsetTop);
+}
+$("#pr-skip").addEventListener("click", nextPr);
+$$("#pr-ans [data-pr]").forEach(b => b.addEventListener("click", () => {
+  const q = run.qs[run.i], r = +b.dataset.pr;
+  setRate(q.id, r); run.res[q.id] = r; renderSum(); nextPr();
+}));
+function finishPr(){
+  const v = Object.values(run.res);
+  const c = r => v.filter(x=>x===r).length;
+  $("#pr-score").innerHTML = `<div class="g"><b>${c(2)}</b><span>знаю</span></div><div class="m"><b>${c(1)}</b><span>частично</span></div><div class="x"><b>${c(0)}</b><span>не знаю</span></div><div><b>${run.qs.length - v.length}</b><span>пропущено</span></div>`;
+  $("#pr-weak").disabled = !run.qs.some(q => run.res[q.id]===0 || run.res[q.id]===1);
+  showPr("done"); renderSum();
+}
+$("#pr-start").addEventListener("click", () => { const p = shuffle(pool()); startPractice(F.n ? p.slice(0, F.n) : p); });
+$("#pr-weak").addEventListener("click", () => startPractice(shuffle(run.qs.filter(q => run.res[q.id]===0 || run.res[q.id]===1))));
+$("#pr-again").addEventListener("click", () => { run = null; showPr("setup"); paintPool(); });
+$("#pr-tolist").addEventListener("click", () => { run = null; F.mode = "list"; saveF(); renderOpen(); });
+
+/* ---------- drills: helpers ---------- */
+const ri = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const hex2 = n => n.toString(16).toUpperCase().padStart(2, "0");
+const bin8 = n => n.toString(2).padStart(8, "0");
+const bin8s = n => bin8(n).slice(0, 4) + " " + bin8(n).slice(4);
+const fx = (x, d) => String(+(+x).toFixed(d)).replace(".", ",");
+const table = (head, rows) => `<div class="tbl"><table><thead><tr>${head.map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+const num = (id, label, ans, tol) => ({ id, label, kind: "num", ans, tol: tol || 0 });
+const sel = (id, label, options, ans) => ({ id, label, kind: "sel", options, ans });
+const txt = (id, label, kind, ans, wide) => ({ id, label, kind, ans, wide });   // kind: hex | bin | ports | ip
+const OUIS = [["00-60-2F", "Cisco"], ["00-1B-63", "Apple"], ["00-50-56", "VMware"], ["3C-D9-2B", "HP"], ["00-1A-11", "Google"], ["F4-8E-38", "Dell"], ["00-0C-29", "VMware"], ["B8-27-EB", "Raspberry Pi"]];
+const randMac = oui => oui + "-" + [0,0,0].map(() => hex2(ri(0, 255))).join("-");
+const MODES = [
+  { k: "user", n: "User EXEC", p: "Switch>" }, { k: "priv", n: "Privileged EXEC", p: "Switch#" },
+  { k: "glob", n: "Global configuration", p: "Switch(config)#" }, { k: "line", n: "Line configuration", p: "Switch(config-line)#" },
+  { k: "if", n: "Interface configuration", p: "Switch(config-if)#" }
+];
+
+/* ---------- drills: generators ----------
+   each returns { task: HTML, fields: [...], sol: HTML } */
+const GEN = {
+  hex: { t: "Bin / dec / hex", src: "L4 · MAC и hex", f(){
+    const n = ri(0, 255), from = pick(["dec", "hex", "bin"]);
+    const shown = from === "dec" ? `<b>${n}</b> (decimal)` : from === "hex" ? `<b>0x${hex2(n)}</b> (hex)` : `<b>${bin8s(n)}</b> (binary)`;
+    const fields = [];
+    if(from !== "dec") fields.push(num("d", "Decimal", n));
+    if(from !== "hex") fields.push(txt("h", "Hex (2 цифры)", "hex", n));
+    if(from !== "bin") fields.push(txt("b", "Binary (8 бит)", "bin", n, true));
+    const hi = n >> 4, lo = n & 15;
+    return {
+      task: `<p>Переведи ${shown} в остальные системы счисления. Один байт = 8 бит = 2 hex-цифры.</p>`,
+      fields,
+      sol: `<ol>${from === "dec" ? `<li><code>${n} / 16 = ${hi}</code> остаток <code>${lo}</code> → hex <code>${hex2(hi).slice(1)}${hex2(lo).slice(1)}</code> = <b>0x${hex2(n)}</b></li>`
+        : from === "hex" ? `<li><code>0x${hex2(n)} = ${hi}·16 + ${lo} = ${hi * 16} + ${lo} = <b>${n}</b></code></li>`
+        : `<li>Разбей на ниблы: <code>${bin8(n).slice(0, 4)}</code> = ${hi}, <code>${bin8(n).slice(4)}</code> = ${lo} → <b>0x${hex2(n)}</b></li><li><code>${hi}·16 + ${lo} = <b>${n}</b></code></li>`}
+        ${from !== "bin" ? `<li>Каждая hex-цифра = 4 бита: <code>${hex2(n)[0]} = ${bin8(n).slice(0, 4)}</code>, <code>${hex2(n)[1]} = ${bin8(n).slice(4)}</code> → <b>${bin8s(n)}</b></li>` : ""}
+        <li>Проверка весами: ${[128,64,32,16,8,4,2,1].filter(w => n & w).join(" + ") || "0"} = ${n}</li></ol>`
+    };
+  } },
+  mac: { t: "Тип MAC и OUI", src: "L4 · MAC addresses", f(){
+    const kind = pick(["uni", "uni", "uni", "bc", "m4", "m6"]);
+    let mac, oui = null, vendor = "";
+    if(kind === "uni"){ const o = pick(OUIS); oui = o[0]; vendor = o[1]; mac = randMac(oui); }
+    else if(kind === "bc") mac = "FF-FF-FF-FF-FF-FF";
+    else if(kind === "m4") mac = "01-00-5E-" + hex2(ri(0, 127)) + "-" + hex2(ri(0, 255)) + "-" + hex2(ri(0, 255));
+    else mac = "33-33-" + [0,0,0,0].map(() => hex2(ri(0, 255))).join("-");
+    const sty = pick(["-", ":", "."]);
+    const shown = sty === "-" ? mac : sty === ":" ? mac.replace(/-/g, ":") : (h => h.slice(0, 4) + "." + h.slice(4, 8) + "." + h.slice(8))(mac.replace(/-/g, "").toLowerCase());
+    const TYPES = ["Unicast", "Broadcast", "IPv4 multicast", "IPv6 multicast"], ans = { uni: 0, bc: 1, m4: 2, m6: 3 }[kind];
+    const fields = [sel("t", "Тип адреса", TYPES, TYPES[ans]), sel("src", "Может быть source MAC?", ["да", "нет"], kind === "uni" ? "да" : "нет")];
+    if(kind === "uni") fields.push(txt("o", "OUI (6 hex)", "hex", parseInt(oui.replace(/-/g, ""), 16), true));
+    fields.push(sel("sw", "Коммутатор без snooping", ["по MAC-таблице", "всегда flood"], kind === "uni" ? "по MAC-таблице" : "всегда flood"));
+    return {
+      task: `<p>Destination MAC кадра: <code style="font-size:1.05em">${shown}</code>. Определи тип адреса${kind === "uni" ? " и OUI" : ""}.</p>`,
+      fields,
+      sol: `<ol><li>Запись в формате с дефисами: <code>${mac}</code> (48 бит, 12 hex).</li>
+        <li>${kind === "bc" ? "Все биты единицы (FF…FF) → <b>broadcast</b>: flood во все порты кроме входящего, роутер не пересылает." : kind === "m4" ? "Начинается с <code>01-00-5E</code> → <b>IPv4 multicast</b>." : kind === "m6" ? "Начинается с <code>33-33</code> → <b>IPv6 multicast</b>." : `Не FF…FF, не 01-00-5E и не 33-33 → <b>unicast</b>. OUI = первые 24 бита = <b>${oui}</b> (${vendor}), остальные 3 байта назначил производитель.`}</li>
+        <li>Source MAC всегда unicast → ${kind === "uni" ? "<b>да</b>, может быть источником." : "<b>нет</b>, бывает только адресом назначения."}</li>
+        <li>${kind === "uni" ? "Unicast коммутатор ищет в MAC-таблице (неизвестный → flood)." : "Broadcast и multicast коммутатор без multicast snooping рассылает во все порты, кроме входящего."}</li></ol>`
+    };
+  } },
+  switch: { t: "Switch It! MAC-таблица", src: "L4 · активность Switch It!", f(){
+    const NP = 8, hosts = ["0A","0B","0C","0D","0E","0F","1A","1B"];
+    const port = shuffle([1,2,3,4,5,6,7,8]);                    // host i sits on port[i]
+    const known = hosts.map(() => Math.random() < .55);
+    const s = ri(0, 7); let d; do { d = ri(0, 7); } while(d === s);
+    const bc = Math.random() < .2;
+    const rows = hosts.map((h, i) => known[i] ? [`Fa${port[i]}`, h] : null).filter(Boolean).sort((a, b) => +a[0].slice(2) - +b[0].slice(2));
+    const inP = port[s], srcKnown = known[s];
+    let out;
+    if(bc || !known[d]) out = [1,2,3,4,5,6,7,8].filter(p => p !== inP); else out = [port[d]];
+    const dst = bc ? "FF-FF-FF-FF-FF-FF" : hosts[d];
+    return {
+      task: `<p>Коммутатор на ${NP} портов. Хосты подключены так: ${hosts.map((h, i) => `${h} → Fa${port[i]}`).join(", ")}.</p>
+        <p>Текущая MAC address table:</p>${rows.length ? table(["Port", "MAC"], rows) : "<p><i>таблица пуста</i></p>"}
+        <p>На порт <b>Fa${inP}</b> приходит кадр: source MAC <b>${hosts[s]}</b>, destination MAC <b>${dst}</b>.</p>`,
+      fields: [sel("l", "Что сделает с source", ["добавит запись", "обновит таймер записи"], srcKnown ? "обновит таймер записи" : "добавит запись"),
+        txt("p", "Порты выхода, например 2, 5", "ports", out, true)],
+      sol: `<ol><li><b>Learn</b> по source: ${hosts[s]} ${srcKnown ? `уже есть на Fa${inP} → <b>обновляет таймер</b> (5 минут)` : `нет в таблице → <b>добавляет</b> ${hosts[s]} → Fa${inP}`}.</li>
+        <li><b>Forward</b> по destination: ${bc ? "broadcast FF-FF-FF-FF-FF-FF → flood" : known[d] ? `${hosts[d]} есть в таблице на Fa${port[d]} → только туда (filtering)` : `${hosts[d]} нет в таблице → unknown unicast → flood`}.</li>
+        <li>Порты: <b>${out.map(p => "Fa" + p).join(", ")}</b>${out.length > 1 ? ` (все, кроме входящего Fa${inP})` : ""}.</li></ol>`
+    };
+  } },
+  bw: { t: "Bandwidth и goodput", src: "L3 · bandwidth", f(){
+    const v = pick(["conv", "time", "good"]);
+    if(v === "conv"){
+      const U = [["bps", 1], ["Kbps", 1e3], ["Mbps", 1e6], ["Gbps", 1e9], ["Tbps", 1e12]];
+      let a, b; do { a = ri(1, 4); b = ri(0, 4); } while(a === b || Math.abs(a - b) > 2);
+      const val = pick([1, 2, 2.5, 4, 10, 40, 100, 0.5, 25]), res = val * U[a][1] / U[b][1];
+      return { task: `<p>Переведи <b>${fx(val, 3)} ${U[a][0]}</b> в <b>${U[b][0]}</b>.</p>`, fields: [num("r", U[b][0], res, res * 1e-9)],
+        sol: `<ol><li>${U[a][0]} = 10^${Math.log10(U[a][1])} bps, ${U[b][0]} = 10^${Math.log10(U[b][1])} bps.</li><li><code>${fx(val, 3)} · 10^${Math.log10(U[a][1]) - Math.log10(U[b][1])} = <b>${fx(res, 6)} ${U[b][0]}</b></code></li></ol>` };
+    }
+    if(v === "time"){
+      const MB = pick([10, 25, 50, 100, 250, 500, 1000]), sp = pick([10, 20, 50, 100, 200, 1000]), t = MB * 8 / sp;
+      return { task: `<p>Файл <b>${MB} MB</b> (мегабайт, 1 MB = 10⁶ байт) передаётся по каналу с throughput <b>${sp} Mbps</b>. Сколько секунд займёт передача (без overhead)?</p>`, fields: [num("t", "Секунд", t, .011)],
+        sol: `<ol><li>Байты в биты: <code>${MB} MB · 8 = ${MB * 8} Mb</code></li><li><code>t = ${MB * 8} Mb / ${sp} Mbps = <b>${fx(t, 2)} с</b></code></li></ol>` };
+    }
+    const thr = pick([80, 90, 95, 100, 200, 500, 940]), ov = pick([5, 8, 10, 12, 15, 20]), g = thr * (1 - ov / 100);
+    return { task: `<p>Throughput канала <b>${thr} Mbps</b>, overhead (заголовки, ACK, повторы) составляет <b>${ov}%</b> трафика. Найди goodput.</p>`, fields: [num("g", "Goodput, Mbps", g, .011)],
+      sol: `<ol><li><code>goodput = throughput − overhead</code></li><li><code>overhead = ${thr} · ${ov / 100} = ${fx(thr * ov / 100, 2)} Mbps</code></li><li><code>goodput = ${thr} − ${fx(thr * ov / 100, 2)} = <b>${fx(g, 2)} Mbps</b></code></li></ol>` };
+  } },
+  frame: { t: "Размер кадра Ethernet", src: "L4 · Ethernet frame", f(){
+    const V = ["runt — отбросить", "нормальный", "jumbo / baby giant"];
+    if(Math.random() < .5){
+      const data = pick([ri(10, 45), ri(46, 1500), ri(46, 1500), ri(1501, 9000)]);
+      const padded = Math.max(46, data), size = 18 + padded;
+      return { task: `<p>Пакет IPv4 размером <b>${data} байт</b> инкапсулируется в кадр Ethernet II. Какой будет размер кадра (без preamble и SFD) и как он классифицируется?</p>`,
+        fields: [num("s", "Размер кадра, байт", size), sel("v", "Кадр", V, size > 1518 ? V[2] : V[1])],
+        sol: `<ol><li>Заголовок и trailer: dst MAC 6 + src MAC 6 + Type 2 + FCS 4 = <b>18 байт</b>.</li>
+          ${data < 46 ? `<li>Данных меньше 46 байт → дополняются (padding) до 46.</li>` : ""}
+          <li><code>${padded} + 18 = <b>${size}</b> байт</code></li>
+          <li>${size > 1518 ? "Больше 1518 (данных больше 1500) → <b>jumbo / baby giant</b>." : "В диапазоне 64–1518 → <b>нормальный</b>."}</li></ol>` };
+    }
+    const size = pick([ri(20, 63), ri(64, 1518), ri(64, 1518), ri(1519, 9018)]), v = size < 64 ? 0 : size <= 1518 ? 1 : 2;
+    return { task: `<p>Коммутатор получил кадр Ethernet длиной <b>${size} байт</b> (без preamble). Как он классифицируется?</p>`,
+      fields: [sel("v", "Кадр", V, V[v]), num("d", "Сколько байт данных (size − 18)", size - 18)],
+      sol: `<ol><li>Допустимый размер: <b>64–1518</b> байт.</li><li>${v === 0 ? `${size} &lt; 64 → <b>collision fragment / runt</b>, отбрасывается автоматически.` : v === 1 ? `64 ≤ ${size} ≤ 1518 → <b>нормальный</b> кадр.` : `${size} &gt; 1518 → <b>jumbo / baby giant</b>: стандартное устройство отбросит, многие GigE поддерживают.`}</li>
+        <li>Данные: <code>${size} − 18 = <b>${size - 18}</b></code> байт${v === 2 ? " (> 1500)" : ""}.</li></ol>` };
+  } },
+  ios: { t: "Режимы IOS", src: "L1 · IOS navigation", f(){
+    const v = pick(["prompt", "move", "move", "task"]);
+    if(v === "prompt"){
+      const m = pick(MODES), host = pick(["Switch", "R1", "S1", "Sw-Floor-1"]), pr = m.p.replace("Switch", host);
+      return { task: `<p>В каком режиме находится устройство с prompt <code>${esc(pr)}</code>?</p>`, fields: [sel("m", "Режим", MODES.map(x => x.n), m.n)],
+        sol: `<ol><li><code>&gt;</code> user EXEC, <code>#</code> privileged EXEC, <code>(config)#</code> global, <code>(config-line)#</code> line, <code>(config-if)#</code> interface.</li><li>Ответ: <b>${m.n}</b>.</li></ol>` };
+    }
+    if(v === "move"){
+      const MV = [
+        ["user", "priv", "enable"], ["priv", "glob", "configure terminal"], ["glob", "line", "line console 0"], ["glob", "if", "interface g0/0/0"],
+        ["line", "glob", "exit"], ["if", "glob", "exit"], ["line", "priv", "end"], ["if", "priv", "end"], ["glob", "priv", "exit"], ["priv", "user", "disable"], ["line", "if", "interface g0/0/0"]
+      ];
+      const [a, b, cmd] = pick(MV), A = MODES.find(x => x.k === a), B = MODES.find(x => x.k === b);
+      const OPTS = ["enable", "disable", "configure terminal", "exit", "end", "line console 0", "interface g0/0/0"];
+      return { task: `<p>Ты в режиме <code>${esc(A.p)}</code> (${A.n}). Одной командой перейди в <code>${esc(B.p)}</code> (${B.n}).</p>`, fields: [sel("c", "Команда", OPTS, cmd)],
+        sol: `<ol><li><b>${cmd}</b>${cmd === "end" ? " — из любого режима конфигурации сразу в privileged EXEC (= Ctrl+Z); exit поднял бы только на один уровень." : cmd === "exit" ? " — на один уровень вверх." : cmd.startsWith("interface") && a === "line" ? " — из одного sub-режима в другой можно перейти напрямую." : "."}</li></ol>` };
+    }
+    const T = [
+      ["Сохранить конфигурацию, чтобы она загрузилась после перезагрузки", "copy running-config startup-config", "priv"],
+      ["Зашифровать все пароли, видимые открытым текстом", "service password-encryption", "glob"],
+      ["Задать зашифрованный пароль для privileged EXEC", "enable secret class", "glob"],
+      ["Включить интерфейс роутера", "no shutdown", "if"],
+      ["Чтобы на линии консоли спрашивался пароль", "login", "line"],
+      ["Задать шлюз коммутатору для удалённого управления", "ip default-gateway 192.168.1.1", "glob"],
+      ["Удалить сохранённую конфигурацию из NVRAM", "erase startup-config", "priv"],
+      ["Разрешить на VTY только SSH", "transport input ssh", "line"],
+      ["Показать интерфейсы, адреса и статус кратко", "show ip interface brief", "priv"],
+      ["Предупреждающий баннер при входе", "banner motd # No entry #", "glob"]
+    ];
+    const [task, cmd, mode] = pick(T), M = MODES.find(x => x.k === mode);
+    const opts = shuffle([cmd, ...shuffle(T.filter(x => x[1] !== cmd)).slice(0, 4).map(x => x[1])]);
+    return { task: `<p>${esc(task)}. Какая команда и в каком режиме?</p>`, fields: [sel("c", "Команда", opts, cmd), sel("m", "Режим", MODES.map(x => x.n), M.n)],
+      sol: `<ol><li><code>${esc(M.p)} ${esc(cmd)}</code></li><li>Режим: <b>${M.n}</b>.</li></ol>` };
+  } },
+  route: { t: "Local / remote и ARP", src: "L5 · MAC и IP, ARP", f(){
+    const mask16 = Math.random() < .3;
+    const a = pick([10, 172, 192]), b = a === 192 ? 168 : a === 172 ? ri(16, 31) : ri(0, 250), c = ri(0, 250);
+    const host = [a, b, c, ri(10, 99)], gw = [a, b, c, 1];
+    const local = Math.random() < .5;
+    let dst;
+    if(local) dst = mask16 ? [a, b, ri(0, 250), ri(100, 250)] : [a, b, c, ri(100, 250)];
+    else dst = mask16 ? [a, (b + ri(1, 9)) % 256, ri(0, 250), ri(2, 250)] : [a, b, (c + ri(1, 5)) % 256, ri(2, 250)];
+    const ip = x => x.join("."), mask = mask16 ? "255.255.0.0" : "255.255.255.0";
+    const macH = randMac(pick(OUIS)[0]), macG = randMac("00-60-2F"), macD = randMac(pick(OUIS)[0]);
+    const net = x => (mask16 ? x.slice(0, 2).concat([0, 0]) : x.slice(0, 3).concat([0])).join(".");
+    return {
+      task: `<p>PC1: IP <b>${ip(host)}</b>, mask <b>${mask}</b>, default gateway <b>${ip(gw)}</b>. PC1 отправляет пакет на <b>${ip(dst)}</b>.</p>
+        ${table(["Устройство", "IP", "MAC"], [["PC1", ip(host), macH], ["Gateway R1", ip(gw), macG], ["Получатель", ip(dst), macD]])}`,
+      fields: [sel("lr", "Получатель", ["local", "remote"], local ? "local" : "remote"), sel("dm", "Destination MAC в кадре", [macD, macG, "FF-FF-FF-FF-FF-FF"], local ? macD : macG),
+        txt("di", "Destination IP в пакете", "ip", ip(dst), true), txt("ai", "Какой IP PC1 ищет в ARP table", "ip", local ? ip(dst) : ip(gw), true)],
+      sol: `<ol><li>Сеть PC1 (IP AND mask): <code>${net(host)}</code>; сеть получателя: <code>${net(dst)}</code> → ${local ? "совпадают → <b>local</b>" : "разные → <b>remote</b>"}.</li>
+        <li>Destination IP всегда конечный хост: <b>${ip(dst)}</b>.</li>
+        <li>${local ? `Local → destination MAC = MAC получателя <b>${macD}</b>; в ARP table ищется <b>${ip(dst)}</b>.` : `Remote → кадр идёт на шлюз: destination MAC = <b>${macG}</b>; в ARP table ищется IP шлюза <b>${ip(gw)}</b>.`}</li>
+        <li>Если записи нет, PC1 шлёт ARP request (broadcast FF-FF-FF-FF-FF-FF), ответ приходит unicast.</li></ol>`
+    };
+  } },
+  ttl: { t: "TTL / Hop Limit", src: "L5 · IPv4 header", f(){
+    const t = pick([1, 2, 3, 4, 5, 8, 64, 128, 255]), n = t > 8 ? ri(2, 15) : ri(1, 8), v6 = Math.random() < .3, F = v6 ? "Hop Limit" : "TTL";
+    const ok = t > n, arrive = t - n, dropAt = t;
+    return {
+      task: `<p>Хост отправляет ${v6 ? "IPv6" : "IPv4"}-пакет с ${F} = <b>${t}</b>. Между источником и получателем <b>${n}</b> ${plural(n, "роутер", "роутера", "роутеров")}. Каждый роутер уменьшает ${F} на 1 и отбрасывает пакет, если получился 0.</p>`,
+      fields: [sel("ok", "Пакет дойдёт?", ["да", "нет"], ok ? "да" : "нет"), ok ? num("a", F + " у получателя", arrive) : num("r", "Номер роутера, который отбросит", dropAt)],
+      sol: `<ol><li>После k-го роутера ${F} = ${t} − k.</li>${ok ? `<li>После ${n}-го: <code>${t} − ${n} = <b>${arrive}</b></code> &gt; 0 → <b>дойдёт</b>.</li>` : `<li>На роутере №${dropAt}: <code>${t} − ${dropAt} = 0</code> → <b>отброшен</b> (роутер шлёт ICMP Time Exceeded). ${dropAt} ≤ ${n}, до получателя не дошёл.</li>`}</ol>`
+    };
+  } },
+  snr: { t: "RSSI и SNR", src: "L3 · Wi-Fi", f(){
+    const a = -ri(40, 80), b = -ri(85, 100), c = -ri(40, 80), d = -ri(85, 100), s1 = a - b, s2 = c - d;
+    return {
+      task: `<p>Точка A: RSSI <b>${a} dBm</b>, noise <b>${b} dBm</b>. Точка B: RSSI <b>${c} dBm</b>, noise <b>${d} dBm</b>. Найди SNR и где связь лучше.</p>`,
+      fields: [num("s1", "SNR A, dB", s1), num("s2", "SNR B, dB", s2), sel("w", "Лучше", ["A", "B", "одинаково"], s1 > s2 ? "A" : s2 > s1 ? "B" : "одинаково")],
+      sol: `<ol><li><code>SNR = RSSI − Noise</code></li><li>A: <code>${a} − (${b}) = <b>${s1} dB</b></code></li><li>B: <code>${c} − (${d}) = <b>${s2} dB</b></code></li><li>Больше SNR — лучше: <b>${s1 > s2 ? "A" : s2 > s1 ? "B" : "одинаково"}</b>.</li></ol>`
+    };
+  } },
+  cable: { t: "Какой кабель", src: "L3 · UTP", f(){
+    const P = [["switch", "PC", 0], ["switch", "router", 0], ["switch", "server", 0], ["switch", "switch", 1], ["router", "router", 1], ["router", "PC", 1], ["PC", "PC", 1], ["switch", "printer", 0]];
+    const two = shuffle(P).slice(0, 3), C = ["straight-through", "crossover"];
+    return {
+      task: `<p>Какой UTP-кабель нужен для каждого соединения (без auto-MDIX)?</p>`,
+      fields: two.map((p, i) => sel("c" + i, `${p[0]} ↔ ${p[1]}`, C, C[p[2]])),
+      sol: `<ol>${two.map(p => `<li>${p[0]} ↔ ${p[1]}: <b>${C[p[2]]}</b> — ${p[2] ? "однотипные устройства (или два «хоста»)" : "коммутатор и конечное устройство / роутер"}</li>`).join("")}<li>Правило: switch с PC, server, router → straight-through; switch–switch, router–router, PC–PC, router–PC → crossover.</li></ol>`
+    };
+  } },
+  osi: { t: "Уровни OSI и PDU", src: "L2 · модели", f(){
+    const I = [
+      ["Segment", 4], ["Packet", 3], ["Frame", 2], ["Bits", 1], ["TCP", 4], ["UDP", 4], ["IPv4", 3], ["IPv6", 3], ["ICMP", 3], ["HTTP", 7], ["DNS", 7],
+      ["MAC-адрес", 2], ["IP-адрес", 3], ["Router", 3], ["Layer 2 switch", 2], ["Hub", 1], ["FCS / CRC", 2], ["Encoding (Manchester)", 1], ["LLC и MAC подуровни", 2], ["Шифрование и сжатие данных", 6], ["Управление сессиями", 5], ["Номера портов", 4]
+    ];
+    const items = shuffle(I).slice(0, 3);
+    const TCPIP = l => l >= 5 ? "Application" : l === 4 ? "Transport" : l === 3 ? "Internet" : "Network Access";
+    const OSI = ["1 Physical", "2 Data Link", "3 Network", "4 Transport", "5 Session", "6 Presentation", "7 Application"];
+    return {
+      task: `<p>К какому уровню OSI и TCP/IP относится каждый элемент?</p>`,
+      fields: items.flatMap((x, i) => [sel("o" + i, x[0] + " · OSI", OSI, OSI[x[1] - 1]), sel("t" + i, x[0] + " · TCP/IP", ["Application", "Transport", "Internet", "Network Access"], TCPIP(x[1]))]),
+      sol: `<ol>${items.map(x => `<li>${x[0]}: <b>${OSI[x[1] - 1]}</b> → TCP/IP <b>${TCPIP(x[1])}</b></li>`).join("")}<li>OSI 5–7 = Application, 4 = Transport, 3 = Internet, 1–2 = Network Access.</li></ol>`
+    };
+  } }
+};
+const GKEYS = Object.keys(GEN);
+
+/* ---------- drills: UI ---------- */
+let DST = store.get("drill", {});      // type → [correct, attempted]
+let drType = store.get("drtype", "all");
+if(drType !== "all" && !GEN[drType]) drType = "all";
+let cur = null;
+function paintTypes(){
+  $("#dr-types").innerHTML = `<button type="button" data-dt="all" aria-pressed="${drType === "all"}">Все вперемешку</button>` + GKEYS.map(k => {
+    const s = DST[k]; return `<button type="button" data-dt="${k}" aria-pressed="${drType === k}">${esc(GEN[k].t)}${s ? ` <span class="c">${s[0]}/${s[1]}</span>` : ""}</button>`;
+  }).join("");
+  const tot = GKEYS.reduce((a, k) => [a[0] + (DST[k] ? DST[k][0] : 0), a[1] + (DST[k] ? DST[k][1] : 0)], [0, 0]);
+  $("#dr-stats").innerHTML = tot[1] ? `<span>Решено верно с первой попытки: <b>${tot[0]}</b> из <b>${tot[1]}</b></span><span>${Math.round(100 * tot[0] / tot[1])}%</span> <button class="linkbtn" type="button" id="dr-reset">Сбросить статистику</button>` : `<span>Статистика появится после первой проверки.</span>`;
+  const rb = $("#dr-reset"); if(rb) armedReset(rb, "Сбросить статистику", () => { DST = {}; store.set("drill", DST); paintTypes(); });
+}
+$("#dr-types").addEventListener("click", e => { const b = e.target.closest("[data-dt]"); if(!b) return; drType = b.dataset.dt; store.set("drtype", drType); newTask(); });
+function newTask(){
+  const k = drType === "all" ? pick(GKEYS) : drType, g = GEN[k].f();
+  cur = Object.assign({ k, checked: false }, g);
+  $("#dr-tag").textContent = GEN[k].t;
+  $("#dr-src").textContent = GEN[k].src;
+  $("#dr-task").innerHTML = g.task;
+  $("#dr-in").innerHTML = g.fields.map(f => `<label>${esc(f.label)}${f.kind === "sel"
+    ? `<select data-f="${f.id}"><option value="">—</option>${f.options.map(o => `<option>${esc(o)}</option>`).join("")}</select>`
+    : `<input data-f="${f.id}" inputmode="${f.kind === "num" ? "decimal" : "text"}" autocomplete="off" autocapitalize="off" spellcheck="false" class="${f.wide ? "wide" : ""}">`}</label>`).join("");
+  $("#dr-fb").textContent = ""; $("#dr-fb").className = "dr-fb";
+  $("#dr-sol").hidden = true; $("#dr-sol").innerHTML = `<b>Решение</b>${g.sol}`;
+  paintTypes();
+}
+const parseNum = s => { s = String(s).trim().replace(/\s/g, "").replace(/[−–]/g, "-").replace(",", "."); return s === "" || isNaN(+s) ? null : +s; };
+function okField(f, raw){
+  const s = String(raw).trim();
+  if(f.kind === "sel") return raw === f.ans;
+  if(f.kind === "hex"){ const h = s.replace(/^0x/i, "").replace(/[\s:.\-]/g, "").replace(/h$/i, ""); return /^[0-9a-f]+$/i.test(h) && parseInt(h, 16) === f.ans; }
+  if(f.kind === "bin"){ const b = s.replace(/\s/g, ""); return /^[01]{1,8}$/.test(b) && parseInt(b, 2) === f.ans; }
+  if(f.kind === "ip") return s.replace(/\s/g, "") === f.ans;
+  if(f.kind === "ports"){ const a = [...new Set((s.match(/\d+/g) || []).map(Number))].sort((x, y) => x - y); return a.length === f.ans.length && a.every((v, i) => v === f.ans[i]); }
+  const v = parseNum(raw); if(v == null) return false;
+  return Math.abs(v - f.ans) <= f.tol + 1e-9;
+}
+$("#dr-check").addEventListener("click", () => {
+  if(!cur) return;
+  let good = 0, filled = 0;
+  cur.fields.forEach(f => {
+    const el = $(`#dr-in [data-f="${f.id}"]`), raw = el.value;
+    el.classList.remove("ok", "bad");
+    if(String(raw).trim() === "") return;
+    filled++;
+    const ok = okField(f, raw); if(ok) good++;
+    el.classList.add(ok ? "ok" : "bad");
+  });
+  const all = good === cur.fields.length;
+  $("#dr-fb").className = "dr-fb " + (all ? "ok" : "bad");
+  $("#dr-fb").textContent = all ? "Всё верно ✔" : filled < cur.fields.length ? `Верно ${good} из ${cur.fields.length}. Заполни все поля.` : `Верно ${good} из ${cur.fields.length}. Проверь выделенные поля или открой решение.`;
+  if(!cur.checked && filled === cur.fields.length){ cur.checked = true; const s = DST[cur.k] || [0, 0]; s[1]++; if(all) s[0]++; DST[cur.k] = s; store.set("drill", DST); paintTypes(); }
+  if(all) $("#dr-sol").hidden = false;
+});
+$("#dr-show").addEventListener("click", () => { if(!cur) return; if(!cur.checked){ cur.checked = true; const s = DST[cur.k] || [0, 0]; s[1]++; DST[cur.k] = s; store.set("drill", DST); paintTypes(); } $("#dr-sol").hidden = false; $("#dr-sol").scrollIntoView({behavior: "smooth", block: "nearest"}); });
+$("#dr-next").addEventListener("click", () => { newTask(); $("#dr-task").scrollIntoView({behavior: "smooth", block: "nearest"}); });
+$("#dr-in").addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); $("#dr-check").click(); } });
+$$("[data-drill]").forEach(b => b.addEventListener("click", e => { e.stopPropagation(); drType = b.dataset.drill; store.set("drtype", drType); cur = null; showView("drill"); }));
+
+/* ---------- home ---------- */
+function renderHome(){
+  const best = store.get("best", {});
+  const vals = LECS.map(l => best[l.k]).filter(v => v != null);
+  $("#h-q").textContent = QZ.length;
+  $("#h-oq").textContent = OQ.length;
+  $("#h-avg").textContent = vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) + "%" : "—";
+  $("#h-q2").textContent = QZ.length + " " + plural(QZ.length, "вопрос", "вопроса", "вопросов");
+  $("#h-oq2").textContent = OQ.length + " " + plural(OQ.length, "вопрос", "вопроса", "вопросов");
+  $("#h-dr").textContent = GKEYS.length + " " + plural(GKEYS.length, "тип", "типа", "типов");
+  $("#h-map").innerHTML = LECS.map(l => {
+    const b = best[l.k], oq = OQ.filter(q => q.l === l.k), rated = oq.filter(q => RATE[q.id] != null).length;
+    return `<button class="h-row" type="button" data-lec-quiz="${l.k}" title="Тест по ${l.s}">
+      <span class="code">${l.s}</span>
+      <span class="name">${esc(l.t)}<small>${qcounts[l.k]} вопр. теста · open ${rated}/${oq.length}</small></span>
+      <span><span class="h-meter"><i style="width:${b || 0}%"></i></span><span class="pct">${b == null ? "—" : b + "%"}</span></span>
+    </button>`;
+  }).join("");
+  const m = mistIds();
+  $("#h-mist").hidden = !m.length;
+  $("#h-mist-n").textContent = m.length;
+}
+$("#h-map").addEventListener("click", e => { const r = e.target.closest("[data-lec-quiz]"); if(r) quizLec(r.dataset.lecQuiz); });
+function openLec(k, mode){ F.lecs = [k]; F.rf = "all"; F.star = false; F.mode = mode || "list"; saveF(); run = null; showView("open"); }
+$$("[data-oq-lec]").forEach(b => b.addEventListener("click", () => openLec(b.dataset.oqLec)));
+$$("[data-go]").forEach(b => b.addEventListener("click", () => {
+  if(b.dataset.drill) return;
+  if(b.dataset.omode){ F.mode = b.dataset.omode; saveF(); if(F.mode==="practice") run = null; }
+  if(b.dataset.go === "quiz" && qrun && !$("#quiz-done").hidden) qrun = null;
+  showView(b.dataset.go);
+}));
+$("#h-exam").addEventListener("click", () => { QF.lecs = LECS.map(l => l.k); store.set("qf", QF); startQuiz(shuffle(QZ).slice(0, 40)); });
+$("#h-mist-go").addEventListener("click", () => { const ids = mistIds(); startQuiz(shuffle(ids.map(id => QBY[id]))); });
+armedReset($("#h-mist-clear"), "Очистить", () => { store.set("mist", []); renderHome(); });
+
+/* ---------- theme (shared with the hub and other trainers via cfq:v1) ---------- */
+function isDark(){ const t = document.documentElement.getAttribute("data-theme"); return t ? t==="dark" : matchMedia("(prefers-color-scheme: dark)").matches; }
+function paintTheme(){ $("#theme-btn").textContent = isDark() ? "☀ Светлая" : "☾ Тёмная"; }
+$("#theme-btn").addEventListener("click",()=>{
+  const t = isDark() ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", t);
+  try{ const s = JSON.parse(localStorage.getItem("cfq:v1")||"{}"); s.theme = t; localStorage.setItem("cfq:v1", JSON.stringify(s)); }catch(e){}
+  paintTheme();
+});
+paintTheme();
+
+/* ---------- keyboard (quiz) ---------- */
+document.addEventListener("keydown", e => {
+  if(e.target.matches("input, textarea, select")) return;
+  if($("#view-quiz").hidden || $("#quiz-run").hidden) return;
+  const k = parseInt(e.key, 10);
+  if(k >= 1 && k <= 6){ const b = $$("#q-opts .opt")[k-1]; if(b && !b.disabled){ b.click(); e.preventDefault(); } }
+  else if(e.key === "Enter"){
+    if(!$("#q-check").hidden && !$("#q-check").disabled && document.activeElement !== $("#q-check")){ $("#q-check").click(); e.preventDefault(); }
+    else if(!$("#q-next").disabled && document.activeElement !== $("#q-next")){ $("#q-next").click(); e.preventDefault(); }
+  }
+});
+
+/* ---------- init ---------- */
+showLec(store.get("lec", LECS[0].k));
+const h = (location.hash||"").slice(1);
+showView(VIEWS.includes(h) ? h : "home");
+window.addEventListener("hashchange",()=>{ const v = location.hash.slice(1); if(VIEWS.includes(v)) showView(v); });
+</script>
+</body>
+</html>

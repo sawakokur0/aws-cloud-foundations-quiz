@@ -20,6 +20,7 @@
   --rm: #1E5A48; --rm-soft: #E0ECE5; --rm-ink: #FFFFFF;
   --cg: #6B2FB3; --cg-soft: #EEE6F8; --cg-ink: #FFFFFF;
   --cv: #A8460F; --cv-soft: #FAE9DD; --cv-ink: #FFFFFF;
+  --cn: #0A6C78; --cn-soft: #DCEFF0; --cn-ink: #FFFFFF;
 
   --f-display: "Unbounded", "Golos Text", system-ui, sans-serif;
   --f-body: "Golos Text", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -35,6 +36,7 @@
     --rm: #7FC4A8; --rm-soft: #1D2E27; --rm-ink: #0E1512;
     --cg: #C3A2F2; --cg-soft: #2A2140; --cg-ink: #140F1C;
     --cv: #F0A06C; --cv-soft: #3A2416; --cv-ink: #1B0F07;
+    --cn: #5CC6D2; --cn-soft: #12343A; --cn-ink: #06191C;
     color-scheme: dark;
   }
 }
@@ -46,6 +48,7 @@
   --rm: #7FC4A8; --rm-soft: #1D2E27; --rm-ink: #0E1512;
   --cg: #C3A2F2; --cg-soft: #2A2140; --cg-ink: #140F1C;
   --cv: #F0A06C; --cv-soft: #3A2416; --cv-ink: #1B0F07;
+  --cn: #5CC6D2; --cn-soft: #12343A; --cn-ink: #06191C;
   color-scheme: dark;
 }
 
@@ -62,6 +65,7 @@ p { margin: 0; }
 .rm  { --c: var(--rm);  --c-soft: var(--rm-soft);  --c-ink: var(--rm-ink); }
 .cg  { --c: var(--cg);  --c-soft: var(--cg-soft);  --c-ink: var(--cg-ink); }
 .cv  { --c: var(--cv);  --c-soft: var(--cv-soft);  --c-ink: var(--cv-ink); }
+.cn  { --c: var(--cn);  --c-soft: var(--cn-soft);  --c-ink: var(--cn-ink); }
 
 /* Header */
 .top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
@@ -90,6 +94,7 @@ p { margin: 0; }
 .hero h1 .r { color: var(--rm); }
 .hero h1 .g { color: var(--cg); }
 .hero h1 .v { color: var(--cv); }
+.hero h1 .n { color: var(--cn); }
 .lede { margin-top: 18px; color: var(--muted); font-size: 17px; max-width: 34em; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
 .stats { display: flex; flex-wrap: wrap; gap: 20px 32px; margin-top: 34px; padding-top: 22px; border-top: 1px solid var(--line); }
@@ -175,13 +180,14 @@ footer .wrap { padding-block: 22px 32px; color: var(--muted); font-size: 13px; d
   <div class="wrap">
     <a class="brand" href="./" aria-label="Главная">
       <span class="brand-mark">MT</span>
-      <span class="brand-name"><b>Тренажёр к мидтермам</b><span>4 курса · тесты · конспекты</span></span>
+      <span class="brand-name"><b>Тренажёр к мидтермам</b><span>5 курсов · тесты · конспекты</span></span>
     </a>
     <nav>
       <a class="ghost hide-sm aws" href="aws/"><span class="dot"></span>Cloud Foundations</a>
       <a class="ghost hide-sm rm" href="research-methods/"><span class="dot"></span>Research Methods</a>
       <a class="ghost hide-sm cg" href="cgf/"><span class="dot"></span>Computer Graphics</a>
       <a class="ghost hide-sm cv" href="cv/"><span class="dot"></span>Computer Vision</a>
+      <a class="ghost hide-sm cn" href="net/"><span class="dot"></span>Computer Networks</a>
       <button class="ghost" type="button" id="theme-btn" aria-label="Переключить тему">Тема</button>
     </nav>
   </div>
@@ -191,7 +197,7 @@ footer .wrap { padding-block: 22px 32px; color: var(--muted); font-size: 13px; d
   <section class="wrap hero">
     <div>
       <span class="eyebrow">Подготовка к мидтермам</span>
-      <h1><span class="a">AWS</span>, <span class="r">Research Methods</span>, <span class="g">Computer Graphics</span> и <span class="v">Computer Vision</span>. Всё в одном месте.</h1>
+      <h1><span class="a">AWS</span>, <span class="r">Research Methods</span>, <span class="g">Computer Graphics</span>, <span class="v">Computer Vision</span> и <span class="n">Computer Networks</span>. Всё в одном месте.</h1>
       <p class="lede">Тесты с пояснениями после каждого ответа, конспекты, сжатые до главного, карточки с терминами, open questions с образцами ответов и разобранный мидтерм с задачами на расчёт. Прогресс по всем курсам собран на этой странице.</p>
       <div class="hero-actions">
         <a class="btn" id="continue" href="aws/">Продолжить <span aria-hidden="true">→</span></a>
@@ -230,7 +236,13 @@ footer .wrap { padding-block: 22px 32px; color: var(--muted); font-size: 13px; d
         <div class="sum-sub"><span id="cv-sub">Ещё не начат</span><span id="cv-mist"></span></div>
         <div class="bars" id="cv-bars"></div>
       </a>
-      <p class="sum-note">Процент считается по всем вопросам курса: непройденные темы идут как 0. Для Computer Graphics и Computer Vision это самооценка по open questions («знаю» = 1, «частично» = ½). Прогресс хранится только в этом браузере.</p>
+      <div class="sum-sep"></div>
+      <a class="sum-course cn" href="net/#quiz" data-course="cn">
+        <div class="sum-row"><span class="dot"></span><span class="nm">Computer Networks</span><span class="pct" id="cn-pct">—</span></div>
+        <div class="sum-sub"><span id="cn-sub">Ещё не начат</span><span id="cn-mist"></span></div>
+        <div class="bars" id="cn-bars"></div>
+      </a>
+      <p class="sum-note">Процент считается по всем вопросам курса: непройденные темы идут как 0. Для Computer Networks это лучший результат теста по лекциям. Для Computer Graphics и Computer Vision это самооценка по open questions («знаю» = 1, «частично» = ½). Прогресс хранится только в этом браузере.</p>
     </aside>
   </section>
 
@@ -303,6 +315,23 @@ footer .wrap { padding-block: 22px 32px; color: var(--muted); font-size: 13px; d
         </ul>
         <div class="course-foot"><a class="btn" href="cv/" data-course="cv">Открыть Computer Vision <span aria-hidden="true">→</span></a></div>
       </article>
+
+      <article class="course cn">
+        <div class="course-top">
+          <span class="course-mark">CN</span>
+          <div><span class="eyebrow">Computer Networks · лекции 1–5</span><h3>Computer Networks</h3></div>
+        </div>
+        <p>Cisco ITN: компоненты сети и IOS, протоколы и модели OSI / TCP/IP, физический уровень, Ethernet и MAC-таблица, IPv4 / IPv6, ARP и настройка роутера. Тест в стиле Cisco, задачи со случайными числами и open questions.</p>
+        <div class="chips"><span class="chip hot">L1–L5</span><span class="chip" id="cn-chip-q">— вопросов</span><span class="chip" id="cn-chip-oq">— open questions</span></div>
+        <ul class="links">
+          <li><a href="net/#quiz" data-course="cn"><span class="code">TEST</span><span class="t">Тест по лекциям<small>«Choose two», пояснения, база ошибок, пробный на 40</small></span><span class="n" id="cn-n-q"></span><span class="ar">→</span></a></li>
+          <li><a href="net/#drill" data-course="cn"><span class="code">DRILLS</span><span class="t">Задачи<small>hex, MAC и OUI, MAC-таблица, bandwidth, IOS, ARP, TTL</small></span><span class="n">∞</span><span class="ar">→</span></a></li>
+          <li><a href="net/#open" data-course="cn"><span class="code">OPEN Q</span><span class="t">Open questions<small>образцы ответов, тренировка с самооценкой</small></span><span class="n" id="cn-n-oq"></span><span class="ar">→</span></a></li>
+          <li><a href="net/#keys" data-course="cn"><span class="code">KEY</span><span class="t">Ключевое и команды<small>что путают, цифры, шпаргалка IOS</small></span><span class="n">5 лекц.</span><span class="ar">→</span></a></li>
+          <li><a href="net/#notes" data-course="cn"><span class="code">NOTES</span><span class="t">Подробные конспекты<small>L1–L5 по слайдам</small></span><span class="n">5 лекц.</span><span class="ar">→</span></a></li>
+        </ul>
+        <div class="course-foot"><a class="btn" href="net/" data-course="cn">Открыть Computer Networks <span aria-hidden="true">→</span></a></div>
+      </article>
     </div>
   </section>
 
@@ -314,19 +343,19 @@ footer .wrap { padding-block: 22px 32px; color: var(--muted); font-size: 13px; d
         <span class="num">01</span>
         <h3>Прочитать главное</h3>
         <p>Сжатые выжимки вместо полных слайдов: определения, цифры и то, что встречается в тестах.</p>
-        <div class="go"><a class="aws" href="aws/#modules" data-course="aws"><span class="dot"></span>Слайды M01–M10</a><a class="rm" href="research-methods/#keys" data-course="rm"><span class="dot"></span>Ключевое L1–L4.2</a><a class="cg" href="cgf/#keys" data-course="cg"><span class="dot"></span>Ключевое КГФ</a><a class="cv" href="cv/#keys" data-course="cv"><span class="dot"></span>Ключевое CV</a></div>
+        <div class="go"><a class="aws" href="aws/#modules" data-course="aws"><span class="dot"></span>Слайды M01–M10</a><a class="rm" href="research-methods/#keys" data-course="rm"><span class="dot"></span>Ключевое L1–L4.2</a><a class="cg" href="cgf/#keys" data-course="cg"><span class="dot"></span>Ключевое КГФ</a><a class="cv" href="cv/#keys" data-course="cv"><span class="dot"></span>Ключевое CV</a><a class="cn" href="net/#keys" data-course="cn"><span class="dot"></span>Ключевое сети</a></div>
       </div>
       <div class="step">
         <span class="num">02</span>
         <h3>Пройти тест</h3>
         <p>После каждого ответа видно, почему верен именно он. Цель: стабильно выше 70%.</p>
-        <div class="go"><a class="aws" href="aws/#mid" data-course="aws"><span class="dot"></span>Мидтерм AWS</a><a class="rm" href="research-methods/#quiz" data-course="rm"><span class="dot"></span>Тест RM</a><a class="cg" href="cgf/#open" data-course="cg"><span class="dot"></span>Open questions КГФ</a><a class="cv" href="cv/#exam" data-course="cv"><span class="dot"></span>Мидтерм CV</a></div>
+        <div class="go"><a class="aws" href="aws/#mid" data-course="aws"><span class="dot"></span>Мидтерм AWS</a><a class="rm" href="research-methods/#quiz" data-course="rm"><span class="dot"></span>Тест RM</a><a class="cg" href="cgf/#open" data-course="cg"><span class="dot"></span>Open questions КГФ</a><a class="cv" href="cv/#exam" data-course="cv"><span class="dot"></span>Мидтерм CV</a><a class="cn" href="net/#quiz" data-course="cn"><span class="dot"></span>Тест сети</a></div>
       </div>
       <div class="step">
         <span class="num">03</span>
         <h3>Закрыть ошибки</h3>
         <p>Неверные ответы попадают в базу ошибок и уходят оттуда, когда ответишь правильно.</p>
-        <div class="go"><a class="aws" href="aws/#mistakes" data-course="aws" id="step-aws-mist"><span class="dot"></span>Ошибки AWS <b id="aws-mist-n"></b></a><a class="rm" href="research-methods/#quiz" data-course="rm"><span class="dot"></span>Ошибки RM <b id="rm-mist-n"></b></a></div>
+        <div class="go"><a class="aws" href="aws/#mistakes" data-course="aws" id="step-aws-mist"><span class="dot"></span>Ошибки AWS <b id="aws-mist-n"></b></a><a class="rm" href="research-methods/#quiz" data-course="rm"><span class="dot"></span>Ошибки RM <b id="rm-mist-n"></b></a><a class="cn" href="net/#quiz" data-course="cn"><span class="dot"></span>Ошибки сети <b id="cn-mist-n"></b></a></div>
       </div>
     </div>
   </section>
@@ -344,6 +373,8 @@ footer .wrap { padding-block: 22px 32px; color: var(--muted); font-size: 13px; d
 <script src="cgf/data-oq.js"></script>
 <script src="cv/data-oq.js"></script>
 <script src="cv/data-exam.js"></script>
+<script src="net/data-quiz.js"></script>
+<script src="net/data-oq.js"></script>
 <script>
 (function () {
   "use strict";
@@ -380,8 +411,14 @@ footer .wrap { padding-block: 22px 32px; color: var(--muted); font-size: 13px; d
   $("st-cards").textContent = RM_CARDS;
   const CG_LECS = window.CGF_LECS || [], CG_OQ = window.CGF_OQ || [];
   const CV_LECS = window.CV_LECS || [], CV_OQ = window.CV_OQ || [], CV_EX = window.CV_EXAMS || [];
-  $("st-oq").textContent = CG_OQ.length + CV_OQ.length;
-  $("st-notes").textContent = KC.length + LABS.length + RM_LECS.length + CG_LECS.length + CV_LECS.length;
+  const CN_LECS = window.NET_LECS || [], CN_Q = window.NET_QUIZ || [], CN_OQ = window.NET_OQ || [];
+  $("st-q").textContent = awsQ + RM_Q + CN_Q.length;
+  $("st-oq").textContent = CG_OQ.length + CV_OQ.length + CN_OQ.length;
+  $("st-notes").textContent = KC.length + LABS.length + RM_LECS.length + CG_LECS.length + CV_LECS.length + CN_LECS.length;
+  $("cn-chip-q").textContent = CN_Q.length + " вопросов теста";
+  $("cn-chip-oq").textContent = CN_OQ.length + " open questions";
+  $("cn-n-q").textContent = CN_Q.length;
+  $("cn-n-oq").textContent = CN_OQ.length;
   $("cv-chip-q").textContent = CV_OQ.length + " open questions";
   $("cv-chip-v").textContent = CV_EX.length + " варианта мидтерма";
   $("cv-n-oq").textContent = CV_OQ.length;
@@ -467,11 +504,18 @@ footer .wrap { padding-block: 22px 32px; color: var(--muted); font-size: 13px; d
   $("cv-sub").textContent = cvDone ? `оценено ${CV_OQ.filter(q => cvRate[q.id] != null).length} из ${CV_OQ.length}` + cvEx : cvEx ? cvEx.slice(3) : "Ещё не начат";
   $("cv-mist").textContent = cvWeak ? cvWeak + " слабых к повтору" : "";
   $("cv-mist").className = cvWeak ? "mist" : "";
+  // Computer Networks: quiz best per lecture (net_best, attempts with ≥ 5 questions of that lecture) and mistakes (net_mist: quiz ids)
+  { const seen = {}; CN_Q.forEach(q => { seen[q.l] = (seen[q.l] || 0) + 1; q.id = q.l + ":" + (seen[q.l] - 1); }); }
+  const cnBest = read("net_best", {}) || {}, cnIds = new Set(CN_Q.map(q => q.id));
+  const cnMist = (read("net_mist", []) || []).filter(id => cnIds.has(id)).length;
+  const cnUnits = CN_LECS.map(l => ({ lb: l.s, title: l.s + " " + l.t, n: CN_Q.filter(q => q.l === l.k).length, best: cnBest[l.k] == null ? null : cnBest[l.k] }));
+  const cnDone = cnUnits.filter(u => u.best != null).length;
+  paint("cn", cnUnits, cnDone, cnMist);
   if (!awsMist) $("step-aws-mist").href = "aws/#mid";
 
   // ---------- "continue" points at the course opened last from here ----------
-  const COURSES = { aws: { href: "aws/", name: "Cloud Foundations" }, rm: { href: "research-methods/", name: "Research Methods" }, cg: { href: "cgf/", name: "Computer Graphics" }, cv: { href: "cv/", name: "Computer Vision" } };
-  const last = read("hub:last", null) || (awsDone || awsMist ? "aws" : rmDone || rmMist ? "rm" : cgDone ? "cg" : cvDone || cvExBest.length ? "cv" : null);
+  const COURSES = { aws: { href: "aws/", name: "Cloud Foundations" }, rm: { href: "research-methods/", name: "Research Methods" }, cg: { href: "cgf/", name: "Computer Graphics" }, cv: { href: "cv/", name: "Computer Vision" }, cn: { href: "net/", name: "Computer Networks" } };
+  const last = read("hub:last", null) || (awsDone || awsMist ? "aws" : rmDone || rmMist ? "rm" : cgDone ? "cg" : cvDone || cvExBest.length ? "cv" : cnDone || cnMist ? "cn" : null);
   const cont = $("continue");
   if (COURSES[last]) {
     cont.href = COURSES[last].href;

@@ -1,6 +1,6 @@
 # Тренажёр к мидтермам
 
-Неофициальный тренажёр для самоподготовки по четырём курсам. Статический сайт без сборки, прогресс хранится в localStorage браузера.
+Неофициальный тренажёр для самоподготовки по пяти курсам. Статический сайт без сборки, прогресс хранится в localStorage браузера.
 
 - `index.html` — главная: все курсы, сводка прогресса и ошибок, быстрые ссылки на разделы.
 - `aws/` — AWS Academy Cloud Foundations (ACFv2): knowledge checks M01–M10, вопросы по лабам, режим к Midterm Quiz (недели 1–6),
@@ -18,6 +18,11 @@
   генератор расчётных задач (Wx + b, accuracy, softmax, SVM loss, метрики, shapes OpenCV, kNN, backprop и др.) и open questions.
   `index.html` + `data-oq.js` (вопросы), `data-exam.js` (варианты). Прямые ссылки: `#home`, `#notes`, `#keys`, `#exam`, `#drill`, `#open`.
 
+- `net/` — Computer Networks (Cisco ITN, лекции 1–5): главная курса, конспекты, ключевое и команды IOS, тест с пояснениями
+  (вопросы «Choose two», база ошибок, пробный мидтерм на 40), генератор задач (hex, MAC и OUI, MAC-таблица коммутатора, bandwidth,
+  размер кадра, режимы IOS, local / remote и ARP, TTL, SNR, кабели, уровни OSI) и open questions.
+  `index.html` + `data-quiz.js` (тест), `data-oq.js` (open questions). Прямые ссылки: `#home`, `#notes`, `#keys`, `#quiz`, `#drill`, `#open`.
+
 Главная берёт числа AWS из `aws/data-*.js`, Computer Graphics из `cgf/data-oq.js` (самооценки в localStorage `cgf_rate`),
-Computer Vision из `cv/data-oq.js` и `cv/data-exam.js` (`cv_rate`, `cv_exam`); числа Research Methods (вопросы по лекциям, карточки) записаны в `index.html`
+Computer Vision из `cv/data-oq.js` и `cv/data-exam.js` (`cv_rate`, `cv_exam`), Computer Networks из `net/data-quiz.js` и `net/data-oq.js` (`net_best`, `net_mist`); числа Research Methods (вопросы по лекциям, карточки) записаны в `index.html`
 константами `RM_LECS` и `RM_CARDS`. Если меняешь вопросы RM, обнови их тоже.
